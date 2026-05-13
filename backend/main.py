@@ -67,10 +67,13 @@ def debug_anthropic_test():
     the right key is deployed, and the result of a tiny live test call
     (with the real exception details on failure). Does NOT leak the key.
     """
-    api_key = os.getenv("ANTHROPIC_API_KEY") or ""
+    raw_key = os.getenv("ANTHROPIC_API_KEY") or ""
+    api_key = raw_key.strip()
     result: dict = {
         "key_set": bool(api_key),
-        "key_length": len(api_key),
+        "key_length_raw": len(raw_key),
+        "key_length_stripped": len(api_key),
+        "had_trailing_whitespace": raw_key != api_key,
         "key_prefix": (api_key[:15] + "...") if len(api_key) > 18 else "TOO SHORT",
     }
 

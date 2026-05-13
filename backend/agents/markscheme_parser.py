@@ -38,7 +38,7 @@ def parse_mark_scheme(raw_mark_scheme: str) -> list[dict]:
         ]
     """
     client = anthropic.Anthropic(
-        api_key=os.getenv("ANTHROPIC_API_KEY"),
+        api_key=(os.getenv("ANTHROPIC_API_KEY") or "").strip(),
         max_retries=5,
         timeout=60.0,
     )

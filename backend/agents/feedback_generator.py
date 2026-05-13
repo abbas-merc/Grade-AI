@@ -67,7 +67,7 @@ def generate_feedback(
         On API or parsing failure, returns a safe fallback dict with the
         same shape and an "error" key. Never raises.
     """
-    api_key = os.getenv("ANTHROPIC_API_KEY")
+    api_key = (os.getenv("ANTHROPIC_API_KEY") or "").strip()
     if not api_key:
         return _safe_fallback("ANTHROPIC_API_KEY not set")
 

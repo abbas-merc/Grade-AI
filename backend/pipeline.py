@@ -275,7 +275,10 @@ def run_full_paper_grading(
     """
     from models import Paper
 
-    api_key = os.getenv("ANTHROPIC_API_KEY")
+    # Strip whitespace/newlines — Railway env vars sometimes include a trailing
+    # \n from copy-paste, which httpx rejects as an illegal header value and
+    # surfaces as the deeply misleading "APIConnectionError: Connection error."
+    api_key = (os.getenv("ANTHROPIC_API_KEY") or "").strip()
     if not api_key:
         raise RuntimeError("ANTHROPIC_API_KEY not set")
 

@@ -105,7 +105,7 @@ def extract_and_grade(
         with the same shape, marks_awarded=0, empty breakdown, and an
         "error" key explaining what went wrong. Never raises.
     """
-    api_key = os.getenv("ANTHROPIC_API_KEY")
+    api_key = (os.getenv("ANTHROPIC_API_KEY") or "").strip()
     if not api_key:
         return _safe_fallback("ANTHROPIC_API_KEY not set")
 
