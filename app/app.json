@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "GradeAI",
+    "slug": "grade-ai",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "gradeai",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.gradeai.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.gradeai.app"
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "GradeAI needs access to your photos to upload your answer.",
+          "cameraPermission": "GradeAI needs access to your camera to photograph your answer."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
