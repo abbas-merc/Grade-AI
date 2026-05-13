@@ -51,7 +51,12 @@ def _serialize_question_detail(question: Question) -> dict:
 @router.get("/{question_id}", response_model=QuestionDetailResponse)
 def get_question(question_id: int, db: Session = Depends(get_db)):
     """Return a question with its full mark scheme as an array of mark points."""
-    question = db.query(Question).filter(Question.id == question_id).first()
-    if not question:
-        raise HTTPException(status_code=404, detail="Question not found")
-    return _serialize_question_detail(question)
+    try:
+        question = db.query(Question).filter(Question.id == question_id).first()
+        if not question:
+            raise HTTPException(status_code=404, detail="Question not found")
+        return _serialize_question_detail(question)
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Failed to load question: {exc}")

@@ -40,20 +40,28 @@ def _serialize_question(q: Question) -> dict:
 @router.get("/", response_model=list[PaperResponse])
 def list_papers(db: Session = Depends(get_db)):
     """Return all exam papers in the database."""
-    papers = db.query(Paper).order_by(Paper.id).all()
-    return [_serialize_paper(p) for p in papers]
+    try:
+        papers = db.query(Paper).order_by(Paper.id).all()
+        return [_serialize_paper(p) for p in papers]
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Failed to load papers: {exc}")
 
 
 @router.get("/{paper_id}/questions", response_model=list[QuestionResponse])
 def list_questions_for_paper(paper_id: int, db: Session = Depends(get_db)):
     """Return all questions belonging to the given paper."""
-    paper = db.query(Paper).filter(Paper.id == paper_id).first()
-    if not paper:
-        raise HTTPException(status_code=404, detail="Paper not found")
-    questions = (
-        db.query(Question)
-        .filter(Question.paper_id == paper_id)
-        .order_by(Question.id)
-        .all()
-    )
-    return [_serialize_question(q) for q in questions]
+    try:
+        paper = db.query(Paper).filter(Paper.id == paper_id).first()
+        if not paper:
+            raise HTTPException(status_code=404, detail="Paper not found")
+        questions = (
+            db.query(Question)
+            .filter(Question.paper_id == paper_id)
+            .order_by(Question.id)
+            .all()
+        )
+        return [_serialize_question(q) for q in questions]
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Failed to load questions: {exc}")

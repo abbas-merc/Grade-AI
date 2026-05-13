@@ -155,6 +155,9 @@ def run_grading_pipeline(
             mark_scheme_points=mark_scheme_points,
         )
 
+        if "error" in grade_result:
+            raise RuntimeError(f"Grading failed: {grade_result['error']}")
+
         call1_cost = _calc_cost(
             grade_result.get("input_tokens", 0),
             grade_result.get("output_tokens", 0),
@@ -179,6 +182,8 @@ def run_grading_pipeline(
             marks_available=marks_available,
             mark_breakdown=mark_breakdown,
         )
+        if "error" in feedback_result:
+            print(f"[Pipeline] Feedback call failed (non-fatal): {feedback_result['error']}")
 
         call2_cost = _calc_cost(0, feedback_result.get("output_tokens", 0))
         running_cost += call2_cost
