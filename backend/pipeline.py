@@ -387,8 +387,13 @@ def run_full_paper_grading(
             messages=[{"role": "user", "content": content}],
         )
     except Exception as exc:
-        print(f"[Pipeline] API call failed: {exc}")
-        raise RuntimeError(f"Anthropic API call failed: {exc}")
+        import traceback as _tb
+        cause = getattr(exc, "__cause__", None)
+        cause_desc = f" (cause: {type(cause).__name__}: {cause})" if cause else ""
+        detail = f"{type(exc).__name__}: {exc}{cause_desc}"
+        print(f"[Pipeline] API call failed: {detail}")
+        _tb.print_exc()
+        raise RuntimeError(f"Anthropic API call failed: {detail}")
 
     in_tok = getattr(response.usage, "input_tokens", 0) or 0
     out_tok = getattr(response.usage, "output_tokens", 0) or 0
