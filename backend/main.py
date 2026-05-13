@@ -100,3 +100,46 @@ def debug_anthropic_test():
         result["error_cause"] = f"{type(cause).__name__}: {cause}" if cause else None
         result["traceback_tail"] = traceback.format_exc().splitlines()[-6:]
     return result
+
+
+@app.get("/debug/model-access")
+def debug_model_access():
+    """Test the same API key against every model the codebase uses.
+
+    /debug/anthropic-test passed but real grading fails with 'Invalid API key'.
+    The only meaningful difference between the two paths is the model name.
+    This endpoint pings each model with the same client config as grading
+    so we can pinpoint exactly which model the key is being rejected for.
+    """
+    api_key = (os.getenv("ANTHROPIC_API_KEY") or "").strip()
+    if not api_key:
+        return {"error": "no key"}
+
+    models = [
+        "claude-haiku-4-5-20251001",
+        "claude-sonnet-4-6",
+        "claude-sonnet-4-5",
+        "claude-sonnet-4-5-20250929",
+    ]
+
+    results: dict = {}
+    for model in models:
+        try:
+            client = anthropic.Anthropic(api_key=api_key, max_retries=0, timeout=20.0)
+            msg = client.messages.create(
+                model=model,
+                max_tokens=10,
+                messages=[{"role": "user", "content": "ok"}],
+            )
+            results[model] = {
+                "status": "ok",
+                "response": (msg.content[0].text if msg.content else "")[:40],
+            }
+        except Exception as exc:
+            results[model] = {
+                "status": "failed",
+                "error_type": type(exc).__name__,
+                "error_message": str(exc)[:300],
+            }
+
+    return {"key_prefix": api_key[:15] + "...", "tests": results}
