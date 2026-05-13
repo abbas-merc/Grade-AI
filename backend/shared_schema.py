@@ -76,3 +76,15 @@ class PaperGradingResponse(BaseModel):
     cost_usd: float
     results: List[QuestionResult]
     cost_cap_reached: bool = False
+
+
+# --- Async paper-grading job schemas ---
+
+class StartGradingResponse(BaseModel):
+    job_id: str
+
+
+class GradingStatusResponse(BaseModel):
+    status: str  # "pending" | "running" | "done" | "error"
+    result: Optional[PaperGradingResponse] = None
+    error: Optional[str] = None

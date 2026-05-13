@@ -26,5 +26,6 @@ export const GRADING_TIMEOUT_MS = 60000;
 /** How often (ms) the result screen polls for grading completion. */
 export const POLL_INTERVAL_MS = 2000;
 
-/** Maximum number of poll attempts before giving up. */
-export const MAX_POLL_ATTEMPTS = 30;
+/** Maximum number of poll attempts before giving up.
+ *  120 × 2000ms = 4 minutes — enough for the largest paper-grading jobs. */
+export const MAX_POLL_ATTEMPTS = 120;

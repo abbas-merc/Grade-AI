@@ -1,33 +1,42 @@
 /**
  * app/capture/[paperId].tsx — Multi-page answer booklet capture screen.
  *
- * Flow:
- *  1. Student photographs each page of their answer booklet one at a time.
- *  2. Captured pages appear as thumbnails with a remove button.
- *  3. Student taps "Submit for Grading" — loading overlay appears with
- *     cycling status messages while the API call runs.
- *  4. On success → navigate to /results/paper with the full result.
- *  5. On failure → alert with message, student can retry.
+ * Phase 1 — Scanning:
+ *   Live camera view with a page counter and Done button overlaid.
+ *   Each tap of the shutter captures a page and increments the counter.
+ *   The camera stays live between captures.
+ *   Tapping Done (requires ≥ 1 page) moves to the review phase.
+ *
+ * Phase 2 — Review:
+ *   Thumbnail grid of all captured pages.
+ *   Each page has a Delete button and a Retake button.
+ *   Retake sends the user back to scanning, captures one photo,
+ *   replaces that specific page, then returns to review.
+ *   Submit for Grading sends images and navigates to results.
  */
 
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
-  FlatList,
+  ScrollView,
   Image,
   Alert,
   StyleSheet,
   Modal,
   ActivityIndicator,
+  Dimensions,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import * as ImagePicker from "expo-image-picker";
+import { CameraView, useCameraPermissions } from "expo-camera";
 import * as ImageManipulator from "expo-image-manipulator";
 
 import { gradePaper } from "../../services/api";
 import type { PaperGradingResult } from "../../types";
+
+const SCREEN_WIDTH = Dimensions.get("window").width;
+const THUMB_SIZE = (SCREEN_WIDTH - 48) / 2;
 
 const MSG_UPLOAD = "Uploading pages…";
 const MSG_EXTRACT = "Reading your handwriting…";
@@ -38,18 +47,23 @@ interface CapturedPage {
   base64: string;
 }
 
+type Phase = "scanning" | "review";
+
 export default function CaptureScreen() {
   const { paperId } = useLocalSearchParams<{ paperId: string }>();
   const router = useRouter();
 
+  const [permission, requestPermission] = useCameraPermissions();
+  const cameraRef = useRef<CameraView>(null);
+
+  const [phase, setPhase] = useState<Phase>("scanning");
   const [pages, setPages] = useState<CapturedPage[]>([]);
+  const [capturing, setCapturing] = useState(false);
+  const [retakeIndex, setRetakeIndex] = useState<number | null>(null);
+
   const [submitting, setSubmitting] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState(MSG_UPLOAD);
 
-  // Timed state machine — advances the loading message through fixed phases.
-  //   0-5s   → "Uploading pages…"
-  //   5-25s  → "Extracting your answers…"
-  //   25s+   → "Grading question by question…"
   useEffect(() => {
     if (!submitting) {
       setLoadingMessage(MSG_UPLOAD);
@@ -64,33 +78,18 @@ export default function CaptureScreen() {
     };
   }, [submitting]);
 
-  const handleCapturePage = useCallback(async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert(
-        "Camera permission required",
-        "Allow camera access in Settings to photograph your answer booklet."
-      );
-      return;
-    }
-
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      base64: false,
-      quality: 1,
-    });
-
-    if (result.canceled) return;
-
-    const asset = result.assets[0];
-
-    // Anthropic's request size limit is 32MB total. Raw iPhone photos are
-    // 2–3 MB each in base64; 10+ pages overflows. Downscale to 1500px on
-    // the long edge (Anthropic resamples to 1568px internally anyway) and
-    // re-encode at quality 0.6 — keeps handwriting legible at ~200–400 KB.
+  const handleCapture = useCallback(async () => {
+    if (!cameraRef.current || capturing) return;
+    setCapturing(true);
     try {
+      const photo = await cameraRef.current.takePictureAsync({ base64: false });
+      if (!photo) return;
+
+      // Downscale to 1500px wide and re-encode at 0.6 quality.
+      // Raw iPhone photos are 2–3 MB each; 10+ pages would exceed Anthropic's
+      // 32 MB request limit. 1500px keeps handwriting legible at ~200–400 KB.
       const manipulated = await ImageManipulator.manipulateAsync(
-        asset.uri,
+        photo.uri,
         [{ resize: { width: 1500 } }],
         {
           compress: 0.6,
@@ -98,33 +97,57 @@ export default function CaptureScreen() {
           base64: true,
         }
       );
+
       if (!manipulated.base64) {
         Alert.alert("Photo error", "Could not encode the photo. Please try again.");
         return;
       }
-      setPages((prev) => [
-        ...prev,
-        { uri: manipulated.uri, base64: manipulated.base64! },
-      ]);
+
+      const newPage: CapturedPage = {
+        uri: manipulated.uri,
+        base64: manipulated.base64,
+      };
+
+      if (retakeIndex !== null) {
+        setPages((prev) => prev.map((p, i) => (i === retakeIndex ? newPage : p)));
+        setRetakeIndex(null);
+        setPhase("review");
+      } else {
+        setPages((prev) => [...prev, newPage]);
+      }
     } catch {
       Alert.alert("Photo error", "Could not process the photo. Please try again.");
+    } finally {
+      setCapturing(false);
     }
+  }, [capturing, retakeIndex]);
+
+  const handleDone = useCallback(() => {
+    if (pages.length === 0) {
+      Alert.alert("No pages captured", "Photograph at least one page before continuing.");
+      return;
+    }
+    setPhase("review");
+    setRetakeIndex(null);
+  }, [pages.length]);
+
+  const handleRetake = useCallback((index: number) => {
+    setRetakeIndex(index);
+    setPhase("scanning");
   }, []);
 
-  const handleRemovePage = useCallback((index: number) => {
+  const handleDelete = useCallback((index: number) => {
     setPages((prev) => prev.filter((_, i) => i !== index));
   }, []);
 
   const handleSubmit = useCallback(async () => {
     if (pages.length === 0) return;
-
     setSubmitting(true);
     try {
       const result: PaperGradingResult = await gradePaper(
         Number(paperId),
         pages.map((p) => p.base64)
       );
-
       router.push({
         pathname: "/results/paper",
         params: { resultData: JSON.stringify(result) },
@@ -138,94 +161,164 @@ export default function CaptureScreen() {
     }
   }, [pages, paperId, router]);
 
+  // ── Permission states ───────────────────────────────────────────────────────
+
+  if (!permission) {
+    return <View style={styles.container} />;
+  }
+
+  if (!permission.granted) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.permissionText}>
+          Camera access is required to scan your answer booklet.
+        </Text>
+        <TouchableOpacity
+          style={styles.permissionButton}
+          onPress={requestPermission}
+          activeOpacity={0.85}
+        >
+          <Text style={styles.permissionButtonText}>Grant Camera Access</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  // ── Phase 1: Scanning ───────────────────────────────────────────────────────
+
+  if (phase === "scanning") {
+    const isRetaking = retakeIndex !== null;
+    const counterLabel = isRetaking
+      ? `Retaking page ${retakeIndex! + 1}`
+      : pages.length === 0
+      ? "No pages captured yet"
+      : `${pages.length} page${pages.length !== 1 ? "s" : ""} captured`;
+
+    return (
+      <View style={styles.container}>
+        <CameraView ref={cameraRef} style={styles.camera} facing="back">
+          {/* Top bar — counter + Done/Cancel */}
+          <View style={styles.cameraTopBar}>
+            <Text style={styles.pageCounter}>{counterLabel}</Text>
+            {isRetaking ? (
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={() => {
+                  setRetakeIndex(null);
+                  setPhase("review");
+                }}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={[
+                  styles.doneButton,
+                  pages.length === 0 && styles.doneButtonDisabled,
+                ]}
+                onPress={handleDone}
+                disabled={pages.length === 0}
+                activeOpacity={0.8}
+              >
+                <Text
+                  style={[
+                    styles.doneButtonText,
+                    pages.length === 0 && styles.doneButtonTextDisabled,
+                  ]}
+                >
+                  Done
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {/* Bottom bar — shutter */}
+          <View style={styles.cameraBottomBar}>
+            <TouchableOpacity
+              style={[styles.shutter, capturing && styles.shutterCapturing]}
+              onPress={handleCapture}
+              disabled={capturing}
+              activeOpacity={0.85}
+            >
+              <View style={styles.shutterInner} />
+            </TouchableOpacity>
+          </View>
+        </CameraView>
+      </View>
+    );
+  }
+
+  // ── Phase 2: Review ─────────────────────────────────────────────────────────
+
   return (
     <View style={styles.container}>
-      {/* Instructions */}
-      <View style={styles.instructions}>
-        <Text style={styles.instructionTitle}>
-          How it works
+      <View style={styles.reviewHeader}>
+        <Text style={styles.reviewTitle}>
+          {pages.length} page{pages.length !== 1 ? "s" : ""} captured
         </Text>
-        <Text style={styles.instructionText}>
-          Photograph each page of your answer booklet, then tap Submit.
-          The AI will find and grade every question automatically.
+        <Text style={styles.reviewSubtitle}>
+          Delete or retake any page, then submit when ready.
         </Text>
       </View>
 
-      {/* Page count */}
-      <Text style={styles.pageCount}>
-        {pages.length === 0
-          ? "No pages captured yet"
-          : `${pages.length} page${pages.length !== 1 ? "s" : ""} captured`}
-      </Text>
-
-      {/* Thumbnails */}
-      {pages.length > 0 && (
-        <FlatList
-          data={pages}
-          keyExtractor={(_, index) => String(index)}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.thumbnailList}
-          renderItem={({ item, index }) => (
-            <View style={styles.thumbnailWrapper}>
-              <Image
-                source={{ uri: item.uri }}
-                style={styles.thumbnail}
-                resizeMode="cover"
-              />
+      <ScrollView
+        style={styles.reviewScroll}
+        contentContainerStyle={styles.reviewGrid}
+        showsVerticalScrollIndicator={false}
+      >
+        {pages.map((page, index) => (
+          <View key={index} style={styles.thumbCard}>
+            <Image
+              source={{ uri: page.uri }}
+              style={styles.thumbImage}
+              resizeMode="cover"
+            />
+            <Text style={styles.thumbLabel}>Page {index + 1}</Text>
+            <View style={styles.thumbActions}>
               <TouchableOpacity
-                style={styles.removeButton}
-                onPress={() => handleRemovePage(index)}
+                style={styles.retakeButton}
+                onPress={() => handleRetake(index)}
                 activeOpacity={0.8}
               >
-                <Text style={styles.removeButtonText}>✕</Text>
+                <Text style={styles.retakeButtonText}>Retake</Text>
               </TouchableOpacity>
-              <Text style={styles.pageLabel}>Page {index + 1}</Text>
+              <TouchableOpacity
+                style={styles.deleteButton}
+                onPress={() => handleDelete(index)}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.deleteButtonText}>Delete</Text>
+              </TouchableOpacity>
             </View>
-          )}
-        />
-      )}
+          </View>
+        ))}
+      </ScrollView>
 
-      {/* Spacer */}
-      <View style={styles.spacer} />
+      <View style={styles.reviewFooter}>
+        <TouchableOpacity
+          style={styles.addMoreButton}
+          onPress={() => setPhase("scanning")}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.addMoreButtonText}>+ Add More Pages</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.submitButton}
+          onPress={handleSubmit}
+          activeOpacity={0.85}
+        >
+          <Text style={styles.submitButtonText}>Submit for Grading</Text>
+        </TouchableOpacity>
+      </View>
 
-      {/* Capture button */}
-      <TouchableOpacity
-        style={styles.captureButton}
-        onPress={handleCapturePage}
-        disabled={submitting}
-        activeOpacity={0.8}
-      >
-        <Text style={styles.captureButtonText}>
-          {pages.length === 0 ? "📷  Photograph Page 1" : "📷  Add Next Page"}
-        </Text>
-      </TouchableOpacity>
-
-      {/* Submit button */}
-      <TouchableOpacity
-        style={[
-          styles.submitButton,
-          pages.length === 0 && styles.submitButtonDisabled,
-        ]}
-        onPress={handleSubmit}
-        disabled={pages.length === 0 || submitting}
-        activeOpacity={0.85}
-      >
-        <Text style={styles.submitButtonText}>
-          Submit for Grading
-        </Text>
-      </TouchableOpacity>
-
-      {/* Loading overlay with cycling messages */}
       <Modal visible={submitting} transparent animationType="fade" statusBarTranslucent>
         <View style={styles.backdrop}>
           <View style={styles.loadingCard}>
             <ActivityIndicator size="large" color="#4F46E5" />
             <Text style={styles.loadingTitle}>Grading in progress</Text>
             <Text style={styles.loadingMessage}>{loadingMessage}</Text>
-            <Text style={styles.loadingHint}>
-              This usually takes 30–60 seconds.
-            </Text>
+            <Text style={styles.loadingHint}>This usually takes 30–60 seconds.</Text>
           </View>
         </View>
       </Modal>
@@ -236,83 +329,205 @@ export default function CaptureScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
-    padding: 16,
-    paddingBottom: 32,
+    backgroundColor: "#000",
   },
-  instructions: {
-    backgroundColor: "#EEF2FF",
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 16,
-    gap: 4,
-  },
-  instructionTitle: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: "#4338CA",
-  },
-  instructionText: {
-    fontSize: 13,
-    color: "#4338CA",
-    lineHeight: 19,
-  },
-  pageCount: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#6B7280",
-    marginBottom: 12,
-  },
-  thumbnailList: {
-    paddingBottom: 4,
-    gap: 12,
-  },
-  thumbnailWrapper: {
+  centered: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
-    gap: 4,
+    gap: 16,
+    padding: 32,
+    backgroundColor: "#F9FAFB",
   },
-  thumbnail: {
-    width: 90,
-    height: 120,
-    borderRadius: 8,
-    backgroundColor: "#E5E7EB",
+
+  // ── Permission ──────────────────────────────────────────────────────────────
+  permissionText: {
+    fontSize: 16,
+    color: "#374151",
+    textAlign: "center",
+    lineHeight: 24,
   },
-  removeButton: {
-    position: "absolute",
-    top: -6,
-    right: -6,
-    backgroundColor: "#EF4444",
+  permissionButton: {
+    backgroundColor: "#4F46E5",
     borderRadius: 12,
-    width: 24,
-    height: 24,
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+  },
+  permissionButtonText: {
+    color: "#fff",
+    fontSize: 15,
+    fontWeight: "700",
+  },
+
+  // ── Camera / Scanning ───────────────────────────────────────────────────────
+  camera: {
+    flex: 1,
+  },
+  cameraTopBar: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingTop: 56,
+    paddingHorizontal: 20,
+    paddingBottom: 16,
+    backgroundColor: "rgba(0,0,0,0.45)",
+  },
+  pageCounter: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  doneButton: {
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+  },
+  doneButtonDisabled: {
+    backgroundColor: "rgba(255,255,255,0.3)",
+  },
+  doneButtonText: {
+    color: "#1F2937",
+    fontSize: 15,
+    fontWeight: "700",
+  },
+  doneButtonTextDisabled: {
+    color: "rgba(255,255,255,0.5)",
+  },
+  cancelButton: {
+    backgroundColor: "rgba(255,255,255,0.2)",
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+  },
+  cancelButtonText: {
+    color: "#fff",
+    fontSize: 15,
+    fontWeight: "600",
+  },
+  cameraBottomBar: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingBottom: 48,
+    paddingTop: 24,
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.45)",
+  },
+  shutter: {
+    width: 76,
+    height: 76,
+    borderRadius: 38,
+    backgroundColor: "transparent",
+    borderWidth: 4,
+    borderColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
   },
-  removeButtonText: {
-    color: "#fff",
-    fontSize: 11,
-    fontWeight: "700",
+  shutterCapturing: {
+    opacity: 0.5,
   },
-  pageLabel: {
-    fontSize: 11,
-    color: "#9CA3AF",
-    fontWeight: "500",
-  },
-  spacer: {
-    flex: 1,
-  },
-  captureButton: {
+  shutterInner: {
+    width: 58,
+    height: 58,
+    borderRadius: 29,
     backgroundColor: "#fff",
-    borderRadius: 12,
-    paddingVertical: 16,
+  },
+
+  // ── Review ──────────────────────────────────────────────────────────────────
+  reviewHeader: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 12,
+    backgroundColor: "#F9FAFB",
+    gap: 4,
+  },
+  reviewTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#111827",
+  },
+  reviewSubtitle: {
+    fontSize: 13,
+    color: "#6B7280",
+  },
+  reviewScroll: {
+    flex: 1,
+    backgroundColor: "#F9FAFB",
+  },
+  reviewGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 16,
+    padding: 16,
+  },
+  thumbCard: {
+    width: THUMB_SIZE,
+    gap: 6,
+  },
+  thumbImage: {
+    width: THUMB_SIZE,
+    height: THUMB_SIZE * 1.35,
+    borderRadius: 10,
+    backgroundColor: "#E5E7EB",
+  },
+  thumbLabel: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#6B7280",
+    textAlign: "center",
+  },
+  thumbActions: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  retakeButton: {
+    flex: 1,
+    backgroundColor: "#EEF2FF",
+    borderRadius: 8,
+    paddingVertical: 8,
     alignItems: "center",
+  },
+  retakeButtonText: {
+    color: "#4F46E5",
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  deleteButton: {
+    flex: 1,
+    backgroundColor: "#FEE2E2",
+    borderRadius: 8,
+    paddingVertical: 8,
+    alignItems: "center",
+  },
+  deleteButtonText: {
+    color: "#EF4444",
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  reviewFooter: {
+    padding: 16,
+    paddingBottom: 32,
+    backgroundColor: "#F9FAFB",
+    borderTopWidth: 1,
+    borderTopColor: "#E5E7EB",
+    gap: 10,
+  },
+  addMoreButton: {
     borderWidth: 2,
     borderColor: "#4F46E5",
-    marginBottom: 12,
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: "center",
   },
-  captureButtonText: {
+  addMoreButtonText: {
     color: "#4F46E5",
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "700",
   },
   submitButton: {
@@ -326,17 +541,14 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
   },
-  submitButtonDisabled: {
-    backgroundColor: "#C7D2FE",
-    shadowOpacity: 0,
-    elevation: 0,
-  },
   submitButtonText: {
     color: "#fff",
     fontSize: 17,
     fontWeight: "700",
     letterSpacing: 0.3,
   },
+
+  // ── Loading overlay ─────────────────────────────────────────────────────────
   backdrop: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.65)",

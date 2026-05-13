@@ -46,7 +46,11 @@ def grade_student_work(
           ]
         }
     """
-    client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+    client = anthropic.Anthropic(
+        api_key=os.getenv("ANTHROPIC_API_KEY"),
+        max_retries=5,
+        timeout=60.0,
+    )
 
     criteria_json = json.dumps(parsed_criteria, indent=2)
 

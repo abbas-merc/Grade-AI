@@ -37,7 +37,11 @@ def parse_mark_scheme(raw_mark_scheme: str) -> list[dict]:
           ...
         ]
     """
-    client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+    client = anthropic.Anthropic(
+        api_key=os.getenv("ANTHROPIC_API_KEY"),
+        max_retries=5,
+        timeout=60.0,
+    )
 
     message = client.messages.create(
         model="claude-sonnet-4-6",

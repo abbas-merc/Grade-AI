@@ -149,7 +149,8 @@ def extract_and_grade(
         "Do not include any text before or after the JSON."
     )
 
-    client = anthropic.Anthropic(api_key=api_key)
+    # max_retries=5 absorbs transient 5xx / 429 errors with backoff.
+    client = anthropic.Anthropic(api_key=api_key, max_retries=5, timeout=90.0)
 
     try:
         message = client.messages.create(

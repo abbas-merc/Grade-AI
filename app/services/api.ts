@@ -11,7 +11,12 @@
 
 import axios from "axios";
 import type { AxiosError } from "axios";
-import { BASE_URL, GRADING_TIMEOUT_MS } from "../constants/config";
+import {
+  BASE_URL,
+  GRADING_TIMEOUT_MS,
+  POLL_INTERVAL_MS,
+  MAX_POLL_ATTEMPTS,
+} from "../constants/config";
 import type { Paper, Question, GradingResult, PaperGradingResult } from "../types";
 
 // ---------------------------------------------------------------------------
@@ -159,10 +164,22 @@ export async function gradeAnswer(
 // Full-paper grading
 // ---------------------------------------------------------------------------
 
+interface StartGradingResponse {
+  job_id: string;
+}
+
+interface GradingStatusResponse {
+  status: "pending" | "running" | "done" | "error";
+  result?: PaperGradingResult | null;
+  error?: string | null;
+}
+
 /**
  * Submit multiple page photos of an answer booklet to grade an entire paper.
  *
- * Uses a 120-second timeout because grading all questions can take 1–3 minutes.
+ * Uses the async backend pattern to avoid Cloudflare's ~100s edge timeout:
+ *   1. POST /grade/paper           — returns a job_id immediately
+ *   2. GET  /grade/paper/status/id — polled every POLL_INTERVAL_MS until done
  *
  * @param paperId    - ID of the paper being graded.
  * @param pageImages - Array of raw base64 JPEG strings, one per photographed page.
@@ -173,19 +190,47 @@ export async function gradePaper(
   paperId: number,
   pageImages: string[]
 ): Promise<PaperGradingResult> {
+  let jobId: string;
   try {
-    const { data } = await client.post<PaperGradingResult>(
+    const { data } = await client.post<StartGradingResponse>(
       "/grade/paper",
       { paper_id: paperId, page_images: pageImages },
-      { timeout: 180000 }
+      { timeout: 60000 }
     );
-    return data;
+    jobId = data.job_id;
   } catch (err) {
     if (axios.isAxiosError(err)) {
       throw new Error(`Paper grading failed: ${extractAxiosMessage(err)}`);
     }
     throw new Error("Paper grading failed: unexpected error");
   }
+
+  for (let attempt = 0; attempt < MAX_POLL_ATTEMPTS; attempt++) {
+    await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+    try {
+      const { data } = await client.get<GradingStatusResponse>(
+        `/grade/paper/status/${jobId}`,
+        { timeout: 15000 }
+      );
+      if (data.status === "done" && data.result) {
+        return data.result;
+      }
+      if (data.status === "error") {
+        throw new Error(data.error || "Grading failed");
+      }
+    } catch (err) {
+      // Transient poll failure — try again on next tick. Only give up
+      // if it's a non-axios error (real bug) or a 404 (job lost).
+      if (axios.isAxiosError(err) && err.response?.status === 404) {
+        throw new Error("Grading job expired. Please try again.");
+      }
+      if (!axios.isAxiosError(err)) {
+        throw err;
+      }
+    }
+  }
+
+  throw new Error("Grading is taking longer than expected. Please try again.");
 }
 
 // ---------------------------------------------------------------------------

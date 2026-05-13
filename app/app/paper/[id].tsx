@@ -114,7 +114,7 @@ export default function PaperScreen() {
           }
           activeOpacity={0.85}
         >
-          <Text style={styles.gradeButtonText}>Grade My Paper</Text>
+          <Text style={styles.gradeButtonText}>Start Scanning</Text>
         </TouchableOpacity>
       </View>
     </View>

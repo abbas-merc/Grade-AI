@@ -360,7 +360,13 @@ def run_full_paper_grading(
     )
     content.append({"type": "text", "text": instructions})
 
-    client = anthropic.Anthropic(api_key=api_key)
+    # max_retries=5 (SDK default is 2) absorbs transient 5xx / 429 / connection
+    # errors with exponential backoff before surfacing failure to the user.
+    client = anthropic.Anthropic(
+        api_key=api_key,
+        max_retries=5,
+        timeout=180.0,
+    )
     print(
         f"\n[Pipeline] Full-paper grading (single-call) — "
         f"{paper.subject_code}/{paper.paper_number}, "
