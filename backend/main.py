@@ -87,6 +87,7 @@ def debug_anthropic_test():
         msg = client.messages.create(
             model="claude-haiku-4-5-20251001",
             max_tokens=10,
+            temperature=0,
             messages=[{"role": "user", "content": "Say 'ok' and nothing else."}],
         )
         result["test_call"] = "ok"
@@ -100,6 +101,65 @@ def debug_anthropic_test():
         result["error_cause"] = f"{type(cause).__name__}: {cause}" if cause else None
         result["traceback_tail"] = traceback.format_exc().splitlines()[-6:]
     return result
+
+
+@app.get("/debug/vision-test")
+def debug_vision_test():
+    """Test a multimodal (image + text) call — the exact type grading uses.
+
+    /debug/model-access only sends text. Real grading sends base64 images.
+    This endpoint sends a tiny 1x1 white JPEG alongside a text prompt so we
+    can confirm the key/account supports vision requests, not just text.
+    """
+    api_key = (os.getenv("ANTHROPIC_API_KEY") or "").strip()
+    if not api_key:
+        return {"error": "no key"}
+
+    # Minimal 1×1 white JPEG, base64-encoded
+    tiny_jpeg_b64 = (
+        "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8U"
+        "HRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDB"
+        "gNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIy"
+        "MjIyMjIyMjL/wAARCAABAAEDASIAAhEBAxEB/8QAFAABAAAAAAAAAAAAAAAAAAAACf/E"
+        "ABQQAQAAAAAAAAAAAAAAAAAAAAD/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAA"
+        "AAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8AJQAB/9k="
+    )
+
+    try:
+        client = anthropic.Anthropic(api_key=api_key, max_retries=0, timeout=20.0)
+        t0 = time.time()
+        msg = client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=10,
+            temperature=0,
+            messages=[{
+                "role": "user",
+                "content": [
+                    {
+                        "type": "image",
+                        "source": {
+                            "type": "base64",
+                            "media_type": "image/jpeg",
+                            "data": tiny_jpeg_b64,
+                        },
+                    },
+                    {"type": "text", "text": "Say 'ok' and nothing else."},
+                ],
+            }],
+        )
+        return {
+            "status": "ok",
+            "duration_ms": int((time.time() - t0) * 1000),
+            "response": (msg.content[0].text if msg.content else "")[:40],
+        }
+    except Exception as exc:
+        cause = getattr(exc, "__cause__", None)
+        return {
+            "status": "failed",
+            "error_type": type(exc).__name__,
+            "error_message": str(exc)[:300],
+            "error_cause": f"{type(cause).__name__}: {cause}" if cause else None,
+        }
 
 
 @app.get("/debug/model-access")
@@ -129,6 +189,7 @@ def debug_model_access():
             msg = client.messages.create(
                 model=model,
                 max_tokens=10,
+                temperature=0,
                 messages=[{"role": "user", "content": "ok"}],
             )
             results[model] = {

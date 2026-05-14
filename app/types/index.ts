@@ -73,3 +73,14 @@ export interface PaperGradingResult {
   results: QuestionResult[];
   cost_cap_reached: boolean;
 }
+
+export interface HistoryEntry {
+  id: string;
+  paper_id: number;
+  paper_name: string;
+  graded_at: string;
+  total_marks_awarded: number;
+  total_marks_available: number;
+  percentage: number;
+  result: PaperGradingResult;
+}

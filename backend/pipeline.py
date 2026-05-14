@@ -343,7 +343,16 @@ def run_full_paper_grading(
         "symbol is ambiguous, infer from context (the surrounding maths and "
         "the question). Better to infer the intended reading than to give up.\n"
         "3. If no answer found anywhere, mark unanswered (0 marks).\n"
-        "4. Grade strictly point-by-point against the mark scheme criteria.\n\n"
+        "4. Grade strictly point-by-point against the mark scheme criteria.\n"
+        "5. If you cannot read the student's handwriting for a question with "
+        "high confidence, do not attempt to interpret it. Instead set the "
+        "awarded marks to 0 for that question and set the feedback to say "
+        "'handwriting unclear, please resubmit this page'. Never award or "
+        "deduct marks based on a guess.\n"
+        "6. You must only evaluate what is physically written on the paper. "
+        "Do not infer, assume, or construct an answer. If the student wrote "
+        "'anti-clockwise', mark that as the answer. Do not replace it with "
+        "your own interpretation of what the answer should be.\n\n"
         "Return ONLY valid JSON. No markdown, no commentary, no explanation. "
         f"Include ALL {len(questions)} questions in `results`, in the order "
         "listed above. Shape:\n"
@@ -380,6 +389,7 @@ def run_full_paper_grading(
         response = client.messages.create(
             model=MODEL,
             max_tokens=16000,
+            temperature=0,
             system=(
                 "You are an expert Cambridge IGCSE mathematics examiner with "
                 "decades of experience reading messy student handwriting. "

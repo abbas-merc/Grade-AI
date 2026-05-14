@@ -46,6 +46,7 @@ def parse_mark_scheme(raw_mark_scheme: str) -> list[dict]:
     message = client.messages.create(
         model="claude-sonnet-4-6",
         max_tokens=2048,
+        temperature=0,
         messages=[
             {
                 "role": "user",

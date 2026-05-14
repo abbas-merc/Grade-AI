@@ -1,14 +1,11 @@
 /**
  * app/results/paper.tsx — Full-paper grading results screen.
  *
- * Displays:
- *  - Summary card: total score and grading cost
- *  - Cost-cap warning banner if the cap was hit mid-paper
- *  - FlatList of per-question result cards (not ScrollView+map for performance)
- *  - Back to Papers button
+ * Fresh results: saves to history when the user taps "Back to Papers".
+ * History replay (fromHistory="true"): shows the result but never re-saves.
  */
 
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -16,8 +13,22 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import type { PaperGradingResult, QuestionResult, PaperMarkBreakdownPoint } from "../../types";
+import { useLocalSearchParams, useRouter, useNavigation, useFocusEffect } from "expo-router";
+import type {
+  PaperGradingResult,
+  QuestionResult,
+  PaperMarkBreakdownPoint,
+  HistoryEntry,
+} from "../../types";
+import { saveHistoryEntry } from "../../services/historyService";
+
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
 
 function MarkPoint({ point }: { point: PaperMarkBreakdownPoint }) {
   return (
@@ -44,7 +55,6 @@ function QuestionCard({ item }: { item: QuestionResult }) {
 
   return (
     <View style={styles.questionCard}>
-      {/* Header row */}
       <View style={styles.questionHeader}>
         <View style={styles.qNumBadge}>
           <Text style={styles.qNumText}>Q{item.question_number}</Text>
@@ -54,10 +64,8 @@ function QuestionCard({ item }: { item: QuestionResult }) {
         </Text>
       </View>
 
-      {/* Question text */}
       <Text style={styles.questionText}>{item.question_text}</Text>
 
-      {/* Extracted answer */}
       {item.extracted_answer ? (
         <View style={styles.answerBox}>
           <Text style={styles.answerLabel}>Your answer</Text>
@@ -69,7 +77,6 @@ function QuestionCard({ item }: { item: QuestionResult }) {
         </View>
       )}
 
-      {/* Mark breakdown */}
       {item.mark_breakdown.length > 0 && (
         <View style={styles.breakdown}>
           {item.mark_breakdown.map((point, idx) => (
@@ -78,7 +85,6 @@ function QuestionCard({ item }: { item: QuestionResult }) {
         </View>
       )}
 
-      {/* Feedback */}
       {item.feedback ? (
         <View style={styles.feedbackBox}>
           <Text style={styles.feedbackText}>{item.feedback}</Text>
@@ -89,8 +95,16 @@ function QuestionCard({ item }: { item: QuestionResult }) {
 }
 
 export default function PaperResultsScreen() {
-  const { resultData } = useLocalSearchParams<{ resultData: string }>();
+  const { resultData, paperName, gradedAt, fromHistory } = useLocalSearchParams<{
+    resultData: string;
+    paperName?: string;
+    gradedAt?: string;
+    fromHistory?: string;
+  }>();
   const router = useRouter();
+  const navigation = useNavigation();
+  // Guard against double-save if the button is tapped twice quickly
+  const hasSaved = useRef(false);
 
   const result: PaperGradingResult | null = useMemo(() => {
     if (!resultData) return null;
@@ -101,6 +115,56 @@ export default function PaperResultsScreen() {
     }
   }, [resultData]);
 
+  // Set the Stack header title to the paper name
+  useFocusEffect(
+    useCallback(() => {
+      if (paperName) {
+        navigation.setOptions({ title: paperName });
+      }
+    }, [paperName, navigation])
+  );
+
+  // Called when the user explicitly taps "Done".
+  // This is the single save point — intentional, never automatic.
+  const handleDone = useCallback(async () => {
+    console.log(
+      `[results/paper] handleDone → fromHistory=${fromHistory}, hasResult=${!!result}, hasSaved=${hasSaved.current}`
+    );
+    if (fromHistory !== "true" && result && !hasSaved.current) {
+      hasSaved.current = true;
+      const name = paperName || `Paper ${result.paper_id}`;
+      const pct =
+        result.total_marks_available > 0
+          ? Math.round(
+              (result.total_marks_awarded / result.total_marks_available) * 100
+            )
+          : 0;
+      const entry: HistoryEntry = {
+        id: Date.now().toString(),
+        paper_id: result.paper_id,
+        paper_name: name,
+        graded_at: new Date().toISOString(),
+        total_marks_awarded: result.total_marks_awarded,
+        total_marks_available: result.total_marks_available,
+        percentage: pct,
+        result,
+      };
+      console.log(
+        `[results/paper] handleDone → calling saveHistoryEntry (id=${entry.id}, paper=${name})`
+      );
+      try {
+        await saveHistoryEntry(entry);
+        console.log(`[results/paper] handleDone → saveHistoryEntry resolved OK (id=${entry.id})`);
+      } catch (err) {
+        // AsyncStorage failure is non-fatal for navigation, but no longer silent —
+        // surface it so we can actually see write failures in Metro logs.
+        console.error("[results/paper] handleDone → saveHistoryEntry threw", err);
+      }
+    }
+    // Land on the History tab so the user sees their newly saved result
+    router.push({ pathname: "/", params: { tab: "history" } });
+  }, [result, paperName, fromHistory, router]);
+
   if (!result) {
     return (
       <View style={styles.centered}>
@@ -108,10 +172,7 @@ export default function PaperResultsScreen() {
         <Text style={styles.errorDetail}>
           The grading result could not be loaded.
         </Text>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.push("/")}
-        >
+        <TouchableOpacity style={styles.backButton} onPress={() => router.push("/")}>
           <Text style={styles.backButtonText}>Back to Papers</Text>
         </TouchableOpacity>
       </View>
@@ -128,6 +189,9 @@ export default function PaperResultsScreen() {
   const summaryBg =
     percentage >= 80 ? "#059669" : percentage >= 50 ? "#4F46E5" : "#DC2626";
 
+  const displayDate =
+    fromHistory === "true" && gradedAt ? formatDate(gradedAt) : null;
+
   return (
     <FlatList
       data={result.results}
@@ -135,19 +199,20 @@ export default function PaperResultsScreen() {
       contentContainerStyle={styles.listContent}
       ListHeaderComponent={
         <>
-          {/* Summary card */}
           <View style={[styles.summaryCard, { backgroundColor: summaryBg }]}>
             <Text style={styles.summaryLabel}>Total Score</Text>
             <Text style={styles.summaryScore}>
               {result.total_marks_awarded} / {result.total_marks_available}
             </Text>
             <Text style={styles.summaryPercent}>{percentage}%</Text>
+            {displayDate && (
+              <Text style={styles.summaryDate}>Graded {displayDate}</Text>
+            )}
             <Text style={styles.summaryCost}>
               Grading cost: ${result.cost_usd.toFixed(4)}
             </Text>
           </View>
 
-          {/* Cost cap warning */}
           {result.cost_cap_reached && (
             <View style={styles.capWarning}>
               <Text style={styles.capWarningText}>
@@ -164,10 +229,10 @@ export default function PaperResultsScreen() {
       ListFooterComponent={
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => router.push("/")}
+          onPress={handleDone}
           activeOpacity={0.85}
         >
-          <Text style={styles.backButtonText}>Back to Papers</Text>
+          <Text style={styles.backButtonText}>Done</Text>
         </TouchableOpacity>
       }
       ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -226,6 +291,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "600",
     color: "rgba(255,255,255,0.85)",
+  },
+  summaryDate: {
+    fontSize: 13,
+    color: "rgba(255,255,255,0.75)",
+    marginTop: 2,
   },
   summaryCost: {
     fontSize: 12,
@@ -293,8 +363,6 @@ const styles = StyleSheet.create({
     color: "#1F2937",
     lineHeight: 20,
   },
-
-  // Answer box
   answerBox: {
     backgroundColor: "#F9FAFB",
     borderRadius: 8,
@@ -325,8 +393,6 @@ const styles = StyleSheet.create({
     color: "#DC2626",
     fontStyle: "italic",
   },
-
-  // Mark breakdown
   breakdown: {
     gap: 6,
   },
@@ -363,8 +429,6 @@ const styles = StyleSheet.create({
     marginTop: 1,
     lineHeight: 17,
   },
-
-  // Feedback
   feedbackBox: {
     backgroundColor: "#F0FDF4",
     borderRadius: 8,
@@ -377,8 +441,6 @@ const styles = StyleSheet.create({
     color: "#065F46",
     lineHeight: 19,
   },
-
-  // Separator + footer
   separator: {
     height: 10,
   },

@@ -50,7 +50,7 @@ interface CapturedPage {
 type Phase = "scanning" | "review";
 
 export default function CaptureScreen() {
-  const { paperId } = useLocalSearchParams<{ paperId: string }>();
+  const { paperId, paperName } = useLocalSearchParams<{ paperId: string; paperName?: string }>();
   const router = useRouter();
 
   const [permission, requestPermission] = useCameraPermissions();
@@ -150,7 +150,7 @@ export default function CaptureScreen() {
       );
       router.push({
         pathname: "/results/paper",
-        params: { resultData: JSON.stringify(result) },
+        params: { resultData: JSON.stringify(result), paperName: paperName ?? "" },
       });
     } catch (err: unknown) {
       const message =
@@ -159,7 +159,7 @@ export default function CaptureScreen() {
     } finally {
       setSubmitting(false);
     }
-  }, [pages, paperId, router]);
+  }, [pages, paperId, paperName, router]);
 
   // ── Permission states ───────────────────────────────────────────────────────
 

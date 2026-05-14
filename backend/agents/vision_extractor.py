@@ -125,7 +125,16 @@ def extract_and_grade(
         "oe means or equivalent — accept any mathematically equivalent form. "
         "You will (1) transcribe the student's handwritten work exactly, "
         "preserving algebra/fractions/indices, then (2) grade it strictly "
-        "point-by-point against the mark scheme provided."
+        "point-by-point against the mark scheme provided. "
+        "If you cannot read the student's handwriting for a question with "
+        "high confidence, do not attempt to interpret it. Instead set the "
+        "awarded marks to 0 for that question and set the feedback to say "
+        "'handwriting unclear, please resubmit this page'. Never award or "
+        "deduct marks based on a guess. "
+        "You must only evaluate what is physically written on the paper. "
+        "Do not infer, assume, or construct an answer. If the student wrote "
+        "'anti-clockwise', mark that as the answer. Do not replace it with "
+        "your own interpretation of what the answer should be."
     )
 
     user_text = (
@@ -156,6 +165,7 @@ def extract_and_grade(
         message = client.messages.create(
             model=MODEL,
             max_tokens=MAX_TOKENS,
+            temperature=0,
             system=system_prompt,
             messages=[
                 {

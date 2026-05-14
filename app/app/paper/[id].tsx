@@ -39,7 +39,7 @@ function QuestionCard({ question }: { question: Question }) {
 }
 
 export default function PaperScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, paperName } = useLocalSearchParams<{ id: string; paperName?: string }>();
   const router = useRouter();
   const navigation = useNavigation();
 
@@ -110,7 +110,7 @@ export default function PaperScreen() {
         <TouchableOpacity
           style={styles.gradeButton}
           onPress={() =>
-            router.push({ pathname: "/capture/[paperId]", params: { paperId: id } })
+            router.push({ pathname: "/capture/[paperId]", params: { paperId: id, paperName: paperName ?? "" } })
           }
           activeOpacity={0.85}
         >

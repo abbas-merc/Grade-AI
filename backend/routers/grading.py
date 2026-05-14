@@ -60,6 +60,7 @@ def grade_answer(body: GradeRequest):
 
 def _run_paper_grading_job(job_id: str, paper_id: int, page_images: list[str]) -> None:
     """Background-task wrapper around run_full_paper_grading. Never raises."""
+    import traceback as _tb
     db = SessionLocal()
     try:
         update_status(job_id, "running")
@@ -70,6 +71,7 @@ def _run_paper_grading_job(job_id: str, paper_id: int, page_images: list[str]) -
         )
         set_result(job_id, result)
     except Exception as exc:
+        _tb.print_exc()  # always log the full traceback so Railway logs capture it
         set_error(job_id, str(exc))
     finally:
         db.close()
