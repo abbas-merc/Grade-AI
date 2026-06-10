@@ -10,7 +10,8 @@
  */
 
 import axios from "axios";
-import type { AxiosError } from "axios";
+import type { AxiosError, InternalAxiosRequestConfig } from "axios";
+import auth from "@react-native-firebase/auth";
 import {
   BASE_URL,
   GRADING_TIMEOUT_MS,
@@ -28,6 +29,25 @@ const client = axios.create({
   timeout: 30000,
   headers: { "Content-Type": "application/json" },
 });
+
+// ---------------------------------------------------------------------------
+// Auth interceptor
+// ---------------------------------------------------------------------------
+
+// Before every request, attach the current Firebase user's ID token as a
+// Bearer token. getIdToken() returns a cached token and silently refreshes it
+// when it's close to expiry. If no user is signed in, the request proceeds
+// without an Authorization header (e.g. the open /health check).
+client.interceptors.request.use(
+  async (config: InternalAxiosRequestConfig) => {
+    const currentUser = auth().currentUser;
+    if (currentUser) {
+      const token = await currentUser.getIdToken();
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  }
+);
 
 // ---------------------------------------------------------------------------
 // Internal helpers

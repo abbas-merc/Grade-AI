@@ -21,6 +21,7 @@ import {
   PanResponder,
 } from "react-native";
 import { useRouter, useFocusEffect, useLocalSearchParams } from "expo-router";
+import auth from "@react-native-firebase/auth";
 
 import { getPapers } from "../services/api";
 import { getHistory, deleteHistoryEntry } from "../services/historyService";
@@ -251,6 +252,15 @@ export default function HomeScreen() {
     }
   }, [loadHistory]);
 
+  // Sign out — the auth listener in _layout.tsx redirects to the sign-in screen.
+  const handleSignOut = useCallback(async () => {
+    try {
+      await auth().signOut();
+    } catch {
+      // Ignore — signing out locally effectively always succeeds.
+    }
+  }, []);
+
   // ── Render ────────────────────────────────────────────────────────────────
   return (
     <View style={styles.container}>
@@ -273,6 +283,13 @@ export default function HomeScreen() {
           <Text style={[styles.tabText, activeTab === "history" && styles.tabTextActive]}>
             History
           </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.signOutButton}
+          onPress={handleSignOut}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.signOutText}>Sign out</Text>
         </TouchableOpacity>
       </View>
 
@@ -419,6 +436,17 @@ const styles = StyleSheet.create({
   },
   tabTextActive: {
     color: "#4F46E5",
+  },
+  signOutButton: {
+    marginLeft: "auto",
+    justifyContent: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+  },
+  signOutText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#DC2626",
   },
 
   // Shared list

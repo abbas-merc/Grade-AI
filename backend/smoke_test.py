@@ -35,7 +35,7 @@ try:
 except Exception:
     pass
 
-BASE_URL = "http://localhost:8000"
+BASE_URL = "http://10.0.2.2:8000"
 
 PASS_TAG = "[ PASS ]"
 FAIL_TAG = "[ FAIL ]"

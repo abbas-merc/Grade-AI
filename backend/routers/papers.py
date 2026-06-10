@@ -9,6 +9,7 @@ Endpoints:
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from auth import get_current_uid
 from database import get_db
 from models import Paper, Question
 from shared_schema import PaperResponse, QuestionResponse
@@ -38,7 +39,10 @@ def _serialize_question(q: Question) -> dict:
 
 
 @router.get("/", response_model=list[PaperResponse])
-def list_papers(db: Session = Depends(get_db)):
+def list_papers(
+    db: Session = Depends(get_db),
+    uid: str = Depends(get_current_uid),
+):
     """Return all exam papers in the database."""
     try:
         papers = db.query(Paper).order_by(Paper.id).all()
@@ -48,7 +52,11 @@ def list_papers(db: Session = Depends(get_db)):
 
 
 @router.get("/{paper_id}/questions", response_model=list[QuestionResponse])
-def list_questions_for_paper(paper_id: int, db: Session = Depends(get_db)):
+def list_questions_for_paper(
+    paper_id: int,
+    db: Session = Depends(get_db),
+    uid: str = Depends(get_current_uid),
+):
     """Return all questions belonging to the given paper."""
     try:
         paper = db.query(Paper).filter(Paper.id == paper_id).first()

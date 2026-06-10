@@ -18,13 +18,19 @@
       "adaptiveIcon": {
         "backgroundColor": "#ffffff"
       },
-      "package": "com.gradeai.app"
+      "package": "com.gradeai.app",
+      "googleServicesFile": "./google-services.json",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
+    "platforms": ["ios", "android"],
     "web": {
       "bundler": "metro"
     },
     "plugins": [
       "expo-router",
+      "@react-native-firebase/app",
       [
         "expo-image-picker",
         {
@@ -35,6 +41,18 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "3c576733-eea6-4d0c-8f75-41ecf2e94346"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/3c576733-eea6-4d0c-8f75-41ecf2e94346"
     }
   }
 }

@@ -9,6 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 
+from auth import get_current_uid
 from database import get_db
 from models import Question
 from shared_schema import QuestionResponse
@@ -49,7 +50,11 @@ def _serialize_question_detail(question: Question) -> dict:
 
 
 @router.get("/{question_id}", response_model=QuestionDetailResponse)
-def get_question(question_id: int, db: Session = Depends(get_db)):
+def get_question(
+    question_id: int,
+    db: Session = Depends(get_db),
+    uid: str = Depends(get_current_uid),
+):
     """Return a question with its full mark scheme as an array of mark points."""
     try:
         question = db.query(Question).filter(Question.id == question_id).first()

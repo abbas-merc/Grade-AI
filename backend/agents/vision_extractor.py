@@ -140,6 +140,13 @@ def extract_and_grade(
     user_text = (
         f"QUESTION ({marks_available} marks):\n{question_text}\n\n"
         f"MARK SCHEME (each item is one award point):\n{scheme_json}\n\n"
+        "You must base your marking decision entirely on what the student has "
+        "written. Do not perform independent verification of the answer. Do not "
+        "recalculate. If you calculated something yourself and it differs from "
+        "what the student wrote, ignore your calculation entirely and mark only "
+        "what the student wrote against the mark scheme criteria. "
+        "If you are unsure whether an answer satisfies a criterion, award the "
+        "mark. Uncertainty defaults to awarding, not withholding.\n\n"
         "Transcribe the image first, then decide for EACH mark scheme point "
         "whether the student earned it. Return ONLY valid JSON, no markdown, "
         "in exactly this shape:\n"
