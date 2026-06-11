@@ -25,7 +25,19 @@ from typing import Any
 import anthropic
 from sqlalchemy.orm import Session
 
-from models import GradingSession, MarkScheme, Question
+from models import GradingSession
+from firestore_service import (
+    get_all_papers,
+    get_question_by_id,
+    get_questions_for_paper,
+)
+from prompts import (
+    get_maths_prompt,
+    get_physics_theory_prompt,
+    get_physics_atp_prompt,
+    get_chemistry_theory_prompt,
+    get_chemistry_atp_prompt,
+)
 from agents.vision_extractor import extract_and_grade
 from agents.feedback_generator import generate_feedback
 
@@ -43,16 +55,6 @@ MODEL = "claude-sonnet-4-6"
 PAGE_EXTRACTION_MAX_TOKENS = 1000
 QUESTION_GRADING_MAX_TOKENS = 500
 
-CAMBRIDGE_RULES = (
-    "Cambridge IGCSE marking rules — apply these exactly: "
-    "M marks are for method — award if correct method is shown even if the final answer is wrong. "
-    "A marks are for accuracy — ONLY award an A mark if the corresponding M mark was also awarded. "
-    "B marks are independent — award regardless of method used. "
-    "ft means follow through — award if the student correctly applied an earlier (wrong) result. "
-    "cao means correct answer only — do not award for a follow-through answer. "
-    "oe means or equivalent — accept any mathematically equivalent form."
-)
-
 
 # ---------------------------------------------------------------------------
 # Shared helpers
@@ -68,13 +70,13 @@ def _log_cost(label: str, cost: float, running_total: float) -> None:
     print(f"[COST] {label}: ${cost:.4f}  (running total: ${running_total:.4f})")
 
 
-def _load_mark_scheme_points(mark_scheme_rows: list[MarkScheme]) -> list[dict]:
+def _load_mark_scheme_points(mark_scheme_rows: list[dict]) -> list[dict]:
     return [
         {
             "point_number": i + 1,
-            "description": row.description,
-            "marks_for_point": row.marks_for_point,
-            "acceptable_alternatives": row.acceptable_alternatives or "",
+            "description": row.get("description", ""),
+            "marks_for_point": row.get("marks_for_point", 1),
+            "acceptable_alternatives": row.get("acceptable_alternatives") or "",
         }
         for i, row in enumerate(mark_scheme_rows)
     ]
@@ -127,16 +129,16 @@ def run_grading_pipeline(
     Raises:
         ValueError: If the question or its mark scheme is missing.
     """
-    question: Question | None = (
-        db.query(Question).filter(Question.id == question_id).first()
-    )
+    question = get_question_by_id(question_id)
     if question is None:
         raise ValueError(f"Question {question_id} not found")
 
-    mark_scheme_points = _load_mark_scheme_points(question.mark_scheme)
-    marks_available: int = int(question.marks_available)
+    question_int_id: int = int(question["id"])
+    question_text: str = question["question_text"]
+    mark_scheme_points = _load_mark_scheme_points(question.get("mark_scheme", []))
+    marks_available: int = int(question["marks_available"])
 
-    grading_session = GradingSession(question_id=question.id)
+    grading_session = GradingSession(question_id=question_int_id)
     db.add(grading_session)
     db.commit()
     db.refresh(grading_session)
@@ -146,11 +148,11 @@ def run_grading_pipeline(
     try:
         print(
             f"[Pipeline] Call 1 — extract_and_grade "
-            f"(question_id={question.id}, marks_available={marks_available})"
+            f"(question_id={question_int_id}, marks_available={marks_available})"
         )
         grade_result = extract_and_grade(
             image_base64=image_base64,
-            question_text=question.question_text,
+            question_text=question_text,
             marks_available=marks_available,
             mark_scheme_points=mark_scheme_points,
         )
@@ -176,7 +178,7 @@ def run_grading_pipeline(
 
         print("[Pipeline] Call 2 — generate_feedback")
         feedback_result = generate_feedback(
-            question_text=question.question_text,
+            question_text=question_text,
             extracted_text=extracted_text,
             marks_awarded=marks_awarded,
             marks_available=marks_available,
@@ -211,8 +213,8 @@ def run_grading_pipeline(
 
         result: dict[str, Any] = {
             "session_id": grading_session.id,
-            "question_id": question.id,
-            "question_text": question.question_text,
+            "question_id": question_int_id,
+            "question_text": question_text,
             "marks_awarded": marks_awarded,
             "marks_available": marks_available,
             "mark_breakdown": mark_breakdown,
@@ -273,8 +275,6 @@ def run_full_paper_grading(
         ValueError: paper/questions missing.
         RuntimeError: API key missing, API call failed, or unparseable JSON.
     """
-    from models import Paper
-
     # Strip whitespace/newlines — Railway env vars sometimes include a trailing
     # \n from copy-paste, which httpx rejects as an illegal header value and
     # surfaces as the deeply misleading "APIConnectionError: Connection error."
@@ -282,38 +282,53 @@ def run_full_paper_grading(
     if not api_key:
         raise RuntimeError("ANTHROPIC_API_KEY not set")
 
-    paper = db.query(Paper).filter(Paper.id == paper_id).first()
+    papers = get_all_papers()
+    paper = next((p for p in papers if str(p["id"]) == str(paper_id)), None)
     if paper is None:
         raise ValueError(f"Paper {paper_id} not found")
 
-    questions: list[Question] = (
-        db.query(Question)
-        .filter(Question.paper_id == paper_id)
-        .order_by(Question.id)
-        .all()
-    )
+    questions: list[dict] = get_questions_for_paper(str(paper_id))
     if not questions:
         raise ValueError(f"No questions found for paper_id={paper_id}")
+
+    # --- Select the subject/paper-specific examiner prompt ---
+    # Route on (subject_code, paper_number) to the correct marking conventions.
+    # Anything unrecognised falls back to the Maths prompt.
+    subject_code = str(paper["subject_code"])
+    paper_number = int(paper["paper_number"])
+    if subject_code == "0580":
+        system_prompt, marking_instructions = get_maths_prompt()
+    elif subject_code == "0625" and paper_number == 4:
+        system_prompt, marking_instructions = get_physics_theory_prompt()
+    elif subject_code == "0625" and paper_number == 6:
+        system_prompt, marking_instructions = get_physics_atp_prompt()
+    elif subject_code == "0620" and paper_number == 4:
+        system_prompt, marking_instructions = get_chemistry_theory_prompt()
+    elif subject_code == "0620" and paper_number == 6:
+        system_prompt, marking_instructions = get_chemistry_atp_prompt()
+    else:
+        system_prompt, marking_instructions = get_maths_prompt()
 
     # --- Build the complete mark scheme block ---
     ms_blocks: list[str] = []
     for q in questions:
-        criteria = [f"    * {ms.description}" for ms in q.mark_scheme]
+        q_marks = int(q["marks_available"])
+        criteria = [f"    * {ms.get('description', '')}" for ms in q.get("mark_scheme", [])]
         criteria_str = (
             "\n".join(criteria)
             if criteria
             else "    (no explicit mark points — award for a correct answer)"
         )
         ms_blocks.append(
-            f"Q{q.question_number} [{q.marks_available} mark"
-            f"{'s' if q.marks_available != 1 else ''}]:\n{criteria_str}"
+            f"Q{q['question_number']} [{q_marks} mark"
+            f"{'s' if q_marks != 1 else ''}]:\n{criteria_str}"
         )
     mark_scheme_full = "\n\n".join(ms_blocks)
 
     # --- Build content: intro, all page images, then mark scheme + instructions ---
     intro = (
-        f"You are grading IGCSE {paper.subject_code} Paper {paper.paper_number} "
-        f"({paper.session} {paper.year}, {paper.tier}, total {paper.total_marks} marks). "
+        f"You are grading IGCSE {paper['subject_code']} Paper {paper['paper_number']} "
+        f"({paper['session']} {paper['year']}, {paper['tier']}, total {paper['total_marks']} marks). "
         f"There are {len(questions)} question parts.\n"
         f"Below are {len(page_images)} photographed page(s) of the student's "
         f"handwritten answer booklet, followed by the mark scheme."
@@ -331,7 +346,7 @@ def run_full_paper_grading(
         })
 
     instructions = (
-        f"\nMARK SCHEME (apply Cambridge rules strictly — {CAMBRIDGE_RULES}):\n\n"
+        f"\nMARK SCHEME (apply Cambridge rules strictly — {marking_instructions}):\n\n"
         f"{mark_scheme_full}\n\n"
         "You must base your marking decision entirely on what the student has "
         "written. Do not perform independent verification of the answer. Do not "
@@ -388,7 +403,7 @@ def run_full_paper_grading(
     )
     print(
         f"\n[Pipeline] Full-paper grading (single-call) — "
-        f"{paper.subject_code}/{paper.paper_number}, "
+        f"{paper['subject_code']}/{paper['paper_number']}, "
         f"{len(questions)} questions, {len(page_images)} page(s)"
     )
 
@@ -397,13 +412,7 @@ def run_full_paper_grading(
             model=MODEL,
             max_tokens=16000,
             temperature=0,
-            system=(
-                "You are an expert Cambridge IGCSE mathematics examiner with "
-                "decades of experience reading messy student handwriting. "
-                "You decipher hurried work and ambiguous symbols by inferring "
-                "from mathematical context. You grade strictly but fairly by "
-                "Cambridge conventions."
-            ),
+            system=system_prompt,
             messages=[{"role": "user", "content": content}],
         )
     except Exception as exc:
@@ -447,14 +456,14 @@ def run_full_paper_grading(
     total_awarded: int = 0
 
     for q in questions:
-        qnum = q.question_number
-        marks_available = int(q.marks_available)
+        qnum = q["question_number"]
+        marks_available = int(q["marks_available"])
         r = result_by_qnum.get(qnum)
 
         if r is None:
             results.append({
                 "question_number": qnum,
-                "question_text": q.question_text,
+                "question_text": q["question_text"],
                 "extracted_answer": "",
                 "marks_awarded": 0,
                 "marks_available": marks_available,
@@ -477,7 +486,7 @@ def run_full_paper_grading(
             breakdown = []
 
         db.add(GradingSession(
-            question_id=q.id,
+            question_id=int(q["id"]),
             extracted_text=extracted,
             marks_awarded=float(awarded),
             feedback_json=json.dumps({
@@ -489,7 +498,7 @@ def run_full_paper_grading(
 
         results.append({
             "question_number": qnum,
-            "question_text": q.question_text,
+            "question_text": q["question_text"],
             "extracted_answer": extracted,
             "marks_awarded": awarded,
             "marks_available": marks_available,
@@ -500,7 +509,7 @@ def run_full_paper_grading(
     db.commit()
 
     # Authoritative paper total comes from Paper.total_marks, not summed parts
-    total_available = paper.total_marks
+    total_available = int(paper["total_marks"])
     # Clamp awarded just in case mis-parsed mark counts let it overshoot
     total_awarded = min(total_awarded, total_available)
 

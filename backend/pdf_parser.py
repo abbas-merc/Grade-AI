@@ -167,9 +167,11 @@ _MARKER_LINE_RE = re.compile(
 )
 
 # Lines that are page headers / table column headers — discard these.
+# The subject-code page-header pattern (e.g. "0580/22") is built dynamically
+# from the subject_code argument inside parse_markscheme — see
+# _build_noise_patterns — so it adapts to Maths, Physics, Chemistry, etc.
 _NOISE_PATTERNS = [
     re.compile(r"^\s*Cambridge\s+IGCSE.*$"),
-    re.compile(r"^\s*0580/\d+\s*$"),
     re.compile(r"^\s*PUBLISHED\s*$"),
     re.compile(r"^\s*May/June\s+\d{4}\s*$"),
     re.compile(r"^\s*©\s+Cambridge.*$"),
@@ -178,12 +180,41 @@ _NOISE_PATTERNS = [
     re.compile(r"^\s*Answer\s*$"),
     re.compile(r"^\s*Marks\s*$"),
     re.compile(r"^\s*Partial\s+Marks\s*$"),
+    # Physics (0625) and Chemistry (0620) mark-scheme page headers — lines that
+    # contain the syllabus code / variant, e.g. "0625/42", "0620/62".
+    re.compile(r"^.*0625/\d+"),
+    re.compile(r"^.*0620/\d+"),
+    # Physics/Chemistry mark-scheme column headers that appear on their own line.
+    re.compile(r"^\s*Band\s*$"),
+    re.compile(r"^\s*Guidance\s*$"),
+    re.compile(r"^\s*Reject\s*$"),
+    re.compile(r"^\s*Allow\s*$"),
+    re.compile(r"^\s*Ignore\s*$"),
 ]
 
 
-def parse_markscheme(text: str) -> list[dict]:
+def _build_noise_patterns(subject_code: str) -> list:
+    """
+    Return the full noise-pattern list for a given subject code.
+
+    This is the static _NOISE_PATTERNS plus a dynamically built page-header
+    pattern for the supplied subject code (e.g. "0580/22", "0625/42"), which
+    replaces what used to be a single hardcoded 0580 pattern.
+    """
+    subject_header = re.compile(rf"^\s*{re.escape(subject_code)}/\d+\s*$")
+    return _NOISE_PATTERNS + [subject_header]
+
+
+def parse_markscheme(text: str, subject_code: str = "0580") -> list[dict]:
     """
     Parse a Cambridge mark-scheme PDF text dump into structured entries.
+
+    Args:
+        text:         Raw text extracted from the mark-scheme PDF.
+        subject_code: Cambridge syllabus code (e.g. "0580", "0625", "0620").
+                      Used to build the page-header noise filter so the correct
+                      subject's header lines are stripped. Defaults to "0580"
+                      so existing Maths callers behave exactly as before.
 
     Each returned dict has keys:
         question_number         (str)        — e.g. "1a", "3b(ii)"
@@ -205,8 +236,9 @@ def parse_markscheme(text: str) -> list[dict]:
         line_start = text.rfind("\n", 0, table_start) + 1
         text = text[line_start:]
 
+    noise_patterns = _build_noise_patterns(subject_code)
     raw_lines = text.splitlines()
-    lines = [ln for ln in raw_lines if not _is_noise(ln)]
+    lines = [ln for ln in raw_lines if not _is_noise(ln, noise_patterns)]
 
     blocks = _split_into_question_blocks(lines)
 
@@ -214,6 +246,10 @@ def parse_markscheme(text: str) -> list[dict]:
     for qnum, block_lines in blocks:
         answer_text, total_marks, partial_text = _analyze_block(block_lines)
         mark_points = _build_mark_points(answer_text, partial_text, total_marks)
+        # Each Cambridge mark point is worth 1 mark. If we parsed more points
+        # than the detected total, trust the point count as the total marks.
+        if len(mark_points) > total_marks:
+            total_marks = len(mark_points)
         entries.append({
             "question_number": qnum,
             "mark_points": mark_points,
@@ -224,8 +260,9 @@ def parse_markscheme(text: str) -> list[dict]:
     return _dedupe_entries(entries)
 
 
-def _is_noise(line: str) -> bool:
-    return any(p.match(line) for p in _NOISE_PATTERNS)
+def _is_noise(line: str, patterns: list | None = None) -> bool:
+    pats = _NOISE_PATTERNS if patterns is None else patterns
+    return any(p.match(line) for p in pats)
 
 
 def _split_into_question_blocks(lines: list[str]) -> list[tuple[str, list[str]]]:
@@ -237,7 +274,13 @@ def _split_into_question_blocks(lines: list[str]) -> list[tuple[str, list[str]]]
       - Lines consisting only of a digit that is exactly one more than the
         current top-level counter are treated as top-level question headers.
       - Everything else is body content for the current block.
+
+    A two-pass approach removes phantom top-level entries: a standalone digit
+    line (e.g. "1") that is really just a section header for sub-parts like
+    "1a" / "1b(i)" is collected in the first pass and filtered out in the
+    second pass when sub-parts of that number exist.
     """
+    # --- First pass: original block splitting (may emit phantom digit blocks) ---
     blocks: list[tuple[str, list[str]]] = []
     current_qnum: str | None = None
     current_lines: list[str] = []
@@ -279,7 +322,24 @@ def _split_into_question_blocks(lines: list[str]) -> list[tuple[str, list[str]]]
     if current_qnum is not None:
         blocks.append((current_qnum, current_lines))
 
-    return blocks
+    # --- Second pass: drop phantom plain-integer blocks that have sub-parts ---
+    # A block whose number is a plain integer (e.g. "1") is a phantom if any
+    # other block's number starts with that same integer followed by a letter
+    # or parenthesis (e.g. "1a", "1(b)") — i.e. the integer was only a section
+    # header. Standalone integers with no sub-parts are kept as real questions.
+    filtered: list[tuple[str, list[str]]] = []
+    for qnum, body in blocks:
+        if re.fullmatch(r"\d+", qnum):
+            has_subparts = any(
+                other_qnum != qnum
+                and re.match(rf"{qnum}(?:[a-z]|\()", other_qnum)
+                for other_qnum, _ in blocks
+            )
+            if has_subparts:
+                continue
+        filtered.append((qnum, body))
+
+    return filtered
 
 
 def _normalize_sub_qnum(num: str, parens: str) -> str:
@@ -359,6 +419,18 @@ def _analyze_block(block_lines: list[str]) -> tuple[str, int, str]:
     # Values above this are page numbers or other PDF artifacts, not mark counts.
     if total_marks > 20:
         total_marks = 0
+
+    # Second pass (Physics/Chemistry format): if the first pass found no total,
+    # the marks figure is usually a bare digit on its own line somewhere in the
+    # block — commonly right after the answer text and before the partial-mark
+    # tokens. Scan the whole block and take the LAST bare-digit line in 1..20.
+    if total_marks == 0:
+        for ln in block_lines:
+            dm = _DIGIT_ALONE_RE.match(ln)
+            if dm:
+                val = int(dm.group(1))
+                if 1 <= val <= 20:
+                    total_marks = val  # keep scanning so the last valid one wins
 
     answer_text = _collapse_ws("\n".join(answer_lines))
     partial_text = "\n".join(ln for ln in partial_lines if ln.strip()).strip()

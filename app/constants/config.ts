@@ -25,13 +25,7 @@ const DEV_PC_LAN_IP = "192.168.68.53";
 const BACKEND_PORT = 8000;
 
 function getBaseUrl(): string {
-  // Android: localhost reaches the PC's backend via `adb reverse`, which works
-  // identically for emulators and USB-tethered real devices.
-  if (Platform.OS === "android") {
-    return `http://localhost:${BACKEND_PORT}`;
-  }
-
-  // iOS (simulator or real device): reach the PC over WiFi via its LAN IP.
+  // Both Android and iOS real devices reach the PC over WiFi via its LAN IP.
   return `http://${DEV_PC_LAN_IP}:${BACKEND_PORT}`;
 }
 

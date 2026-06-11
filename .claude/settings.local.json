@@ -60,7 +60,20 @@
       "Bash(adb devices *)",
       "Bash(adb reverse *)",
       "Bash(adb shell *)",
-      "Bash(curl -s -m 5 http://localhost:8000/health)"
+      "Bash(curl -s -m 5 http://localhost:8000/health)",
+      "Bash(pip install *)",
+      "Bash(python -m py_compile firestore_service.py migrate_to_firestore.py routers/papers.py routers/questions.py pipeline.py)",
+      "Bash(set AUTH_REQUIRED=false)",
+      "Bash(python -c \"import firestore_service, pipeline; from routers import papers, questions; import migrate_to_firestore; print\\('IMPORTS OK'\\); print\\('firestore_service funcs:', [f for f in \\('seed_paper_to_firestore','get_all_papers','get_questions_for_paper','get_question_by_id'\\) if hasattr\\(firestore_service,f\\)]\\)\")",
+      "PowerShell($env:AUTH_REQUIRED='false'; Set-Location \"C:\\\\Dev\\\\Grade AI\\\\backend\"; python -c \"import firestore_service, pipeline; from routers import papers, questions; import migrate_to_firestore; print\\('IMPORTS OK'\\); print\\('funcs:', [f for f in \\('seed_paper_to_firestore','get_all_papers','get_questions_for_paper','get_question_by_id'\\) if hasattr\\(firestore_service,f\\)]\\)\")",
+      "PowerShell($env:AUTH_REQUIRED='false'; Set-Location \"C:\\\\Dev\\\\Grade AI\\\\backend\"; & \".\\\\venv\\\\Scripts\\\\python.exe\" -c \"import firestore_service, pipeline; from routers import papers, questions; import migrate_to_firestore; print\\('IMPORTS OK'\\); print\\('funcs:', [f for f in \\('seed_paper_to_firestore','get_all_papers','get_questions_for_paper','get_question_by_id'\\) if hasattr\\(firestore_service,f\\)]\\)\")",
+      "Bash(.\\\\venv\\\\Scripts\\\\uvicorn.exe main:app --reload --host 0.0.0.0 --port 8000)",
+      "Bash(python -m py_compile prompts.py pipeline.py pdf_parser.py seed_subjects.py)",
+      "PowerShell($env:AUTH_REQUIRED='false'; Set-Location \"C:\\\\Dev\\\\Grade AI\\\\backend\"; & \".\\\\venv\\\\Scripts\\\\python.exe\" seed_subjects.py)",
+      "Bash(python -m py_compile pdf_parser.py seed_subjects.py)",
+      "Bash(python -m py_compile pdf_parser.py)",
+      "Bash(curl -s http://192.168.68.53:8000/health)",
+      "Bash(curl -s http://localhost:8000/health)"
     ]
   }
 }

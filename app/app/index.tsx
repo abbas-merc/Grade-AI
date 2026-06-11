@@ -14,6 +14,7 @@ import {
   View,
   Text,
   FlatList,
+  ScrollView,
   TouchableOpacity,
   ActivityIndicator,
   StyleSheet,
@@ -56,6 +57,45 @@ function paperLabel(paper: Paper): string {
   return `IGCSE ${paper.subject_code} · Paper ${paper.paper_number} · ${session} ${paper.year}`;
 }
 
+function getSubjectName(subject_code: string): string {
+  switch (subject_code) {
+    case "0580":
+      return "Mathematics";
+    case "0625":
+      return "Physics";
+    case "0620":
+      return "Chemistry";
+    default:
+      return subject_code;
+  }
+}
+
+// Group papers by subject name, preserving the order Mathematics, Physics,
+// Chemistry (any other subjects follow in first-seen order).
+function groupPapersBySubject(papers: Paper[]): Record<string, Paper[]> {
+  const groups: Record<string, Paper[]> = {};
+  for (const paper of papers) {
+    const name = getSubjectName(paper.subject_code);
+    if (!groups[name]) {
+      groups[name] = [];
+    }
+    groups[name].push(paper);
+  }
+
+  const ordered: Record<string, Paper[]> = {};
+  for (const name of ["Mathematics", "Physics", "Chemistry"]) {
+    if (groups[name]) {
+      ordered[name] = groups[name];
+    }
+  }
+  for (const name of Object.keys(groups)) {
+    if (!ordered[name]) {
+      ordered[name] = groups[name];
+    }
+  }
+  return ordered;
+}
+
 // ─── HistoryRow (swipe-to-delete) ─────────────────────────────────────────────
 
 function HistoryRow({
@@ -73,8 +113,12 @@ function HistoryRow({
   // Keep latest callbacks in refs so panResponder (created once) can call them
   const onDeleteRef = useRef(onDelete);
   const onPressRef = useRef(onPress);
-  useEffect(() => { onDeleteRef.current = onDelete; }, [onDelete]);
-  useEffect(() => { onPressRef.current = onPress; }, [onPress]);
+  useEffect(() => {
+    onDeleteRef.current = onDelete;
+  }, [onDelete]);
+  useEffect(() => {
+    onPressRef.current = onPress;
+  }, [onPress]);
 
   const snapClosed = useCallback(() => {
     isOpen.current = false;
@@ -99,8 +143,12 @@ function HistoryRow({
   // Keep latest snap functions accessible to the stable panResponder
   const snapClosedRef = useRef(snapClosed);
   const snapOpenRef = useRef(snapOpen);
-  useEffect(() => { snapClosedRef.current = snapClosed; }, [snapClosed]);
-  useEffect(() => { snapOpenRef.current = snapOpen; }, [snapOpen]);
+  useEffect(() => {
+    snapClosedRef.current = snapClosed;
+  }, [snapClosed]);
+  useEffect(() => {
+    snapOpenRef.current = snapOpen;
+  }, [snapOpen]);
 
   const panResponder = useRef(
     PanResponder.create({
@@ -125,7 +173,7 @@ function HistoryRow({
           snapClosedRef.current();
         }
       },
-    })
+    }),
   ).current;
 
   const color = scoreColor(entry.percentage);
@@ -164,13 +212,17 @@ function HistoryRow({
             <Text style={styles.historyPaperName} numberOfLines={1}>
               {entry.paper_name}
             </Text>
-            <Text style={styles.historyDate}>{formatDate(entry.graded_at)}</Text>
+            <Text style={styles.historyDate}>
+              {formatDate(entry.graded_at)}
+            </Text>
           </View>
           <View style={[styles.scoreBadge, { borderColor: color }]}>
             <Text style={[styles.scoreText, { color }]}>
               {entry.total_marks_awarded}/{entry.total_marks_available}
             </Text>
-            <Text style={[styles.scorePercent, { color }]}>{entry.percentage}%</Text>
+            <Text style={[styles.scorePercent, { color }]}>
+              {entry.percentage}%
+            </Text>
           </View>
         </TouchableOpacity>
       </Animated.View>
@@ -183,7 +235,9 @@ function HistoryRow({
 export default function HomeScreen() {
   const router = useRouter();
   const { tab } = useLocalSearchParams<{ tab?: string }>();
-  const [activeTab, setActiveTab] = useState<Tab>(tab === "history" ? "history" : "papers");
+  const [activeTab, setActiveTab] = useState<Tab>(
+    tab === "history" ? "history" : "papers",
+  );
 
   // React to deep-link / nav params (e.g. Done button on results screen passes tab=history)
   useEffect(() => {
@@ -238,19 +292,22 @@ export default function HomeScreen() {
   useFocusEffect(
     useCallback(() => {
       loadHistory();
-    }, [loadHistory])
+    }, [loadHistory]),
   );
 
-  const handleDelete = useCallback(async (id: string) => {
-    // Optimistic update — remove from UI immediately
-    setHistory((prev) => prev.filter((e) => e.id !== id));
-    try {
-      await deleteHistoryEntry(id);
-    } catch {
-      // If the delete fails, reload to restore correct state
-      loadHistory();
-    }
-  }, [loadHistory]);
+  const handleDelete = useCallback(
+    async (id: string) => {
+      // Optimistic update — remove from UI immediately
+      setHistory((prev) => prev.filter((e) => e.id !== id));
+      try {
+        await deleteHistoryEntry(id);
+      } catch {
+        // If the delete fails, reload to restore correct state
+        loadHistory();
+      }
+    },
+    [loadHistory],
+  );
 
   // Sign out — the auth listener in _layout.tsx redirects to the sign-in screen.
   const handleSignOut = useCallback(async () => {
@@ -271,7 +328,12 @@ export default function HomeScreen() {
           onPress={() => setActiveTab("papers")}
           activeOpacity={0.8}
         >
-          <Text style={[styles.tabText, activeTab === "papers" && styles.tabTextActive]}>
+          <Text
+            style={[
+              styles.tabText,
+              activeTab === "papers" && styles.tabTextActive,
+            ]}
+          >
             Papers
           </Text>
         </TouchableOpacity>
@@ -280,7 +342,12 @@ export default function HomeScreen() {
           onPress={() => setActiveTab("history")}
           activeOpacity={0.8}
         >
-          <Text style={[styles.tabText, activeTab === "history" && styles.tabTextActive]}>
+          <Text
+            style={[
+              styles.tabText,
+              activeTab === "history" && styles.tabTextActive,
+            ]}
+          >
             History
           </Text>
         </TouchableOpacity>
@@ -314,35 +381,43 @@ export default function HomeScreen() {
               <Text style={styles.mutedText}>No papers available yet.</Text>
             </View>
           ) : (
-            <FlatList
-              data={papers}
-              keyExtractor={(item) => String(item.id)}
-              contentContainerStyle={styles.listContent}
-              ListHeaderComponent={
-                <Text style={styles.sectionLabel}>Select a paper to begin</Text>
-              }
-              ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-              renderItem={({ item }) => (
-                <PaperCard
-                  paper={item}
-                  onPress={() =>
-                    router.push({
-                      pathname: "/paper/[id]",
-                      params: { id: String(item.id), paperName: paperLabel(item) },
-                    })
-                  }
-                />
+            <ScrollView contentContainerStyle={styles.listContent}>
+              <Text style={styles.sectionLabel}>Select a paper to begin</Text>
+              {Object.entries(groupPapersBySubject(papers)).map(
+                ([subjectName, subjectPapers], groupIndex) => (
+                  <React.Fragment key={subjectName}>
+                    {groupIndex > 0 && <View style={{ height: 24 }} />}
+                    <Text style={styles.subjectHeader}>{subjectName}</Text>
+                    {subjectPapers.map((item, paperIndex) => (
+                      <React.Fragment key={String(item.id)}>
+                        {paperIndex > 0 && <View style={{ height: 8 }} />}
+                        <PaperCard
+                          paper={item}
+                          onPress={() =>
+                            router.push({
+                              pathname: "/paper/[id]",
+                              params: {
+                                id: String(item.id),
+                                paperName: paperLabel(item),
+                              },
+                            })
+                          }
+                        />
+                      </React.Fragment>
+                    ))}
+                  </React.Fragment>
+                ),
               )}
-            />
+            </ScrollView>
           )}
         </>
       )}
 
       {/* ── History tab ── */}
-      {activeTab === "history" && (
+      {activeTab === "history" &&
         // Show the centered loader only on first load. Subsequent reloads
         // show the list with a pull-to-refresh spinner instead.
-        historyLoading && history.length === 0 ? (
+        (historyLoading && history.length === 0 ? (
           <View style={styles.centered}>
             <ActivityIndicator size="large" color="#4F46E5" />
             <Text style={styles.mutedText}>Loading history…</Text>
@@ -352,14 +427,17 @@ export default function HomeScreen() {
             data={history}
             keyExtractor={(item) => item.id}
             contentContainerStyle={
-              history.length === 0 ? styles.emptyListContent : styles.listContent
+              history.length === 0
+                ? styles.emptyListContent
+                : styles.listContent
             }
             refreshing={refreshing}
             onRefresh={handleRefresh}
             ListHeaderComponent={
               history.length > 0 ? (
                 <Text style={styles.sectionLabel}>
-                  {history.length} session{history.length !== 1 ? "s" : ""} · swipe left to delete
+                  {history.length} session{history.length !== 1 ? "s" : ""} ·
+                  swipe left to delete
                 </Text>
               ) : null
             }
@@ -391,8 +469,7 @@ export default function HomeScreen() {
               />
             )}
           />
-        )
-      )}
+        ))}
     </View>
   );
 }
@@ -458,6 +535,12 @@ const styles = StyleSheet.create({
   sectionLabel: {
     fontSize: 13,
     color: "#9CA3AF",
+    marginBottom: 10,
+  },
+  subjectHeader: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#1F2937",
     marginBottom: 10,
   },
 
