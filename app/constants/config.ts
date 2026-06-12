@@ -21,7 +21,7 @@ import { Platform } from "react-native";
  * LAN IP of the development PC running the FastAPI backend. Used by iOS.
  * Update this if the PC's IP changes (run `ipconfig` and read the IPv4 address).
  */
-const DEV_PC_LAN_IP = "192.168.68.53";
+const DEV_PC_LAN_IP = "192.168.68.61";
 const BACKEND_PORT = 8000;
 
 function getBaseUrl(): string {

@@ -81,6 +81,7 @@ def _run_paper_grading_job(
             paper_id=paper_id,
             page_images=page_images,
             db=db,
+            uid=uid,
         )
         # Persist the full-paper result to Firestore under this user. Don't let
         # a Firestore failure fail the job — log it and keep the result.

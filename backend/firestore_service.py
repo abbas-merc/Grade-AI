@@ -47,6 +47,9 @@ _PAPERS_COLLECTION = "papers"
 _QUESTIONS_SUBCOLLECTION = "questions"
 _MARK_SCHEME_SUBCOLLECTION = "mark_scheme"
 
+# Collection for structured marking-request logs.
+_LOGS_COLLECTION = "logs"
+
 
 def _get_client() -> firestore.Client:
     """
@@ -105,6 +108,24 @@ def get_grading_history(uid: str) -> list:
         data["marking_id"] = doc.id
         history.append(data)
     return history
+
+
+def log_marking_request(uid: str, log_data: dict) -> None:
+    """
+    Write a structured marking-request log document to the top-level `logs`
+    collection. All fields from log_data are stored plus a server-side
+    created_at timestamp.
+
+    This function must never raise — logging is best-effort and must not break
+    grading. Any error is caught and printed silently.
+    """
+    try:
+        db = _get_client()
+        payload: dict[str, Any] = dict(log_data)
+        payload["created_at"] = firestore.SERVER_TIMESTAMP
+        db.collection(_LOGS_COLLECTION).add(payload)
+    except Exception as exc:  # noqa: BLE001
+        print(f"[firestore] failed to log marking request: {exc}")
 
 
 # ---------------------------------------------------------------------------

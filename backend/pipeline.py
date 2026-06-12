@@ -20,6 +20,8 @@ from __future__ import annotations
 import json
 import os
 import re
+import time
+from datetime import datetime, timezone
 from typing import Any
 
 import anthropic
@@ -30,6 +32,7 @@ from firestore_service import (
     get_all_papers,
     get_question_by_id,
     get_questions_for_paper,
+    log_marking_request,
 )
 from prompts import (
     get_maths_prompt,
@@ -241,6 +244,7 @@ def run_full_paper_grading(
     paper_id: int,
     page_images: list[str],
     db: Session,
+    uid: str,
 ) -> dict:
     """
     Grade an entire exam paper from one or more photographed pages in a
@@ -275,6 +279,8 @@ def run_full_paper_grading(
         ValueError: paper/questions missing.
         RuntimeError: API key missing, API call failed, or unparseable JSON.
     """
+    start_time = time.time()
+
     # Strip whitespace/newlines — Railway env vars sometimes include a trailing
     # \n from copy-paste, which httpx rejects as an illegal header value and
     # surfaces as the deeply misleading "APIConnectionError: Connection error."
@@ -518,7 +524,7 @@ def run_full_paper_grading(
         f"${cost:.4f}"
     )
 
-    return {
+    final_result = {
         "paper_id": paper_id,
         "total_marks_awarded": total_awarded,
         "total_marks_available": total_available,
@@ -526,3 +532,23 @@ def run_full_paper_grading(
         "results": results,
         "cost_cap_reached": cost_cap_reached,
     }
+
+    log_marking_request(
+        uid,
+        {
+            "teacher_uid": uid,
+            "subject_code": str(paper["subject_code"]),
+            "paper_number": int(paper["paper_number"]),
+            "session": paper["session"],
+            "year": paper["year"],
+            "paper_id": paper_id,
+            "questions_marked": len(results),
+            "total_marks_awarded": total_awarded,
+            "total_marks_available": total_available,
+            "cost_usd": round(cost, 6),
+            "processing_time_ms": int((time.time() - start_time) * 1000),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        },
+    )
+
+    return final_result
