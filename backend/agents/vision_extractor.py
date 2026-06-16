@@ -23,6 +23,8 @@ from typing import Any
 import anthropic
 from dotenv import load_dotenv
 
+from agents.image_preprocess import enhance_image_base64
+
 load_dotenv()
 
 MODEL = "claude-sonnet-4-6"
@@ -109,8 +111,10 @@ def extract_and_grade(
     if not api_key:
         return _safe_fallback("ANTHROPIC_API_KEY not set")
 
-    media_type = _detect_media_type(image_base64)
-    clean_b64 = _strip_data_uri(image_base64)
+    # Enhance the image for handwriting legibility before sending it to the
+    # model. enhance_image_base64 always returns high-quality JPEG bytes.
+    clean_b64 = enhance_image_base64(_strip_data_uri(image_base64))
+    media_type = "image/jpeg"
 
     scheme_json = json.dumps(mark_scheme_points, indent=2)
 
@@ -147,6 +151,14 @@ def extract_and_grade(
         "what the student wrote against the mark scheme criteria. "
         "If you are unsure whether an answer satisfies a criterion, award the "
         "mark. Uncertainty defaults to awarding, not withholding.\n\n"
+        "The image contains handwritten student answers. Handwriting quality "
+        "may vary significantly between students. Some handwriting may be messy, "
+        "rushed, or unconventional. Read every written character as carefully as "
+        "possible. If a word or number is genuinely impossible to interpret "
+        "after careful analysis, write the token [illegible] in place of that "
+        "word. Do not skip any written content and do not guess randomly. Apply "
+        "extra attention to numbers, units, and technical scientific terms as "
+        "these are the most critical parts of student answers.\n\n"
         "Transcribe the image first, then decide for EACH mark scheme point "
         "whether the student earned it. Return ONLY valid JSON, no markdown, "
         "in exactly this shape:\n"

@@ -5,6 +5,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import type { Question } from "../types";
+import { COLORS, RADIUS, SPACING, FONT, ON } from "../constants/theme";
 
 interface Props {
   question: Question;
@@ -33,44 +34,41 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 14,
-    gap: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 3,
-    elevation: 1,
+    backgroundColor: COLORS.card,
+    borderWidth: 0.5,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.lg,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.lg,
+    gap: SPACING.md,
+    marginBottom: SPACING.sm,
   },
   numberBadge: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    backgroundColor: "#EEF2FF",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: COLORS.primaryLight,
+    borderRadius: RADIUS.sm,
+    paddingHorizontal: 10,
+    paddingVertical: SPACING.xs,
   },
   numberText: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: "#4F46E5",
+    fontSize: 12,
+    fontWeight: FONT.medium,
+    color: ON.primaryText,
   },
   preview: {
     flex: 1,
-    fontSize: 14,
-    color: "#374151",
+    fontSize: 13,
+    color: COLORS.textSecondary,
     lineHeight: 19,
   },
   marksBadge: {
-    backgroundColor: "#F3F4F6",
-    borderRadius: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    backgroundColor: COLORS.primaryLight,
+    borderRadius: RADIUS.sm,
+    paddingHorizontal: 10,
+    paddingVertical: SPACING.xs,
   },
   marksText: {
     fontSize: 12,
-    fontWeight: "600",
-    color: "#6B7280",
+    fontWeight: FONT.medium,
+    color: ON.primaryText,
   },
 });

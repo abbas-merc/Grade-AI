@@ -20,14 +20,24 @@ import {
   StyleSheet,
   Animated,
   PanResponder,
+  Alert,
 } from "react-native";
-import { useRouter, useFocusEffect, useLocalSearchParams } from "expo-router";
+import {
+  useRouter,
+  useLocalSearchParams,
+} from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import auth from "@react-native-firebase/auth";
 
 import { getPapers } from "../services/api";
-import { getHistory, deleteHistoryEntry } from "../services/historyService";
+import {
+  getHistory,
+  deleteHistoryEntry,
+  subscribeToHistory,
+} from "../services/historyService";
 import PaperCard from "../components/PaperCard";
 import type { Paper, HistoryEntry } from "../types";
+import { COLORS, RADIUS, SPACING, FONT, ON } from "../constants/theme";
 
 // Width of the red delete zone revealed by a left swipe
 const DELETE_WIDTH = 80;
@@ -44,10 +54,10 @@ function formatDate(iso: string): string {
   });
 }
 
-function scoreColor(pct: number): string {
-  if (pct >= 80) return "#059669";
-  if (pct >= 50) return "#4F46E5";
-  return "#DC2626";
+function scoreBadgeColors(pct: number): { backgroundColor: string; color: string } {
+  if (pct >= 70) return { backgroundColor: COLORS.passLight, color: ON.passText };
+  if (pct >= 50) return { backgroundColor: COLORS.warningLight, color: ON.warningText };
+  return { backgroundColor: COLORS.failLight, color: ON.failText };
 }
 
 function paperLabel(paper: Paper): string {
@@ -94,6 +104,44 @@ function groupPapersBySubject(papers: Paper[]): Record<string, Paper[]> {
     }
   }
   return ordered;
+}
+
+// ─── ProcessingBadge (in-progress indicator) ──────────────────────────────────
+
+// Blue "Grading..." pill that fades between 0.4 and 1.0 on a 1-second loop, with
+// the current backend progress_step shown as a subtitle beneath it.
+function ProcessingBadge({ progressStep }: { progressStep?: string }) {
+  const opacity = useRef(new Animated.Value(0.4)).current;
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: 0.4,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [opacity]);
+  return (
+    <View style={styles.processingWrap}>
+      <Animated.View style={[styles.processingPill, { opacity }]}>
+        <Text style={styles.processingPillText}>Grading...</Text>
+      </Animated.View>
+      {progressStep ? (
+        <Text style={styles.progressStepText} numberOfLines={1}>
+          {progressStep}
+        </Text>
+      ) : null}
+    </View>
+  );
 }
 
 // ─── HistoryRow (swipe-to-delete) ─────────────────────────────────────────────
@@ -176,7 +224,10 @@ function HistoryRow({
     }),
   ).current;
 
-  const color = scoreColor(entry.percentage);
+  const badge = scoreBadgeColors(entry.percentage);
+  const queued = entry.status === "queued";
+  const processing = entry.status === "processing";
+  const failed = entry.status === "failed" || entry.status === "error";
 
   return (
     // overflow:hidden clips the row as it slides left, keeping layout clean
@@ -203,27 +254,44 @@ function HistoryRow({
           onPress={() => {
             if (isOpen.current) {
               snapClosed(); // first tap on open row closes it
-            } else {
-              onPressRef.current();
+              return;
             }
+            // Don't open results until the job has finished grading.
+            if (entry.status && entry.status !== "complete") return;
+            onPressRef.current();
           }}
         >
           <View style={styles.historyMain}>
             <Text style={styles.historyPaperName} numberOfLines={1}>
               {entry.paper_name}
             </Text>
+            {/* Paper name + timestamp always show, regardless of status. */}
             <Text style={styles.historyDate}>
               {formatDate(entry.graded_at)}
             </Text>
           </View>
-          <View style={[styles.scoreBadge, { borderColor: color }]}>
-            <Text style={[styles.scoreText, { color }]}>
-              {entry.total_marks_awarded}/{entry.total_marks_available}
-            </Text>
-            <Text style={[styles.scorePercent, { color }]}>
-              {entry.percentage}%
-            </Text>
-          </View>
+          {queued ? (
+            <View style={styles.queuePill}>
+              <Text style={styles.queuePillText}>In queue</Text>
+            </View>
+          ) : processing ? (
+            <ProcessingBadge progressStep={entry.progress_step} />
+          ) : failed ? (
+            <View style={styles.failPill}>
+              <Text style={styles.failPillText}>Failed</Text>
+            </View>
+          ) : (
+            <View
+              style={[styles.scoreBadge, { backgroundColor: badge.backgroundColor }]}
+            >
+              <Text style={[styles.scoreText, { color: badge.color }]}>
+                {entry.total_marks_awarded}/{entry.total_marks_available}
+              </Text>
+              <Text style={[styles.scorePercent, { color: badge.color }]}>
+                {entry.percentage}%
+              </Text>
+            </View>
+          )}
         </TouchableOpacity>
       </Animated.View>
     </View>
@@ -234,6 +302,7 @@ function HistoryRow({
 
 export default function HomeScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { tab } = useLocalSearchParams<{ tab?: string }>();
   const [activeTab, setActiveTab] = useState<Tab>(
     tab === "history" ? "history" : "papers",
@@ -251,13 +320,26 @@ export default function HomeScreen() {
   const [papersLoading, setPapersLoading] = useState(true);
   const [papersError, setPapersError] = useState<string | null>(null);
 
-  const loadPapers = useCallback(() => {
+  const loadPapers = useCallback(async () => {
     setPapersLoading(true);
     setPapersError(null);
-    getPapers()
-      .then(setPapers)
-      .catch((err: Error) => setPapersError(err.message))
-      .finally(() => setPapersLoading(false));
+    // Retry up to 3 times (1.5 s apart) to survive brief backend restarts and
+    // Firebase token re-initialization that happen after hot reloads.
+    let lastError: Error | null = null;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      if (attempt > 0) {
+        await new Promise<void>((resolve) => setTimeout(resolve, 1500));
+      }
+      try {
+        setPapers(await getPapers());
+        setPapersLoading(false);
+        return;
+      } catch (err) {
+        lastError = err as Error;
+      }
+    }
+    setPapersError(lastError?.message ?? "Unknown error");
+    setPapersLoading(false);
   }, []);
 
   useEffect(() => {
@@ -269,16 +351,23 @@ export default function HomeScreen() {
   const [historyLoading, setHistoryLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-  const loadHistory = useCallback(async () => {
+  // Real-time Firestore listener: the History list updates automatically when a
+  // grading job is created ("processing") and again when it completes
+  // ("complete"), with no manual refresh. Subscribe once on mount.
+  useEffect(() => {
     setHistoryLoading(true);
-    try {
-      setHistory(await getHistory());
-    } finally {
-      setHistoryLoading(false);
-    }
+    const unsubscribe = subscribeToHistory(
+      (entries) => {
+        setHistory(entries);
+        setHistoryLoading(false);
+      },
+      () => setHistoryLoading(false),
+    );
+    return unsubscribe;
   }, []);
 
-  // Pull-to-refresh — reads AsyncStorage without showing the full-screen spinner
+  // Pull-to-refresh — one-shot read as an offline fallback; the live listener
+  // already keeps the list current.
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
@@ -288,26 +377,21 @@ export default function HomeScreen() {
     }
   }, []);
 
-  // Reload every time the screen comes back into focus (e.g. after grading)
-  useFocusEffect(
-    useCallback(() => {
-      loadHistory();
-    }, [loadHistory]),
-  );
-
-  const handleDelete = useCallback(
-    async (id: string) => {
-      // Optimistic update — remove from UI immediately
-      setHistory((prev) => prev.filter((e) => e.id !== id));
-      try {
-        await deleteHistoryEntry(id);
-      } catch {
-        // If the delete fails, reload to restore correct state
-        loadHistory();
-      }
-    },
-    [loadHistory],
-  );
+  const handleDelete = useCallback(async (entry: HistoryEntry) => {
+    // Delete from Firestore (teachers/{uid}/markings) FIRST. Only remove the
+    // row from local state if that succeeds — if it fails, keep the row and
+    // tell the user, so the UI never drifts out of sync with Firestore.
+    try {
+      await deleteHistoryEntry(entry.id, entry.marking_id);
+      setHistory((prev) => prev.filter((e) => e.id !== entry.id));
+    } catch (err) {
+      console.error("[index] handleDelete → delete failed", err);
+      Alert.alert(
+        "Couldn't delete",
+        "We couldn't remove this result from your history. Please check your connection and try again.",
+      );
+    }
+  }, []);
 
   // Sign out — the auth listener in _layout.tsx redirects to the sign-in screen.
   const handleSignOut = useCallback(async () => {
@@ -318,46 +402,75 @@ export default function HomeScreen() {
     }
   }, []);
 
+  // Profile button in the header → confirm before signing out.
+  const handleProfilePress = useCallback(() => {
+    Alert.alert("Profile", "Sign out?", [
+      { text: "Cancel", style: "cancel" },
+      { text: "Sign out", style: "destructive", onPress: handleSignOut },
+    ]);
+  }, [handleSignOut]);
+
   // ── Render ────────────────────────────────────────────────────────────────
   return (
     <View style={styles.container}>
-      {/* Tab bar */}
-      <View style={styles.tabBar}>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === "papers" && styles.tabActive]}
-          onPress={() => setActiveTab("papers")}
-          activeOpacity={0.8}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === "papers" && styles.tabTextActive,
-            ]}
+      {/* Blue header: wordmark + profile, with a segmented control beneath */}
+      <View style={[styles.header, { paddingTop: insets.top + SPACING.sm }]}>
+        <View style={styles.headerTop}>
+          <View style={styles.brand}>
+            <View style={styles.logoSquare}>
+              <Text style={styles.logoLetter}>G</Text>
+            </View>
+            <Text style={styles.wordmark}>
+              <Text style={styles.wordmarkLight}>Grade</Text>
+              <Text style={styles.wordmarkBold}>AI</Text>
+            </Text>
+          </View>
+          <TouchableOpacity
+            onPress={handleProfilePress}
+            style={styles.headerButton}
+            hitSlop={8}
+            activeOpacity={0.7}
           >
-            Papers
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === "history" && styles.tabActive]}
-          onPress={() => setActiveTab("history")}
-          activeOpacity={0.8}
-        >
-          <Text
+            <Text style={styles.headerIcon}>☰</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.segment}>
+          <TouchableOpacity
             style={[
-              styles.tabText,
-              activeTab === "history" && styles.tabTextActive,
+              styles.segmentItem,
+              activeTab === "papers" && styles.segmentItemActive,
             ]}
+            onPress={() => setActiveTab("papers")}
+            activeOpacity={0.8}
           >
-            History
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.signOutButton}
-          onPress={handleSignOut}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.signOutText}>Sign out</Text>
-        </TouchableOpacity>
+            <Text
+              style={[
+                styles.segmentText,
+                activeTab === "papers" && styles.segmentTextActive,
+              ]}
+            >
+              Papers
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.segmentItem,
+              activeTab === "history" && styles.segmentItemActive,
+            ]}
+            onPress={() => setActiveTab("history")}
+            activeOpacity={0.8}
+          >
+            <Text
+              style={[
+                styles.segmentText,
+                activeTab === "history" && styles.segmentTextActive,
+              ]}
+            >
+              History
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* ── Papers tab ── */}
@@ -365,7 +478,7 @@ export default function HomeScreen() {
         <>
           {papersLoading ? (
             <View style={styles.centered}>
-              <ActivityIndicator size="large" color="#4F46E5" />
+              <ActivityIndicator size="large" color={COLORS.primary} />
               <Text style={styles.mutedText}>Loading papers…</Text>
             </View>
           ) : papersError ? (
@@ -382,6 +495,13 @@ export default function HomeScreen() {
             </View>
           ) : (
             <ScrollView contentContainerStyle={styles.listContent}>
+              <TouchableOpacity
+                style={styles.createPaperButton}
+                onPress={() => router.push("/generate-paper")}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.createPaperButtonText}>+ Create Custom Paper</Text>
+              </TouchableOpacity>
               <Text style={styles.sectionLabel}>Select a paper to begin</Text>
               {Object.entries(groupPapersBySubject(papers)).map(
                 ([subjectName, subjectPapers], groupIndex) => (
@@ -390,7 +510,7 @@ export default function HomeScreen() {
                     <Text style={styles.subjectHeader}>{subjectName}</Text>
                     {subjectPapers.map((item, paperIndex) => (
                       <React.Fragment key={String(item.id)}>
-                        {paperIndex > 0 && <View style={{ height: 8 }} />}
+                        {paperIndex > 0 && <View style={{ height: 10 }} />}
                         <PaperCard
                           paper={item}
                           onPress={() =>
@@ -419,7 +539,7 @@ export default function HomeScreen() {
         // show the list with a pull-to-refresh spinner instead.
         (historyLoading && history.length === 0 ? (
           <View style={styles.centered}>
-            <ActivityIndicator size="large" color="#4F46E5" />
+            <ActivityIndicator size="large" color={COLORS.primary} />
             <Text style={styles.mutedText}>Loading history…</Text>
           </View>
         ) : (
@@ -454,7 +574,7 @@ export default function HomeScreen() {
             renderItem={({ item }) => (
               <HistoryRow
                 entry={item}
-                onDelete={() => handleDelete(item.id)}
+                onDelete={() => handleDelete(item)}
                 onPress={() =>
                   router.push({
                     pathname: "/results/paper",
@@ -479,109 +599,163 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: COLORS.surface,
   },
   centered: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    gap: 10,
-    padding: 24,
+    gap: SPACING.sm,
+    padding: SPACING.xl,
   },
 
-  // Tab bar
-  tabBar: {
+  // Blue header
+  header: {
+    backgroundColor: COLORS.primary,
+    paddingHorizontal: SPACING.lg,
+    paddingBottom: SPACING.md,
+  },
+  headerTop: {
     flexDirection: "row",
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
-    paddingHorizontal: 16,
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: SPACING.md,
   },
-  tab: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderBottomWidth: 2,
-    borderBottomColor: "transparent",
+  brand: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: SPACING.sm,
   },
-  tabActive: {
-    borderBottomColor: "#4F46E5",
-  },
-  tabText: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#9CA3AF",
-  },
-  tabTextActive: {
-    color: "#4F46E5",
-  },
-  signOutButton: {
-    marginLeft: "auto",
+  logoSquare: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    backgroundColor: COLORS.card,
+    alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 8,
   },
-  signOutText: {
-    fontSize: 14,
+  logoLetter: {
+    color: COLORS.primary,
+    fontSize: 18,
+    fontWeight: "700",
+  },
+  wordmark: {
+    fontSize: 20,
+  },
+  wordmarkLight: {
+    color: COLORS.card,
+    fontSize: 20,
+    fontWeight: FONT.regular,
+  },
+  wordmarkBold: {
+    color: COLORS.card,
+    fontSize: 20,
     fontWeight: "600",
-    color: "#DC2626",
+  },
+  headerButton: {
+    paddingHorizontal: SPACING.sm,
+  },
+  headerIcon: {
+    color: COLORS.card,
+    fontSize: 22,
+  },
+
+  // Segmented control (Papers / History)
+  segment: {
+    flexDirection: "row",
+    backgroundColor: "rgba(255,255,255,0.2)",
+    borderRadius: RADIUS.md,
+    padding: 3,
+  },
+  segmentItem: {
+    flex: 1,
+    paddingVertical: SPACING.sm,
+    alignItems: "center",
+    borderRadius: 8,
+  },
+  segmentItemActive: {
+    backgroundColor: COLORS.card,
+  },
+  segmentText: {
+    fontSize: 14,
+    fontWeight: FONT.medium,
+    color: "rgba(255,255,255,0.7)",
+  },
+  segmentTextActive: {
+    color: COLORS.primary,
   },
 
   // Shared list
   listContent: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 32,
+    paddingHorizontal: SPACING.lg,
+    paddingTop: SPACING.md,
+    paddingBottom: SPACING.xxl,
+  },
+  createPaperButton: {
+    backgroundColor: COLORS.primary,
+    borderRadius: RADIUS.lg,
+    paddingVertical: SPACING.md,
+    alignItems: "center",
+    marginBottom: SPACING.lg,
+  },
+  createPaperButtonText: {
+    color: COLORS.card,
+    fontSize: 15,
+    fontWeight: FONT.medium,
   },
   sectionLabel: {
     fontSize: 13,
-    color: "#9CA3AF",
-    marginBottom: 10,
+    color: COLORS.textTertiary,
+    marginBottom: SPACING.sm,
   },
   subjectHeader: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#1F2937",
-    marginBottom: 10,
+    fontSize: 11,
+    fontWeight: FONT.medium,
+    color: COLORS.textTertiary,
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
+    marginTop: SPACING.xl,
+    marginBottom: SPACING.sm,
   },
 
   // States
   mutedText: {
-    color: "#6B7280",
+    color: COLORS.textSecondary,
     fontSize: 15,
   },
   errorText: {
     fontSize: 17,
-    fontWeight: "600",
-    color: "#EF4444",
+    fontWeight: FONT.medium,
+    color: COLORS.fail,
   },
   errorDetail: {
     fontSize: 13,
-    color: "#6B7280",
+    color: COLORS.textSecondary,
     textAlign: "center",
   },
   retryButton: {
-    backgroundColor: "#4F46E5",
-    borderRadius: 10,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    marginTop: 4,
+    backgroundColor: COLORS.primary,
+    borderRadius: RADIUS.md,
+    paddingHorizontal: SPACING.xl,
+    paddingVertical: SPACING.md,
+    marginTop: SPACING.xs,
   },
   retryText: {
-    color: "#fff",
-    fontWeight: "600",
+    color: COLORS.card,
+    fontWeight: FONT.medium,
     fontSize: 15,
   },
 
   // Empty history (FlatList content style + the empty component itself)
   emptyListContent: {
     flexGrow: 1,
-    paddingHorizontal: 16,
+    paddingHorizontal: SPACING.lg,
   },
   emptyHistory: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    gap: 10,
+    gap: SPACING.sm,
     paddingVertical: 80,
   },
   emptyIcon: {
@@ -589,28 +763,27 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     fontSize: 17,
-    fontWeight: "700",
-    color: "#1F2937",
+    fontWeight: FONT.medium,
+    color: COLORS.textPrimary,
   },
   emptySubtitle: {
     fontSize: 14,
-    color: "#9CA3AF",
+    color: COLORS.textTertiary,
     textAlign: "center",
     lineHeight: 20,
   },
 
-  // Swipe wrapper — overflow:hidden clips the row as it slides left
+  // Swipe wrapper — overflow:hidden clips the row as it slides left.
+  // Shadow lives here (not on the clipped row) so it renders on both platforms.
   swipeWrapper: {
     overflow: "hidden",
-    borderRadius: 12,
+    borderRadius: RADIUS.lg,
     marginBottom: 10,
-    // Shadow lives here so overflow:hidden doesn't clip it on Android;
-    // on iOS shadows render outside the bounds anyway
-    shadowColor: "#000",
+    shadowColor: "rgba(0,0,0,1)",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
-    shadowRadius: 3,
-    elevation: 1,
+    shadowRadius: 4,
+    elevation: 2,
   },
 
   // Red delete button (sits behind the sliding row)
@@ -620,7 +793,7 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     width: DELETE_WIDTH,
-    backgroundColor: "#EF4444",
+    backgroundColor: COLORS.fail,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -631,47 +804,103 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   deleteActionText: {
-    color: "#fff",
+    color: COLORS.card,
     fontSize: 14,
-    fontWeight: "700",
+    fontWeight: FONT.medium,
   },
 
   // History row card (slides over the delete button)
   historyRow: {
-    backgroundColor: "#fff",
-    padding: 14,
+    backgroundColor: COLORS.card,
+    borderWidth: 0.5,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.lg,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.lg,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: 12,
+    gap: SPACING.md,
   },
   historyMain: {
     flex: 1,
-    gap: 3,
   },
   historyPaperName: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#1F2937",
+    fontSize: 15,
+    fontWeight: FONT.medium,
+    color: COLORS.textPrimary,
   },
   historyDate: {
-    fontSize: 12,
-    color: "#9CA3AF",
+    fontSize: 13,
+    color: COLORS.textSecondary,
+    marginTop: SPACING.xs,
   },
   scoreBadge: {
-    borderWidth: 1.5,
-    borderRadius: 10,
+    borderRadius: RADIUS.md,
     paddingHorizontal: 10,
     paddingVertical: 6,
     alignItems: "center",
     minWidth: 70,
   },
+  // Status pills (queued / processing / failed)
+  queuePill: {
+    borderRadius: RADIUS.md,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    alignItems: "center",
+    justifyContent: "center",
+    minWidth: 70,
+    backgroundColor: COLORS.border,
+  },
+  queuePillText: {
+    fontSize: 12,
+    fontWeight: FONT.medium,
+    color: COLORS.textSecondary,
+  },
+  processingWrap: {
+    alignItems: "flex-end",
+    gap: 2,
+    maxWidth: 130,
+  },
+  processingPill: {
+    borderRadius: RADIUS.md,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    alignItems: "center",
+    justifyContent: "center",
+    minWidth: 70,
+    backgroundColor: COLORS.primary,
+  },
+  processingPillText: {
+    fontSize: 12,
+    fontWeight: FONT.medium,
+    color: COLORS.card,
+  },
+  progressStepText: {
+    fontSize: 11,
+    color: COLORS.textTertiary,
+    textAlign: "right",
+  },
+  failPill: {
+    borderRadius: RADIUS.md,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    alignItems: "center",
+    justifyContent: "center",
+    minWidth: 70,
+    backgroundColor: COLORS.failLight,
+  },
+  failPillText: {
+    fontSize: 12,
+    fontWeight: FONT.medium,
+    color: COLORS.fail,
+  },
   scoreText: {
-    fontSize: 14,
-    fontWeight: "700",
+    fontSize: 13,
+    fontWeight: FONT.medium,
   },
   scorePercent: {
     fontSize: 11,
-    fontWeight: "600",
+    fontWeight: FONT.medium,
   },
 });

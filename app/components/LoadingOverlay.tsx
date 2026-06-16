@@ -1,59 +1,88 @@
 /**
- * components/LoadingOverlay.tsx — Full-screen modal overlay shown during grading.
+ * components/LoadingOverlay.tsx — Full-screen grading progress view.
+ *
+ * No longer a modal: while `visible` is true it renders an absolutely
+ * positioned, full-screen layer and cycles a sub-status line every 8 seconds.
  */
 
-import React from "react";
-import {
-  Modal,
-  View,
-  Text,
-  ActivityIndicator,
-  StyleSheet,
-} from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet } from "react-native";
+import { COLORS, SPACING, FONT } from "../constants/theme";
 
 interface Props {
   visible: boolean;
   message: string;
 }
 
+const SUB_MESSAGES = [
+  "Uploading pages…",
+  "Analysing handwriting…",
+  "Applying mark scheme…",
+];
+
 export default function LoadingOverlay({ visible, message }: Props) {
+  const [subIndex, setSubIndex] = useState(0);
+
+  // Cycle the sub-status line every 8 seconds while visible.
+  useEffect(() => {
+    if (!visible) {
+      setSubIndex(0);
+      return;
+    }
+    const id = setInterval(() => {
+      setSubIndex((i) => (i + 1) % SUB_MESSAGES.length);
+    }, 8000);
+    return () => clearInterval(id);
+  }, [visible]);
+
+  if (!visible) return null;
+
   return (
-    <Modal visible={visible} transparent animationType="fade" statusBarTranslucent>
-      <View style={styles.backdrop}>
-        <View style={styles.card}>
-          <ActivityIndicator size="large" color="#4F46E5" />
-          <Text style={styles.message}>{message}</Text>
-        </View>
-      </View>
-    </Modal>
+    <View style={styles.fullScreen}>
+      <Text style={styles.appName}>GradeAI</Text>
+      <Text style={styles.mainStatus}>{message}</Text>
+      <Text style={styles.subStatus}>{SUB_MESSAGES[subIndex]}</Text>
+      <Text style={styles.helper}>This usually takes 30–60 seconds</Text>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.65)",
+  fullScreen: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: COLORS.card,
+    alignItems: "center",
     justifyContent: "center",
-    alignItems: "center",
+    zIndex: 1000,
+    elevation: 1000,
   },
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    paddingHorizontal: 32,
-    paddingVertical: 28,
-    alignItems: "center",
-    gap: 16,
-    minWidth: 220,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
-    elevation: 8,
+  appName: {
+    fontSize: 18,
+    fontWeight: FONT.medium,
+    color: COLORS.primary,
+    marginBottom: SPACING.xxl,
   },
-  message: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#374151",
+  mainStatus: {
+    fontSize: 18,
+    fontWeight: FONT.medium,
+    color: COLORS.textPrimary,
+    textAlign: "center",
+  },
+  subStatus: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    textAlign: "center",
+    marginTop: SPACING.sm,
+  },
+  helper: {
+    position: "absolute",
+    bottom: 40,
+    fontSize: 12,
+    color: COLORS.textTertiary,
     textAlign: "center",
   },
 });

@@ -19,6 +19,7 @@ import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
 
 import { getQuestions } from "../../services/api";
 import type { Question } from "../../types";
+import { COLORS, RADIUS, SPACING, FONT, ON } from "../../constants/theme";
 
 function QuestionCard({ question }: { question: Question }) {
   return (
@@ -71,7 +72,7 @@ export default function PaperScreen() {
   if (loading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#4F46E5" />
+        <ActivityIndicator size="large" color={COLORS.primary} />
         <Text style={styles.loadingText}>Loading questions…</Text>
       </View>
     );
@@ -124,64 +125,63 @@ export default function PaperScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: COLORS.surface,
   },
   centered: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    gap: 10,
-    padding: 24,
+    gap: SPACING.sm,
+    padding: SPACING.xl,
+    backgroundColor: COLORS.surface,
   },
   loadingText: {
-    color: "#6B7280",
+    color: COLORS.textSecondary,
     fontSize: 15,
   },
   errorText: {
     fontSize: 17,
-    fontWeight: "600",
-    color: "#EF4444",
+    fontWeight: FONT.medium,
+    color: COLORS.fail,
   },
   errorDetail: {
     fontSize: 14,
-    color: "#6B7280",
+    color: COLORS.textSecondary,
     textAlign: "center",
   },
   emptyText: {
-    color: "#9CA3AF",
+    color: COLORS.textTertiary,
     fontSize: 15,
   },
   retryButton: {
-    backgroundColor: "#4F46E5",
-    borderRadius: 10,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    marginTop: 8,
+    backgroundColor: COLORS.primary,
+    borderRadius: RADIUS.md,
+    paddingHorizontal: SPACING.xl,
+    paddingVertical: SPACING.md,
+    marginTop: SPACING.sm,
   },
   retryButtonText: {
-    color: "#fff",
-    fontWeight: "600",
+    color: COLORS.card,
+    fontWeight: FONT.medium,
     fontSize: 15,
   },
   flatList: {
     flex: 1,
   },
   list: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 8,
-    gap: 10,
+    paddingHorizontal: SPACING.lg,
+    paddingTop: SPACING.md,
+    paddingBottom: SPACING.sm,
+    gap: SPACING.sm,
   },
   card: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 14,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 3,
-    elevation: 1,
-    gap: 8,
+    backgroundColor: COLORS.card,
+    borderWidth: 0.5,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.lg,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.lg,
+    gap: SPACING.sm,
   },
   cardHeader: {
     flexDirection: "row",
@@ -189,54 +189,49 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   numberBadge: {
-    backgroundColor: "#EEF2FF",
-    borderRadius: 6,
+    backgroundColor: COLORS.primaryLight,
+    borderRadius: RADIUS.sm,
     paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingVertical: SPACING.xs,
   },
   numberText: {
-    fontSize: 13,
-    fontWeight: "700",
-    color: "#4F46E5",
+    fontSize: 12,
+    fontWeight: FONT.medium,
+    color: ON.primaryText,
   },
   marksBadge: {
-    backgroundColor: "#F3F4F6",
-    borderRadius: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    backgroundColor: COLORS.primaryLight,
+    borderRadius: RADIUS.sm,
+    paddingHorizontal: 10,
+    paddingVertical: SPACING.xs,
   },
   marksText: {
     fontSize: 12,
-    fontWeight: "600",
-    color: "#6B7280",
+    fontWeight: FONT.medium,
+    color: ON.primaryText,
   },
   questionText: {
-    fontSize: 14,
-    color: "#374151",
+    fontSize: 13,
+    color: COLORS.textSecondary,
     lineHeight: 20,
+    marginTop: SPACING.xs,
   },
   footer: {
-    padding: 16,
-    paddingBottom: 32,
-    backgroundColor: "#F9FAFB",
-    borderTopWidth: 1,
-    borderTopColor: "#E5E7EB",
+    padding: SPACING.lg,
+    paddingBottom: SPACING.xxl,
+    backgroundColor: COLORS.surface,
+    borderTopWidth: 0.5,
+    borderTopColor: COLORS.border,
   },
   gradeButton: {
-    backgroundColor: "#4F46E5",
-    borderRadius: 14,
-    paddingVertical: 18,
+    backgroundColor: COLORS.primary,
+    borderRadius: RADIUS.lg,
+    paddingVertical: SPACING.lg,
     alignItems: "center",
-    shadowColor: "#4F46E5",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
   },
   gradeButtonText: {
-    color: "#fff",
-    fontSize: 17,
-    fontWeight: "700",
-    letterSpacing: 0.3,
+    color: COLORS.card,
+    fontSize: 15,
+    fontWeight: FONT.medium,
   },
 });

@@ -21,6 +21,7 @@ import type {
   HistoryEntry,
 } from "../../types";
 import { saveHistoryEntry } from "../../services/historyService";
+import { COLORS, RADIUS, SPACING, FONT, ON } from "../../constants/theme";
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString("en-GB", {
@@ -33,9 +34,11 @@ function formatDate(iso: string): string {
 function MarkPoint({ point }: { point: PaperMarkBreakdownPoint }) {
   return (
     <View style={styles.markPoint}>
-      <Text style={point.awarded ? styles.checkMark : styles.crossMark}>
-        {point.awarded ? "✅" : "❌"}
-      </Text>
+      <View style={point.awarded ? styles.tickCircle : styles.crossCircle}>
+        <Text style={point.awarded ? styles.tickIcon : styles.crossIcon}>
+          {point.awarded ? "✓" : "✕"}
+        </Text>
+      </View>
       <View style={styles.markPointBody}>
         <Text style={styles.markCriterion}>{point.criterion}</Text>
         <Text style={styles.markReason}>{point.reason}</Text>
@@ -45,26 +48,27 @@ function MarkPoint({ point }: { point: PaperMarkBreakdownPoint }) {
 }
 
 function QuestionCard({ item }: { item: QuestionResult }) {
-  const percentage =
-    item.marks_available > 0
-      ? Math.round((item.marks_awarded / item.marks_available) * 100)
-      : 0;
-
-  const scoreColor =
-    percentage >= 80 ? "#059669" : percentage >= 50 ? "#4F46E5" : "#DC2626";
-
   return (
     <View style={styles.questionCard}>
       <View style={styles.questionHeader}>
         <View style={styles.qNumBadge}>
           <Text style={styles.qNumText}>Q{item.question_number}</Text>
         </View>
-        <Text style={[styles.questionScore, { color: scoreColor }]}>
+        <Text style={styles.questionScore}>
           {item.marks_awarded} / {item.marks_available}
         </Text>
       </View>
 
       <Text style={styles.questionText}>{item.question_text}</Text>
+
+      {item.has_illegible && (
+        <View style={styles.illegibleNote}>
+          <Text style={styles.illegibleNoteText}>
+            ⚠️  Some handwriting in this answer could not be read (marked
+            [illegible] below). Please check this question manually.
+          </Text>
+        </View>
+      )}
 
       {item.extracted_answer ? (
         <View style={styles.answerBox}>
@@ -148,6 +152,9 @@ export default function PaperResultsScreen() {
         total_marks_available: result.total_marks_available,
         percentage: pct,
         result,
+        // Firestore doc ID from the backend, so this entry can be deleted from
+        // teachers/{uid}/markings later. May be undefined if the save failed.
+        marking_id: result.marking_id,
       };
       console.log(
         `[results/paper] handleDone → calling saveHistoryEntry (id=${entry.id}, paper=${name})`
@@ -161,8 +168,13 @@ export default function PaperResultsScreen() {
         console.error("[results/paper] handleDone → saveHistoryEntry threw", err);
       }
     }
-    // Land on the History tab so the user sees their newly saved result
-    router.push({ pathname: "/", params: { tab: "history" } });
+    // Reset the navigation stack: clear the entire grading flow (capture,
+    // breakdown, etc.) so Back can't return to any of it, and land on the
+    // History tab.
+    if (router.canDismiss()) {
+      router.dismissAll();
+    }
+    router.replace({ pathname: "/", params: { tab: "history" } });
   }, [result, paperName, fromHistory, router]);
 
   if (!result) {
@@ -186,9 +198,6 @@ export default function PaperResultsScreen() {
         )
       : 0;
 
-  const summaryBg =
-    percentage >= 80 ? "#059669" : percentage >= 50 ? "#4F46E5" : "#DC2626";
-
   const displayDate =
     fromHistory === "true" && gradedAt ? formatDate(gradedAt) : null;
 
@@ -199,7 +208,7 @@ export default function PaperResultsScreen() {
       contentContainerStyle={styles.listContent}
       ListHeaderComponent={
         <>
-          <View style={[styles.summaryCard, { backgroundColor: summaryBg }]}>
+          <View style={styles.summaryCard}>
             <Text style={styles.summaryLabel}>Total Score</Text>
             <Text style={styles.summaryScore}>
               {result.total_marks_awarded} / {result.total_marks_available}
@@ -208,16 +217,15 @@ export default function PaperResultsScreen() {
             {displayDate && (
               <Text style={styles.summaryDate}>Graded {displayDate}</Text>
             )}
-            <Text style={styles.summaryCost}>
-              Grading cost: ${result.cost_usd.toFixed(4)}
-            </Text>
           </View>
 
-          {result.cost_cap_reached && (
+          {result.marks_total_mismatch && (
             <View style={styles.capWarning}>
               <Text style={styles.capWarningText}>
-                ⚠️  Grading stopped early — the $0.50 cost cap was reached.
-                Some questions may show 0 marks.
+                ⚠️  Heads up — the marks for this paper don't add up to its
+                official total, so an individual question's total may be off.
+                Your answers were still graded; double-check any question that
+                looks wrong.
               </Text>
             </View>
           )}
@@ -242,101 +250,92 @@ export default function PaperResultsScreen() {
 
 const styles = StyleSheet.create({
   listContent: {
-    padding: 16,
+    padding: SPACING.lg,
     paddingBottom: 40,
-    backgroundColor: "#F9FAFB",
-    gap: 0,
+    backgroundColor: COLORS.surface,
   },
   centered: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    gap: 12,
-    padding: 24,
-    backgroundColor: "#F9FAFB",
+    gap: SPACING.md,
+    padding: SPACING.xl,
+    backgroundColor: COLORS.surface,
   },
   errorTitle: {
     fontSize: 20,
-    fontWeight: "700",
-    color: "#EF4444",
+    fontWeight: FONT.medium,
+    color: COLORS.fail,
   },
   errorDetail: {
     fontSize: 14,
-    color: "#6B7280",
+    color: COLORS.textSecondary,
     textAlign: "center",
   },
 
   // Summary
   summaryCard: {
-    borderRadius: 16,
-    padding: 24,
+    backgroundColor: COLORS.primary,
+    borderRadius: RADIUS.lg,
+    padding: SPACING.xl,
     alignItems: "center",
-    gap: 4,
-    marginBottom: 12,
+    marginBottom: SPACING.md,
   },
   summaryLabel: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: "rgba(255,255,255,0.8)",
+    fontSize: 11,
+    fontWeight: FONT.medium,
+    color: "rgba(255,255,255,0.6)",
     textTransform: "uppercase",
-    letterSpacing: 0.5,
+    letterSpacing: 0.8,
+    marginBottom: SPACING.sm,
   },
   summaryScore: {
-    fontSize: 52,
-    fontWeight: "800",
-    color: "#fff",
-    lineHeight: 60,
+    fontSize: 36,
+    fontWeight: FONT.medium,
+    color: COLORS.card,
   },
   summaryPercent: {
     fontSize: 18,
-    fontWeight: "600",
     color: "rgba(255,255,255,0.85)",
+    marginTop: SPACING.xs,
   },
   summaryDate: {
-    fontSize: 13,
-    color: "rgba(255,255,255,0.75)",
-    marginTop: 2,
-  },
-  summaryCost: {
     fontSize: 12,
-    color: "rgba(255,255,255,0.65)",
-    marginTop: 4,
+    color: "rgba(255,255,255,0.5)",
+    marginTop: SPACING.sm,
   },
 
   // Cap warning
   capWarning: {
-    backgroundColor: "#FEF3C7",
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 12,
+    backgroundColor: COLORS.warningLight,
+    borderRadius: RADIUS.md,
+    padding: SPACING.md,
+    marginBottom: SPACING.md,
     borderLeftWidth: 3,
-    borderLeftColor: "#F59E0B",
+    borderLeftColor: COLORS.warning,
   },
   capWarningText: {
     fontSize: 13,
-    color: "#92400E",
+    color: ON.warningText,
     lineHeight: 18,
   },
 
   sectionHeader: {
     fontSize: 16,
-    fontWeight: "700",
-    color: "#1F2937",
-    marginBottom: 10,
-    marginTop: 4,
+    fontWeight: FONT.medium,
+    color: COLORS.textPrimary,
+    marginBottom: SPACING.sm,
+    marginTop: SPACING.xs,
   },
 
   // Question card
   questionCard: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 14,
-    gap: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 3,
-    elevation: 1,
+    backgroundColor: COLORS.card,
+    borderWidth: 0.5,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.lg,
+    padding: SPACING.lg,
+    gap: SPACING.md,
   },
   questionHeader: {
     flexDirection: "row",
@@ -344,116 +343,145 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   qNumBadge: {
-    backgroundColor: "#EEF2FF",
-    borderRadius: 6,
+    backgroundColor: COLORS.primaryLight,
+    borderRadius: RADIUS.sm,
     paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingVertical: SPACING.xs,
   },
   qNumText: {
-    fontSize: 13,
-    fontWeight: "700",
-    color: "#4F46E5",
+    fontSize: 12,
+    fontWeight: FONT.medium,
+    color: ON.primaryText,
   },
   questionScore: {
-    fontSize: 16,
-    fontWeight: "700",
+    fontSize: 13,
+    fontWeight: FONT.medium,
+    color: COLORS.textSecondary,
   },
   questionText: {
     fontSize: 14,
-    color: "#1F2937",
+    color: COLORS.textPrimary,
     lineHeight: 20,
   },
-  answerBox: {
-    backgroundColor: "#F9FAFB",
-    borderRadius: 8,
+  illegibleNote: {
+    backgroundColor: COLORS.warningLight,
+    borderRadius: RADIUS.md,
     padding: 10,
-    gap: 4,
     borderLeftWidth: 3,
-    borderLeftColor: "#D1D5DB",
+    borderLeftColor: COLORS.warning,
+  },
+  illegibleNoteText: {
+    fontSize: 13,
+    color: ON.warningText,
+    lineHeight: 18,
+  },
+  answerBox: {
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.md,
+    padding: 10,
+    gap: SPACING.xs,
+    borderLeftWidth: 3,
+    borderLeftColor: COLORS.border,
   },
   answerLabel: {
     fontSize: 11,
-    fontWeight: "600",
-    color: "#9CA3AF",
+    fontWeight: FONT.medium,
+    color: COLORS.textTertiary,
     textTransform: "uppercase",
     letterSpacing: 0.4,
   },
   answerText: {
     fontSize: 13,
-    color: "#374151",
+    color: COLORS.textSecondary,
     lineHeight: 19,
   },
   noAnswerBox: {
-    backgroundColor: "#FEF2F2",
-    borderRadius: 8,
+    backgroundColor: COLORS.failLight,
+    borderRadius: RADIUS.md,
     padding: 10,
   },
   noAnswerText: {
     fontSize: 13,
-    color: "#DC2626",
+    color: COLORS.fail,
     fontStyle: "italic",
   },
   breakdown: {
-    gap: 6,
+    gap: SPACING.sm,
   },
   markPoint: {
     flexDirection: "row",
-    gap: 8,
-    paddingTop: 6,
-    borderTopWidth: 1,
-    borderTopColor: "#F3F4F6",
+    gap: SPACING.sm,
+    paddingTop: SPACING.sm,
+    borderTopWidth: 0.5,
+    borderTopColor: COLORS.border,
   },
-  checkMark: {
-    fontSize: 16,
-    lineHeight: 22,
-    width: 24,
-    textAlign: "center",
+  tickCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: COLORS.passLight,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  crossMark: {
-    fontSize: 16,
-    lineHeight: 22,
-    width: 24,
-    textAlign: "center",
+  crossCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: COLORS.failLight,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  tickIcon: {
+    color: COLORS.pass,
+    fontSize: 11,
+    fontWeight: FONT.medium,
+  },
+  crossIcon: {
+    color: COLORS.fail,
+    fontSize: 11,
+    fontWeight: FONT.medium,
   },
   markPointBody: {
     flex: 1,
   },
   markCriterion: {
     fontSize: 13,
-    fontWeight: "600",
-    color: "#1F2937",
+    fontWeight: FONT.medium,
+    color: COLORS.textPrimary,
   },
   markReason: {
     fontSize: 12,
-    color: "#6B7280",
-    marginTop: 1,
+    color: COLORS.textSecondary,
+    marginTop: SPACING.xs,
     lineHeight: 17,
   },
   feedbackBox: {
-    backgroundColor: "#F0FDF4",
-    borderRadius: 8,
-    padding: 10,
+    backgroundColor: COLORS.primaryLight,
     borderLeftWidth: 3,
-    borderLeftColor: "#059669",
+    borderLeftColor: COLORS.primary,
+    borderTopRightRadius: 8,
+    borderBottomRightRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
   },
   feedbackText: {
     fontSize: 13,
-    color: "#065F46",
-    lineHeight: 19,
+    color: ON.primaryText,
+    lineHeight: 20,
   },
   separator: {
-    height: 10,
+    height: SPACING.md,
   },
   backButton: {
-    backgroundColor: "#1F2937",
-    borderRadius: 14,
-    paddingVertical: 18,
+    backgroundColor: COLORS.primary,
+    borderRadius: RADIUS.lg,
+    paddingVertical: SPACING.lg,
     alignItems: "center",
-    marginTop: 16,
+    marginTop: SPACING.xl,
   },
   backButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "700",
+    color: COLORS.card,
+    fontSize: 15,
+    fontWeight: FONT.medium,
   },
 });

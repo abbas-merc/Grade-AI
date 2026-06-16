@@ -24,23 +24,17 @@ import {
   Image,
   Alert,
   StyleSheet,
-  Modal,
-  ActivityIndicator,
-  Dimensions,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { CameraView, useCameraPermissions } from "expo-camera";
-import * as ImageManipulator from "expo-image-manipulator";
 
-import { gradePaper } from "../../services/api";
-import type { PaperGradingResult } from "../../types";
+import { submitPaperForGrading } from "../../services/markingQueue";
+import type { GeneratedPaper } from "../../types/paperGenerator";
+import { COLORS, RADIUS, SPACING, FONT, ON } from "../../constants/theme";
 
-const SCREEN_WIDTH = Dimensions.get("window").width;
-const THUMB_SIZE = (SCREEN_WIDTH - 48) / 2;
+const THUMB_SIZE = 130;
 
-const MSG_UPLOAD = "Uploading pages…";
-const MSG_EXTRACT = "Reading your handwriting…";
-const MSG_GRADE = "Grading every question…";
+const LOADING_MESSAGES = ["Uploading pages…"];
 
 interface CapturedPage {
   uri: string;
@@ -50,7 +44,13 @@ interface CapturedPage {
 type Phase = "scanning" | "review";
 
 export default function CaptureScreen() {
-  const { paperId, paperName } = useLocalSearchParams<{ paperId: string; paperName?: string }>();
+  const { paperId, paperName, generatedPaper } = useLocalSearchParams<{
+    paperId: string;
+    paperName?: string;
+    // Present only when marking a Custom Paper Generator paper: the full
+    // generate-paper response, serialised. Carried in memory through the route.
+    generatedPaper?: string;
+  }>();
   const router = useRouter();
 
   const [permission, requestPermission] = useCameraPermissions();
@@ -62,50 +62,41 @@ export default function CaptureScreen() {
   const [retakeIndex, setRetakeIndex] = useState<number | null>(null);
 
   const [submitting, setSubmitting] = useState(false);
-  const [loadingMessage, setLoadingMessage] = useState(MSG_UPLOAD);
+  const [loadingIndex, setLoadingIndex] = useState(0);
 
+  // While submitting, cycle the sub-status line every 8 seconds.
   useEffect(() => {
     if (!submitting) {
-      setLoadingMessage(MSG_UPLOAD);
+      setLoadingIndex(0);
       return;
     }
-    setLoadingMessage(MSG_UPLOAD);
-    const t1 = setTimeout(() => setLoadingMessage(MSG_EXTRACT), 3000);
-    const t2 = setTimeout(() => setLoadingMessage(MSG_GRADE), 12000);
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-    };
+    const id = setInterval(() => {
+      setLoadingIndex((i) => (i + 1) % LOADING_MESSAGES.length);
+    }, 8000);
+    return () => clearInterval(id);
   }, [submitting]);
 
   const handleCapture = useCallback(async () => {
     if (!cameraRef.current || capturing) return;
     setCapturing(true);
     try {
-      const photo = await cameraRef.current.takePictureAsync({ base64: false });
+      // Capture at full original resolution with no compression or downscaling,
+      // so the backend receives the sharpest possible image for handwriting
+      // recognition. quality: 1 disables JPEG compression on the capture.
+      const photo = await cameraRef.current.takePictureAsync({
+        base64: true,
+        quality: 1,
+      });
       if (!photo) return;
 
-      // Downscale to 1500px wide and re-encode at 0.6 quality.
-      // Raw iPhone photos are 2–3 MB each; 10+ pages would exceed Anthropic's
-      // 32 MB request limit. 1500px keeps handwriting legible at ~200–400 KB.
-      const manipulated = await ImageManipulator.manipulateAsync(
-        photo.uri,
-        [{ resize: { width: 1500 } }],
-        {
-          compress: 0.6,
-          format: ImageManipulator.SaveFormat.JPEG,
-          base64: true,
-        }
-      );
-
-      if (!manipulated.base64) {
+      if (!photo.base64) {
         Alert.alert("Photo error", "Could not encode the photo. Please try again.");
         return;
       }
 
       const newPage: CapturedPage = {
-        uri: manipulated.uri,
-        base64: manipulated.base64,
+        uri: photo.uri,
+        base64: photo.base64,
       };
 
       if (retakeIndex !== null) {
@@ -144,22 +135,39 @@ export default function CaptureScreen() {
     if (pages.length === 0) return;
     setSubmitting(true);
     try {
-      const result: PaperGradingResult = await gradePaper(
+      // Compress pages, write them to Firestore + the "queued" marking document,
+      // then return. We do NOT wait for grading — the backend queue listener
+      // handles it. Pages are sent as file URIs; markingQueue downscales and
+      // encodes each one.
+      const inlineGenerated: GeneratedPaper | undefined = generatedPaper
+        ? (JSON.parse(generatedPaper) as GeneratedPaper)
+        : undefined;
+      await submitPaperForGrading(
         Number(paperId),
-        pages.map((p) => p.base64)
+        paperName ?? `Paper ${paperId}`,
+        pages.map((p) => p.uri),
+        inlineGenerated
       );
-      router.push({
-        pathname: "/results/paper",
-        params: { resultData: JSON.stringify(result), paperName: paperName ?? "" },
-      });
+      // Clear the whole capture flow from the stack so Back can't return here,
+      // then drop the teacher on the History tab, where the job shows as
+      // "In queue" → "Grading…" → score, updating live. A push notification
+      // arrives when it's ready.
+      if (router.canDismiss()) {
+        router.dismissAll();
+      }
+      router.replace({ pathname: "/", params: { tab: "history" } });
+      Alert.alert(
+        "Paper submitted",
+        "Paper submitted for grading. We will notify you when it is ready."
+      );
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : "Grading failed. Please try again.";
-      Alert.alert("Grading failed", message, [{ text: "OK" }]);
-    } finally {
+        err instanceof Error ? err.message : "Submission failed. Please try again.";
+      Alert.alert("Submission failed", message, [{ text: "OK" }]);
+      // Stay on the review screen so the teacher can retry.
       setSubmitting(false);
     }
-  }, [pages, paperId, paperName, router]);
+  }, [pages, paperId, paperName, generatedPaper, router]);
 
   // ── Permission states ───────────────────────────────────────────────────────
 
@@ -180,6 +188,19 @@ export default function CaptureScreen() {
         >
           <Text style={styles.permissionButtonText}>Grant Camera Access</Text>
         </TouchableOpacity>
+      </View>
+    );
+  }
+
+  // ── Submitting: full-screen grading progress ────────────────────────────────
+
+  if (submitting) {
+    return (
+      <View style={styles.loadingScreen}>
+        <Text style={styles.loadingAppName}>GradeAI</Text>
+        <Text style={styles.loadingMain}>Submitting paper</Text>
+        <Text style={styles.loadingSub}>{LOADING_MESSAGES[loadingIndex]}</Text>
+        <Text style={styles.loadingHelper}>This will only take a moment</Text>
       </View>
     );
   }
@@ -240,9 +261,7 @@ export default function CaptureScreen() {
               onPress={handleCapture}
               disabled={capturing}
               activeOpacity={0.85}
-            >
-              <View style={styles.shutterInner} />
-            </TouchableOpacity>
+            />
           </View>
         </CameraView>
       </View>
@@ -311,17 +330,6 @@ export default function CaptureScreen() {
           <Text style={styles.submitButtonText}>Submit for Grading</Text>
         </TouchableOpacity>
       </View>
-
-      <Modal visible={submitting} transparent animationType="fade" statusBarTranslucent>
-        <View style={styles.backdrop}>
-          <View style={styles.loadingCard}>
-            <ActivityIndicator size="large" color="#4F46E5" />
-            <Text style={styles.loadingTitle}>Grading in progress</Text>
-            <Text style={styles.loadingMessage}>{loadingMessage}</Text>
-            <Text style={styles.loadingHint}>This usually takes 30–60 seconds.</Text>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 }
@@ -329,34 +337,67 @@ export default function CaptureScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: "rgba(0,0,0,1)",
   },
   centered: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    gap: 16,
-    padding: 32,
-    backgroundColor: "#F9FAFB",
+    gap: SPACING.lg,
+    padding: SPACING.xxl,
+    backgroundColor: COLORS.surface,
+  },
+
+  // ── Full-screen grading progress ────────────────────────────────────────────
+  loadingScreen: {
+    flex: 1,
+    backgroundColor: COLORS.card,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  loadingAppName: {
+    fontSize: 18,
+    fontWeight: FONT.medium,
+    color: COLORS.primary,
+    marginBottom: SPACING.xxl,
+  },
+  loadingMain: {
+    fontSize: 18,
+    fontWeight: FONT.medium,
+    color: COLORS.textPrimary,
+    textAlign: "center",
+  },
+  loadingSub: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    textAlign: "center",
+    marginTop: SPACING.sm,
+  },
+  loadingHelper: {
+    position: "absolute",
+    bottom: 40,
+    fontSize: 12,
+    color: COLORS.textTertiary,
+    textAlign: "center",
   },
 
   // ── Permission ──────────────────────────────────────────────────────────────
   permissionText: {
     fontSize: 16,
-    color: "#374151",
+    color: COLORS.textSecondary,
     textAlign: "center",
     lineHeight: 24,
   },
   permissionButton: {
-    backgroundColor: "#4F46E5",
-    borderRadius: 12,
-    paddingHorizontal: 24,
+    backgroundColor: COLORS.primary,
+    borderRadius: RADIUS.lg,
+    paddingHorizontal: SPACING.xl,
     paddingVertical: 14,
   },
   permissionButtonText: {
-    color: "#fff",
+    color: COLORS.card,
     fontSize: 15,
-    fontWeight: "700",
+    fontWeight: FONT.medium,
   },
 
   // ── Camera / Scanning ───────────────────────────────────────────────────────
@@ -373,41 +414,41 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: 56,
     paddingHorizontal: 20,
-    paddingBottom: 16,
+    paddingBottom: SPACING.lg,
     backgroundColor: "rgba(0,0,0,0.45)",
   },
   pageCounter: {
-    color: "#fff",
+    color: COLORS.card,
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: FONT.medium,
   },
   doneButton: {
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 8,
+    backgroundColor: COLORS.card,
+    borderRadius: RADIUS.md,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.sm,
   },
   doneButtonDisabled: {
     backgroundColor: "rgba(255,255,255,0.3)",
   },
   doneButtonText: {
-    color: "#1F2937",
-    fontSize: 15,
-    fontWeight: "700",
+    color: COLORS.primary,
+    fontSize: 14,
+    fontWeight: FONT.medium,
   },
   doneButtonTextDisabled: {
     color: "rgba(255,255,255,0.5)",
   },
   cancelButton: {
     backgroundColor: "rgba(255,255,255,0.2)",
-    borderRadius: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 8,
+    borderRadius: RADIUS.md,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.sm,
   },
   cancelButtonText: {
-    color: "#fff",
-    fontSize: 15,
-    fontWeight: "600",
+    color: COLORS.card,
+    fontSize: 14,
+    fontWeight: FONT.medium,
   },
   cameraBottomBar: {
     position: "absolute",
@@ -415,174 +456,128 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     paddingBottom: 48,
-    paddingTop: 24,
+    paddingTop: SPACING.xl,
     alignItems: "center",
     backgroundColor: "rgba(0,0,0,0.45)",
   },
   shutter: {
-    width: 76,
-    height: 76,
-    borderRadius: 38,
-    backgroundColor: "transparent",
-    borderWidth: 4,
-    borderColor: "#fff",
-    justifyContent: "center",
-    alignItems: "center",
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: COLORS.card,
+    borderWidth: 2,
+    borderColor: COLORS.primary,
   },
   shutterCapturing: {
     opacity: 0.5,
   },
-  shutterInner: {
-    width: 58,
-    height: 58,
-    borderRadius: 29,
-    backgroundColor: "#fff",
-  },
 
   // ── Review ──────────────────────────────────────────────────────────────────
   reviewHeader: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 12,
-    backgroundColor: "#F9FAFB",
-    gap: 4,
+    paddingHorizontal: SPACING.lg,
+    paddingTop: SPACING.lg,
+    paddingBottom: SPACING.md,
+    backgroundColor: COLORS.surface,
+    gap: SPACING.xs,
   },
   reviewTitle: {
     fontSize: 18,
-    fontWeight: "700",
-    color: "#111827",
+    fontWeight: FONT.medium,
+    color: COLORS.textPrimary,
   },
   reviewSubtitle: {
     fontSize: 13,
-    color: "#6B7280",
+    color: COLORS.textSecondary,
   },
   reviewScroll: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: COLORS.surface,
   },
   reviewGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 16,
-    padding: 16,
+    gap: SPACING.lg,
+    padding: SPACING.lg,
   },
   thumbCard: {
     width: THUMB_SIZE,
-    gap: 6,
+    gap: SPACING.sm,
   },
   thumbImage: {
     width: THUMB_SIZE,
     height: THUMB_SIZE * 1.35,
-    borderRadius: 10,
-    backgroundColor: "#E5E7EB",
+    borderRadius: RADIUS.lg,
+    borderWidth: 0.5,
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.border,
   },
   thumbLabel: {
     fontSize: 12,
-    fontWeight: "600",
-    color: "#6B7280",
+    color: COLORS.textSecondary,
     textAlign: "center",
+    marginTop: SPACING.sm,
   },
   thumbActions: {
     flexDirection: "row",
-    gap: 8,
+    gap: SPACING.sm,
   },
   retakeButton: {
     flex: 1,
-    backgroundColor: "#EEF2FF",
-    borderRadius: 8,
-    paddingVertical: 8,
+    backgroundColor: "transparent",
+    borderWidth: 0.5,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.md,
+    paddingVertical: SPACING.sm,
     alignItems: "center",
   },
   retakeButtonText: {
-    color: "#4F46E5",
-    fontSize: 13,
-    fontWeight: "600",
+    color: COLORS.textPrimary,
+    fontSize: 14,
+    fontWeight: FONT.regular,
   },
   deleteButton: {
     flex: 1,
-    backgroundColor: "#FEE2E2",
-    borderRadius: 8,
-    paddingVertical: 8,
+    backgroundColor: COLORS.failLight,
+    borderWidth: 0,
+    borderRadius: RADIUS.md,
+    paddingVertical: SPACING.sm,
     alignItems: "center",
   },
   deleteButtonText: {
-    color: "#EF4444",
-    fontSize: 13,
-    fontWeight: "600",
+    color: ON.deleteText,
+    fontSize: 14,
+    fontWeight: FONT.medium,
   },
   reviewFooter: {
-    padding: 16,
-    paddingBottom: 32,
-    backgroundColor: "#F9FAFB",
-    borderTopWidth: 1,
-    borderTopColor: "#E5E7EB",
-    gap: 10,
+    padding: SPACING.lg,
+    paddingBottom: SPACING.xxl,
+    backgroundColor: COLORS.surface,
+    borderTopWidth: 0.5,
+    borderTopColor: COLORS.border,
   },
   addMoreButton: {
-    borderWidth: 2,
-    borderColor: "#4F46E5",
-    borderRadius: 12,
+    backgroundColor: "transparent",
+    borderWidth: 1.5,
+    borderColor: COLORS.primary,
+    borderRadius: RADIUS.lg,
     paddingVertical: 14,
     alignItems: "center",
   },
   addMoreButtonText: {
-    color: "#4F46E5",
+    color: COLORS.primary,
     fontSize: 15,
-    fontWeight: "700",
+    fontWeight: FONT.medium,
   },
   submitButton: {
-    backgroundColor: "#4F46E5",
-    borderRadius: 14,
-    paddingVertical: 18,
+    backgroundColor: COLORS.primary,
+    borderRadius: RADIUS.lg,
+    paddingVertical: SPACING.lg,
     alignItems: "center",
-    shadowColor: "#4F46E5",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
+    marginTop: SPACING.md,
   },
   submitButtonText: {
-    color: "#fff",
-    fontSize: 17,
-    fontWeight: "700",
-    letterSpacing: 0.3,
-  },
-
-  // ── Loading overlay ─────────────────────────────────────────────────────────
-  backdrop: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.65)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadingCard: {
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    paddingHorizontal: 32,
-    paddingVertical: 32,
-    alignItems: "center",
-    gap: 12,
-    minWidth: 260,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-  loadingTitle: {
-    fontSize: 17,
-    fontWeight: "700",
-    color: "#1F2937",
-  },
-  loadingMessage: {
+    color: COLORS.card,
     fontSize: 15,
-    fontWeight: "600",
-    color: "#4F46E5",
-    textAlign: "center",
-  },
-  loadingHint: {
-    fontSize: 12,
-    color: "#9CA3AF",
-    textAlign: "center",
+    fontWeight: FONT.medium,
   },
 });

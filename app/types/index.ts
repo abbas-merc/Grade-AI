@@ -63,6 +63,9 @@ export interface QuestionResult {
   marks_available: number;
   mark_breakdown: PaperMarkBreakdownPoint[];
   feedback: string;
+  // True when the transcript contains an [illegible] token — the model could
+  // not read part of this answer, so the teacher should check it manually.
+  has_illegible?: boolean;
 }
 
 export interface PaperGradingResult {
@@ -72,6 +75,12 @@ export interface PaperGradingResult {
   cost_usd: number;
   results: QuestionResult[];
   cost_cap_reached: boolean;
+  // True when the per-question maximum marks don't sum to the paper total —
+  // individual question totals may contain a marking error.
+  marks_total_mismatch?: boolean;
+  // Firestore document ID of the saved marking (teachers/{uid}/markings/{id}).
+  // Present when the backend successfully persisted the result.
+  marking_id?: string;
 }
 
 export interface HistoryEntry {
@@ -83,4 +92,15 @@ export interface HistoryEntry {
   total_marks_available: number;
   percentage: number;
   result: PaperGradingResult;
+  // Lifecycle of the marking job. Absent on legacy documents → treat as
+  // "complete". "processing"/"queued" rows show a progress indicator instead of
+  // a score; "failed"/"error" rows show a failure note.
+  status?: "queued" | "processing" | "complete" | "failed" | "error";
+  // While status is "processing", the current pipeline step (e.g. "Reading
+  // handwriting") shown as a subtitle in the History row.
+  progress_step?: string;
+  // Firestore document ID of this marking under teachers/{uid}/markings.
+  // Used to delete the corresponding Firestore document. Absent on entries
+  // graded before this field existed (those delete locally only).
+  marking_id?: string;
 }

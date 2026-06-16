@@ -20,8 +20,6 @@ from __future__ import annotations
 import json
 import os
 import re
-import time
-from datetime import datetime, timezone
 from typing import Any
 
 import anthropic
@@ -32,7 +30,6 @@ from firestore_service import (
     get_all_papers,
     get_question_by_id,
     get_questions_for_paper,
-    log_marking_request,
 )
 from prompts import (
     get_maths_prompt,
@@ -43,6 +40,7 @@ from prompts import (
 )
 from agents.vision_extractor import extract_and_grade
 from agents.feedback_generator import generate_feedback
+from agents.image_preprocess import enhance_image_base64
 
 
 # ---------------------------------------------------------------------------
@@ -179,6 +177,14 @@ def run_grading_pipeline(
         marks_awarded: int = int(grade_result.get("marks_awarded", 0))
         mark_breakdown: list[dict] = grade_result.get("mark_breakdown", []) or []
 
+        # The [illegible] token is preserved in extracted_text (shown to the
+        # teacher); log which question it appeared in for manual review.
+        if "[illegible]" in extracted_text.lower():
+            print(
+                f"[WARN] [illegible] token(s) found in question {question_int_id}. "
+                f"Teacher should check this answer manually."
+            )
+
         print("[Pipeline] Call 2 — generate_feedback")
         feedback_result = generate_feedback(
             question_text=question_text,
@@ -245,6 +251,8 @@ def run_full_paper_grading(
     page_images: list[str],
     db: Session,
     uid: str,
+    progress_callback=None,
+    inline_paper: dict | None = None,
 ) -> dict:
     """
     Grade an entire exam paper from one or more photographed pages in a
@@ -279,8 +287,6 @@ def run_full_paper_grading(
         ValueError: paper/questions missing.
         RuntimeError: API key missing, API call failed, or unparseable JSON.
     """
-    start_time = time.time()
-
     # Strip whitespace/newlines — Railway env vars sometimes include a trailing
     # \n from copy-paste, which httpx rejects as an illegal header value and
     # surfaces as the deeply misleading "APIConnectionError: Connection error."
@@ -288,14 +294,27 @@ def run_full_paper_grading(
     if not api_key:
         raise RuntimeError("ANTHROPIC_API_KEY not set")
 
-    papers = get_all_papers()
-    paper = next((p for p in papers if str(p["id"]) == str(paper_id)), None)
-    if paper is None:
-        raise ValueError(f"Paper {paper_id} not found")
+    if inline_paper is not None:
+        # Generated (ad-hoc) paper from the Custom Paper Generator. Its paper
+        # meta + questions/mark schemes are supplied inline rather than looked up
+        # by paper_id (these papers are not stored in the papers collection). The
+        # shape mirrors get_all_papers() / get_questions_for_paper() so the rest
+        # of the function is unchanged: paper has subject_code, paper_number,
+        # session, year, tier, total_marks; each question has question_number,
+        # marks_available, question_text, and mark_scheme=[{description}].
+        paper = inline_paper["paper"]
+        questions: list[dict] = inline_paper.get("questions", [])
+        if not questions:
+            raise ValueError("inline_paper provided with no questions")
+    else:
+        papers = get_all_papers()
+        paper = next((p for p in papers if str(p["id"]) == str(paper_id)), None)
+        if paper is None:
+            raise ValueError(f"Paper {paper_id} not found")
 
-    questions: list[dict] = get_questions_for_paper(str(paper_id))
-    if not questions:
-        raise ValueError(f"No questions found for paper_id={paper_id}")
+        questions = get_questions_for_paper(str(paper_id))
+        if not questions:
+            raise ValueError(f"No questions found for paper_id={paper_id}")
 
     # --- Select the subject/paper-specific examiner prompt ---
     # Route on (subject_code, paper_number) to the correct marking conventions.
@@ -342,23 +361,42 @@ def run_full_paper_grading(
 
     content: list[dict] = [{"type": "text", "text": intro}]
     for page_b64 in page_images:
+        # Enhance each page for handwriting legibility before sending it to the
+        # model. enhance_image_base64 always returns high-quality JPEG bytes.
+        enhanced_b64 = enhance_image_base64(_strip_data_uri(page_b64))
         content.append({
             "type": "image",
             "source": {
                 "type": "base64",
-                "media_type": _detect_media_type(page_b64),
-                "data": _strip_data_uri(page_b64),
+                "media_type": "image/jpeg",
+                "data": enhanced_b64,
             },
         })
 
     instructions = (
         f"\nMARK SCHEME (apply Cambridge rules strictly — {marking_instructions}):\n\n"
         f"{mark_scheme_full}\n\n"
+        "MAXIMUM MARKS: The maximum marks available for each question are stated "
+        "directly in the mark scheme above — the number shown in square brackets "
+        "next to the question (e.g. '[4 marks]'). Read that number exactly as "
+        "written. You must NOT infer, calculate, adjust, or redistribute marks "
+        "between questions. Whatever the mark scheme states as the total for a "
+        "question is the total for that question, no exceptions, and the marks "
+        "you award for a question must never exceed it.\n\n"
         "You must base your marking decision entirely on what the student has "
         "written. Do not perform independent verification of the answer. Do not "
         "recalculate. If you calculated something yourself and it differs from "
         "what the student wrote, ignore your calculation entirely and mark only "
         "what the student wrote against the mark scheme criteria.\n\n"
+        "HANDWRITING: The image contains handwritten student answers. "
+        "Handwriting quality may vary significantly between students. Some "
+        "handwriting may be messy, rushed, or unconventional. Read every "
+        "written character as carefully as possible. If a word or number is "
+        "genuinely impossible to interpret after careful analysis, write the "
+        "token [illegible] in place of that word. Do not skip any written "
+        "content and do not guess randomly. Apply extra attention to numbers, "
+        "units, and technical scientific terms as these are the most critical "
+        "parts of student answers.\n\n"
         "TASK — for EACH question listed above:\n"
         "1. Scan all pages for the student's answer (question numbers like "
         "'1a', '13b(ii)' will be written by the student). An answer may "
@@ -413,6 +451,9 @@ def run_full_paper_grading(
         f"{len(questions)} questions, {len(page_images)} page(s)"
     )
 
+    if progress_callback:
+        progress_callback("Reading handwriting")
+
     try:
         response = client.messages.create(
             model=MODEL,
@@ -446,27 +487,65 @@ def run_full_paper_grading(
     except Exception as exc:
         raise RuntimeError(f"Could not parse grading response as JSON: {exc}")
 
+    if progress_callback:
+        progress_callback("Applying mark scheme")
+
     raw_results = parsed.get("results", [])
     if not isinstance(raw_results, list):
         raise RuntimeError("Grading response missing 'results' list")
 
-    result_by_qnum: dict[str, dict] = {}
-    for r in raw_results:
-        if isinstance(r, dict):
-            qnum = str(r.get("question_number", "")).strip()
-            if qnum:
-                result_by_qnum[qnum] = r
+    # Index the model's results for matching. We keep an exact index plus a
+    # "normalized leading number" index so we can recover from the model keying
+    # a result by a sub-part (e.g. returning "1a"/"1(a)(i)" for our question
+    # "1") — common for generated papers whose mark-scheme text carries the
+    # source paper's sub-part labels. Normalization is the FALLBACK only; an
+    # exact question_number match always wins. We normalise to the FIRST run of
+    # digits found anywhere in the key — the whole run, so Q10–Q13 don't
+    # collapse into Q1 — which maps "1a", "1(a)(i)", and prefixed forms the
+    # model sometimes emits ("Q1", "Q13") all back to the leading number.
+    def _norm_qnum(value: str) -> str:
+        m = re.search(r"\d+", str(value))
+        return m.group(0) if m else str(value).strip().lower()
+
+    model_results = [
+        r for r in raw_results
+        if isinstance(r, dict) and str(r.get("question_number", "")).strip()
+    ]
+    exact_index: dict[str, int] = {}
+    norm_index: dict[str, list[int]] = {}
+    for i, r in enumerate(model_results):
+        rq = str(r["question_number"]).strip()
+        exact_index.setdefault(rq, i)
+        norm_index.setdefault(_norm_qnum(rq), []).append(i)
+
+    # A model result is consumed once matched, so the same entry is never
+    # aggregated into two of our questions (guards the inverse case where the
+    # model lumps several stored sub-questions under one number).
+    consumed: set[int] = set()
 
     # --- Build final results in stored question order, persist sessions ---
     results: list[dict] = []
     total_awarded: int = 0
+    illegible_questions: list[str] = []
 
     for q in questions:
         qnum = q["question_number"]
         marks_available = int(q["marks_available"])
-        r = result_by_qnum.get(qnum)
 
-        if r is None:
+        # 1) Exact match wins. 2) Fallback: every still-unconsumed model result
+        # whose leading number normalises to this question (aggregated).
+        matched: list[dict] = []
+        exact_i = exact_index.get(qnum)
+        if exact_i is not None and exact_i not in consumed:
+            matched.append(model_results[exact_i])
+            consumed.add(exact_i)
+        else:
+            for i in norm_index.get(_norm_qnum(qnum), []):
+                if i not in consumed:
+                    matched.append(model_results[i])
+                    consumed.add(i)
+
+        if not matched:
             results.append({
                 "question_number": qnum,
                 "question_text": q["question_text"],
@@ -475,32 +554,57 @@ def run_full_paper_grading(
                 "marks_available": marks_available,
                 "mark_breakdown": [],
                 "feedback": "Not graded (missing from AI response).",
+                "has_illegible": False,
             })
             continue
 
-        try:
-            awarded = int(r.get("marks_awarded", 0))
-        except (TypeError, ValueError):
-            awarded = 0
+        # Aggregate across matched results (usually one; >1 when the model split
+        # this question into sub-parts).
+        awarded = 0
+        extracted_parts: list[str] = []
+        feedback_parts: list[str] = []
+        breakdown: list = []
+        for r in matched:
+            try:
+                part_awarded = int(r.get("marks_awarded", 0))
+            except (TypeError, ValueError):
+                part_awarded = 0
+            awarded += max(0, part_awarded)
+            ex = str(r.get("extracted_answer", "")).strip()
+            if ex:
+                extracted_parts.append(ex)
+            fb = str(r.get("feedback", "")).strip()
+            if fb:
+                feedback_parts.append(fb)
+            bd = r.get("mark_breakdown", [])
+            if isinstance(bd, list):
+                breakdown.extend(bd)
+
         awarded = max(0, min(awarded, marks_available))
         total_awarded += awarded
+        extracted = "\n".join(extracted_parts)
+        feedback = " ".join(feedback_parts)
 
-        extracted = str(r.get("extracted_answer", "")).strip()
-        feedback = str(r.get("feedback", "")).strip()
-        breakdown = r.get("mark_breakdown", [])
-        if not isinstance(breakdown, list):
-            breakdown = []
+        # Flag questions where the model could not read part of the answer, so
+        # the teacher knows to check that question manually.
+        has_illegible = "[illegible]" in extracted.lower()
+        if has_illegible:
+            illegible_questions.append(qnum)
 
-        db.add(GradingSession(
-            question_id=int(q["id"]),
-            extracted_text=extracted,
-            marks_awarded=float(awarded),
-            feedback_json=json.dumps({
-                "feedback": feedback,
-                "mark_breakdown": breakdown,
-                "cost_usd": cost,
-            }),
-        ))
+        # Generated papers' question IDs are not rows in the SQLite Question
+        # table, so skip the analytics GradingSession write for inline papers —
+        # int(q["id"]) would fail and the question_id FK would be invalid.
+        if inline_paper is None:
+            db.add(GradingSession(
+                question_id=int(q["id"]),
+                extracted_text=extracted,
+                marks_awarded=float(awarded),
+                feedback_json=json.dumps({
+                    "feedback": feedback,
+                    "mark_breakdown": breakdown,
+                    "cost_usd": cost,
+                }),
+            ))
 
         results.append({
             "question_number": qnum,
@@ -510,14 +614,44 @@ def run_full_paper_grading(
             "marks_available": marks_available,
             "mark_breakdown": breakdown,
             "feedback": feedback,
+            "has_illegible": has_illegible,
         })
 
     db.commit()
+
+    if progress_callback:
+        progress_callback("Calculating scores")
+
+    # Log which questions contained illegible content so it is visible in logs
+    # as well as in the result returned to the teacher.
+    if illegible_questions:
+        print(
+            f"[WARN] [illegible] token(s) found in paper {paper_id} for "
+            f"question(s): {', '.join(illegible_questions)}. "
+            f"Flagging those questions for manual review."
+        )
 
     # Authoritative paper total comes from Paper.total_marks, not summed parts
     total_available = int(paper["total_marks"])
     # Clamp awarded just in case mis-parsed mark counts let it overshoot
     total_awarded = min(total_awarded, total_available)
+
+    # --- Validate per-question maxima against the authoritative paper total ---
+    # The maximum marks for each question come straight from the mark scheme
+    # (Firestore). Their sum must equal the paper's stored total_marks. If it
+    # doesn't, the mark scheme is internally inconsistent (e.g. a 4-mark
+    # question stored as 3), so individual question totals may be wrong even
+    # when the paper total happens to add up. We flag this (but never block the
+    # result) so the frontend can warn the user.
+    expected_total = total_available
+    returned_total = sum(int(q["marks_available"]) for q in questions)
+    marks_total_mismatch = returned_total != expected_total
+    if marks_total_mismatch:
+        print(
+            f"[WARN] marks total mismatch for paper {paper_id}: "
+            f"expected total {expected_total} (paper.total_marks) but per-question "
+            f"maxima sum to {returned_total}. Flagging marks_total_mismatch=true."
+        )
 
     print(
         f"[Pipeline] FINAL: {total_awarded}/{total_available} marks, "
@@ -531,24 +665,7 @@ def run_full_paper_grading(
         "cost_usd": round(cost, 6),
         "results": results,
         "cost_cap_reached": cost_cap_reached,
+        "marks_total_mismatch": marks_total_mismatch,
     }
-
-    log_marking_request(
-        uid,
-        {
-            "teacher_uid": uid,
-            "subject_code": str(paper["subject_code"]),
-            "paper_number": int(paper["paper_number"]),
-            "session": paper["session"],
-            "year": paper["year"],
-            "paper_id": paper_id,
-            "questions_marked": len(results),
-            "total_marks_awarded": total_awarded,
-            "total_marks_available": total_available,
-            "cost_usd": round(cost, 6),
-            "processing_time_ms": int((time.time() - start_time) * 1000),
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-        },
-    )
 
     return final_result

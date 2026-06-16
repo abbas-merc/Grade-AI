@@ -5,6 +5,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import type { Paper } from "../types";
+import { COLORS, RADIUS, SPACING, FONT, ON } from "../constants/theme";
 
 interface Props {
   paper: Paper;
@@ -36,12 +37,15 @@ export default function PaperCard({ paper, onPress }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 16,
-    shadowColor: "#000",
+    backgroundColor: COLORS.card,
+    borderWidth: 0.5,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.lg,
+    paddingVertical: 14,
+    paddingHorizontal: SPACING.lg,
+    shadowColor: "rgba(0,0,0,1)",
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.07,
+    shadowOpacity: 0.06,
     shadowRadius: 4,
     elevation: 2,
   },
@@ -51,31 +55,31 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   code: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#1F2937",
+    fontSize: 15,
+    fontWeight: FONT.medium,
+    color: COLORS.textPrimary,
   },
   tierBadge: {
-    backgroundColor: "#EEF2FF",
-    borderRadius: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
+    backgroundColor: ON.extendedBg,
+    borderRadius: RADIUS.sm,
+    paddingHorizontal: 10,
+    paddingVertical: SPACING.xs,
   },
   tierText: {
-    color: "#4F46E5",
+    color: ON.extendedText,
     fontSize: 12,
-    fontWeight: "600",
+    fontWeight: FONT.medium,
   },
   session: {
-    fontSize: 14,
-    color: "#6B7280",
-    marginTop: 6,
+    fontSize: 13,
+    color: COLORS.textSecondary,
+    marginTop: SPACING.xs,
   },
   footer: {
-    marginTop: 12,
+    marginTop: SPACING.xs,
   },
   marks: {
     fontSize: 13,
-    color: "#9CA3AF",
+    color: COLORS.textSecondary,
   },
 });

@@ -1,32 +1,36 @@
 /**
  * constants/config.ts — App-wide configuration constants.
  *
- * BASE_URL resolution (deliberately does NOT use Constants.isDevice, which is
- * unreliable on Android in SDK 54 and often returns undefined):
+ * BASE_URL is derived automatically from Expo's dev-server host so it never
+ * needs manual updates when the PC's DHCP IP changes.
  *
- *   Android (emulator OR real device) → localhost, tunneled to the PC by
- *     `adb reverse tcp:8000 tcp:8000`. adb reverse works for both, so the same
- *     URL is correct in every Android case. No firewall or same-WiFi needed.
- *   iOS → the dev PC's LAN IP (no adb reverse on iOS). For the iOS simulator
- *     localhost would also work, but the LAN IP works for both simulator and
- *     a real iOS device, so we use it uniformly.
+ * Strategy:
+ *   Expo's dev server always runs on the PC at the same IP the backend uses.
+ *   Constants.expoConfig.hostUri gives "<ip>:<metro-port>" (e.g. "192.168.68.63:8081").
+ *   We extract the IP part and point it at the backend port (8001).
  *
- * Requirement for Android: run `adb reverse tcp:8000 tcp:8000` once per device
- * connection (it is cleared on unplug/reboot/adb restart).
+ *   Fallback: if hostUri is unavailable (production build, standalone app),
+ *   we fall back to EXPO_PUBLIC_API_URL env var, then a hardcoded IP.
  */
 
-import { Platform } from "react-native";
+import Constants from "expo-constants";
 
-/**
- * LAN IP of the development PC running the FastAPI backend. Used by iOS.
- * Update this if the PC's IP changes (run `ipconfig` and read the IPv4 address).
- */
-const DEV_PC_LAN_IP = "192.168.68.61";
-const BACKEND_PORT = 8000;
+const BACKEND_PORT = 8001;
 
 function getBaseUrl(): string {
-  // Both Android and iOS real devices reach the PC over WiFi via its LAN IP.
-  return `http://${DEV_PC_LAN_IP}:${BACKEND_PORT}`;
+  // Derive IP from Expo's dev-server host (same machine runs both Metro + FastAPI).
+  const hostUri = Constants.expoConfig?.hostUri;
+  if (hostUri) {
+    const ip = hostUri.split(":")[0];
+    if (ip) return `http://${ip}:${BACKEND_PORT}`;
+  }
+
+  // Explicit override via env var (useful for production / EAS builds).
+  const envUrl = process.env.EXPO_PUBLIC_API_URL;
+  if (envUrl) return envUrl;
+
+  // Last-resort hardcoded fallback — update if above mechanisms fail.
+  return `http://192.168.68.63:${BACKEND_PORT}`;
 }
 
 export const BASE_URL = getBaseUrl();

@@ -12,13 +12,10 @@
 import axios from "axios";
 import type { AxiosError, InternalAxiosRequestConfig } from "axios";
 import auth from "@react-native-firebase/auth";
-import {
-  BASE_URL,
-  GRADING_TIMEOUT_MS,
-  POLL_INTERVAL_MS,
-  MAX_POLL_ATTEMPTS,
-} from "../constants/config";
-import type { Paper, Question, GradingResult, PaperGradingResult } from "../types";
+import { encode as encodeBase64 } from "base64-arraybuffer";
+import { BASE_URL, GRADING_TIMEOUT_MS } from "../constants/config";
+import type { Paper, Question, GradingResult } from "../types";
+import type { GeneratedPaper, GeneratePaperRequest } from "../types/paperGenerator";
 
 // ---------------------------------------------------------------------------
 // Axios instance
@@ -42,8 +39,14 @@ client.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     const currentUser = auth().currentUser;
     if (currentUser) {
-      const token = await currentUser.getIdToken();
-      config.headers.Authorization = `Bearer ${token}`;
+      try {
+        const token = await currentUser.getIdToken();
+        config.headers.Authorization = `Bearer ${token}`;
+      } catch {
+        // Token refresh failed temporarily (e.g. Firebase re-initializing after
+        // a hot reload). Proceed without the header — the backend will return
+        // a 401, which is an AxiosError and produces a proper error message.
+      }
     }
     return config;
   }
@@ -180,78 +183,9 @@ export async function gradeAnswer(
   }
 }
 
-// ---------------------------------------------------------------------------
-// Full-paper grading
-// ---------------------------------------------------------------------------
-
-interface StartGradingResponse {
-  job_id: string;
-}
-
-interface GradingStatusResponse {
-  status: "pending" | "running" | "done" | "error";
-  result?: PaperGradingResult | null;
-  error?: string | null;
-}
-
-/**
- * Submit multiple page photos of an answer booklet to grade an entire paper.
- *
- * Uses the async backend pattern to avoid Cloudflare's ~100s edge timeout:
- *   1. POST /grade/paper           — returns a job_id immediately
- *   2. GET  /grade/paper/status/id — polled every POLL_INTERVAL_MS until done
- *
- * @param paperId    - ID of the paper being graded.
- * @param pageImages - Array of raw base64 JPEG strings, one per photographed page.
- * @returns PaperGradingResult with total score and per-question breakdowns.
- * @throws  Error("Paper grading failed: {detail}") on any failure.
- */
-export async function gradePaper(
-  paperId: number,
-  pageImages: string[]
-): Promise<PaperGradingResult> {
-  let jobId: string;
-  try {
-    const { data } = await client.post<StartGradingResponse>(
-      "/grade/paper",
-      { paper_id: paperId, page_images: pageImages },
-      { timeout: 60000 }
-    );
-    jobId = data.job_id;
-  } catch (err) {
-    if (axios.isAxiosError(err)) {
-      throw new Error(`Paper grading failed: ${extractAxiosMessage(err)}`);
-    }
-    throw new Error("Paper grading failed: unexpected error");
-  }
-
-  for (let attempt = 0; attempt < MAX_POLL_ATTEMPTS; attempt++) {
-    await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
-    try {
-      const { data } = await client.get<GradingStatusResponse>(
-        `/grade/paper/status/${jobId}`,
-        { timeout: 15000 }
-      );
-      if (data.status === "done" && data.result) {
-        return data.result;
-      }
-      if (data.status === "error") {
-        throw new Error(data.error || "Grading failed");
-      }
-    } catch (err) {
-      // Transient poll failure — try again on next tick. Only give up
-      // if it's a non-axios error (real bug) or a 404 (job lost).
-      if (axios.isAxiosError(err) && err.response?.status === 404) {
-        throw new Error("Grading job expired. Please try again.");
-      }
-      if (!axios.isAxiosError(err)) {
-        throw err;
-      }
-    }
-  }
-
-  throw new Error("Grading is taking longer than expected. Please try again.");
-}
+// Full-paper grading no longer goes through an HTTP endpoint. The app writes a
+// "queued" document directly to Firestore (see services/markingQueue.ts) and a
+// backend listener grades it. The History tab observes status changes live.
 
 // ---------------------------------------------------------------------------
 // Health
@@ -274,5 +208,109 @@ export async function checkHealth(): Promise<boolean> {
     return data.status === "ok";
   } catch {
     return false;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Custom Paper Generator
+// ---------------------------------------------------------------------------
+
+/**
+ * Fetch the distinct topics available for a subject (for the topic chip row).
+ *
+ * @param subject - e.g. "math".
+ * @returns Array of topic strings from GET /questions/topics?subject=...
+ * @throws  Error("Failed to load topics") on any failure.
+ */
+export async function getTopics(subject: string): Promise<string[]> {
+  try {
+    const { data } = await client.get<{ topics: string[] }>("/questions/topics", {
+      params: { subject },
+    });
+    return data.topics ?? [];
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      throw new Error(`Failed to load topics: ${extractAxiosMessage(err)}`);
+    }
+    throw new Error("Failed to load topics");
+  }
+}
+
+/**
+ * Generate a custom paper from the questions collection.
+ *
+ * @param req - Subject, topics, totalMarks, difficulty.
+ * @returns The generated paper (questions + mark scheme) from
+ *          POST /api/generate-paper.
+ * @throws  Error("Failed to generate paper") on any failure.
+ */
+export async function generatePaper(
+  req: GeneratePaperRequest
+): Promise<GeneratedPaper> {
+  try {
+    const { data } = await client.post<GeneratedPaper>("/api/generate-paper", req);
+    return data;
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      throw new Error(`Failed to generate paper: ${extractAxiosMessage(err)}`);
+    }
+    throw new Error("Failed to generate paper");
+  }
+}
+
+/**
+ * POST a generated paper to a PDF endpoint and return the PDF as a base64
+ * string (ready for FileSystem.writeAsStringAsync with Base64 encoding).
+ */
+async function downloadPdfAsBase64(
+  path: string,
+  paper: GeneratedPaper
+): Promise<string> {
+  const { data } = await client.post<ArrayBuffer>(path, paper, {
+    responseType: "arraybuffer",
+    timeout: GRADING_TIMEOUT_MS,
+  });
+  return encodeBase64(data);
+}
+
+/**
+ * Download the question-paper PDF for a generated paper.
+ * @returns base64-encoded PDF bytes.
+ * @throws  Error("Failed to download question paper") on any failure.
+ */
+export async function downloadQuestionPaperPdf(
+  paper: GeneratedPaper
+): Promise<string> {
+  try {
+    return await downloadPdfAsBase64(
+      "/api/generate-paper/download-question-paper",
+      paper
+    );
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      throw new Error(`Failed to download question paper: ${extractAxiosMessage(err)}`);
+    }
+    throw new Error("Failed to download question paper");
+  }
+}
+
+/**
+ * Download the mark-scheme PDF for a generated paper.
+ * @returns base64-encoded PDF bytes.
+ * @throws  Error("Failed to download mark scheme") on any failure.
+ */
+export async function downloadMarkSchemePdf(
+  paper: GeneratedPaper
+): Promise<string> {
+  try {
+    return await downloadPdfAsBase64(
+      "/api/generate-paper/download-mark-scheme",
+      paper
+    );
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      throw new Error(`Failed to download mark scheme: ${extractAxiosMessage(err)}`);
+    }
+    throw new Error("Failed to download mark scheme");
   }
 }

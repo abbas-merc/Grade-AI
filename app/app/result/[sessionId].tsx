@@ -17,6 +17,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 
 import GradeResult from "../../components/GradeResult";
 import type { GradingResult } from "../../types";
+import { COLORS, RADIUS, SPACING, FONT } from "../../constants/theme";
 
 export default function ResultScreen() {
   const { resultData } = useLocalSearchParams<{ resultData: string }>();
@@ -47,15 +48,7 @@ export default function ResultScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      {/* Score headline */}
-      <View style={styles.headline}>
-        <Text style={styles.headlineLabel}>Result</Text>
-        <Text style={styles.headlineScore}>
-          {result.marks_awarded} / {result.marks_available} marks
-        </Text>
-      </View>
-
-      {/* Detailed breakdown + feedback */}
+      {/* Score hero + detailed breakdown + feedback */}
       <GradeResult result={result} />
 
       {/* Navigation */}
@@ -73,64 +66,41 @@ export default function ResultScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: COLORS.surface,
   },
   content: {
-    padding: 16,
-    gap: 16,
+    padding: SPACING.lg,
+    gap: SPACING.lg,
     paddingBottom: 40,
   },
   centered: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    gap: 12,
-    padding: 24,
+    gap: SPACING.md,
+    padding: SPACING.xl,
+    backgroundColor: COLORS.surface,
   },
   errorTitle: {
     fontSize: 20,
-    fontWeight: "700",
-    color: "#EF4444",
+    fontWeight: FONT.medium,
+    color: COLORS.fail,
   },
   errorDetail: {
     fontSize: 14,
-    color: "#6B7280",
+    color: COLORS.textSecondary,
     textAlign: "center",
   },
-  headline: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 16,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  headlineLabel: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "#9CA3AF",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-  headlineScore: {
-    fontSize: 32,
-    fontWeight: "800",
-    color: "#1F2937",
-    marginTop: 4,
-  },
   homeButton: {
-    backgroundColor: "#1F2937",
-    borderRadius: 12,
-    paddingVertical: 16,
+    backgroundColor: COLORS.primary,
+    borderRadius: RADIUS.lg,
+    paddingVertical: SPACING.lg,
     alignItems: "center",
-    marginTop: 4,
+    marginTop: SPACING.xs,
   },
   homeButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "700",
+    color: COLORS.card,
+    fontSize: 15,
+    fontWeight: FONT.medium,
   },
 });

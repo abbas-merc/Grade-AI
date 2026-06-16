@@ -20,6 +20,7 @@ import {
 import { Link } from "expo-router";
 
 import { auth, authErrorMessage } from "../../services/firebase";
+import { COLORS, RADIUS, SPACING, FONT } from "../../constants/theme";
 
 export default function SignUpScreen() {
   const [email, setEmail] = useState("");
@@ -60,7 +61,7 @@ export default function SignUpScreen() {
         <TextInput
           style={styles.input}
           placeholder="Email"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={COLORS.textTertiary}
           autoCapitalize="none"
           autoCorrect={false}
           keyboardType="email-address"
@@ -72,7 +73,7 @@ export default function SignUpScreen() {
         <TextInput
           style={styles.input}
           placeholder="Password (at least 6 characters)"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={COLORS.textTertiary}
           secureTextEntry
           autoCapitalize="none"
           autoComplete="password-new"
@@ -90,7 +91,7 @@ export default function SignUpScreen() {
           activeOpacity={0.85}
         >
           {loading ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color={COLORS.card} />
           ) : (
             <Text style={styles.buttonText}>Sign Up</Text>
           )}
@@ -110,65 +111,65 @@ export default function SignUpScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: COLORS.surface,
   },
   inner: {
     flex: 1,
     justifyContent: "center",
-    paddingHorizontal: 24,
+    paddingHorizontal: SPACING.xl,
     gap: 14,
   },
   title: {
     fontSize: 26,
-    fontWeight: "700",
-    color: "#1F2937",
+    fontWeight: FONT.medium,
+    color: COLORS.textPrimary,
   },
   subtitle: {
     fontSize: 15,
-    color: "#6B7280",
-    marginBottom: 8,
+    color: COLORS.textSecondary,
+    marginBottom: SPACING.sm,
   },
   input: {
-    backgroundColor: "#fff",
+    backgroundColor: COLORS.card,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
-    borderRadius: 10,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.md,
     paddingHorizontal: 14,
-    paddingVertical: 12,
+    paddingVertical: SPACING.md,
     fontSize: 16,
-    color: "#1F2937",
+    color: COLORS.textPrimary,
   },
   error: {
-    color: "#DC2626",
+    color: COLORS.fail,
     fontSize: 14,
   },
   button: {
-    backgroundColor: "#4F46E5",
-    borderRadius: 10,
+    backgroundColor: COLORS.primary,
+    borderRadius: RADIUS.md,
     paddingVertical: 14,
     alignItems: "center",
-    marginTop: 4,
+    marginTop: SPACING.xs,
   },
   buttonDisabled: {
     opacity: 0.6,
   },
   buttonText: {
-    color: "#fff",
+    color: COLORS.card,
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: FONT.medium,
   },
   footer: {
     flexDirection: "row",
     justifyContent: "center",
-    marginTop: 8,
+    marginTop: SPACING.sm,
   },
   footerText: {
-    color: "#6B7280",
+    color: COLORS.textSecondary,
     fontSize: 14,
   },
   link: {
-    color: "#4F46E5",
+    color: COLORS.primary,
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: FONT.medium,
   },
 });

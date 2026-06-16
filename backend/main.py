@@ -17,7 +17,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from database import Base, engine
-from routers import papers, questions, grading
+from routers import papers, questions, grading, paper_generator
+from marking_worker import start_marking_listener
 
 app = FastAPI(
     title="GradeAI API",
@@ -37,6 +38,7 @@ app.add_middleware(
 app.include_router(papers.router)
 app.include_router(questions.router)
 app.include_router(grading.router)
+app.include_router(paper_generator.router, prefix="/api")
 
 
 @app.on_event("startup")
@@ -44,7 +46,11 @@ def startup_event():
     """Create all DB tables on first run (idempotent)."""
     import models  # noqa: F401 — ensure models are registered on Base before create_all
     Base.metadata.create_all(bind=engine)
-    print("GradeAI backend started — DB tables ready.")
+    # Start the Firestore-driven grading queue listener on a daemon thread. It
+    # replaces FastAPI BackgroundTasks (which Railway kills for long jobs) and
+    # runs for the lifetime of the process without blocking the server.
+    start_marking_listener()
+    print("GradeAI backend started — DB tables ready, marking queue listening.")
 
 
 @app.get("/health")

@@ -15,7 +15,21 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, View, StyleSheet } from "react-native";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import * as Notifications from "expo-notifications";
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
+
+import { COLORS, FONT } from "../constants/theme";
+import { registerForPushNotifications } from "../services/pushNotifications";
+
+// Show notifications even while the app is foregrounded.
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowBanner: true,
+    shouldShowList: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 export default function RootLayout() {
   const [initializing, setInitializing] = useState(true);
@@ -43,10 +57,26 @@ export default function RootLayout() {
     }
   }, [user, initializing, segments, router]);
 
+  // Once authenticated, register this device for push notifications so the
+  // backend can alert the teacher when a grading job finishes.
+  useEffect(() => {
+    if (!user) return;
+    registerForPushNotifications(user.uid);
+  }, [user]);
+
+  // Tapping a "Marking Complete" notification takes the teacher to the History
+  // tab, where the finished result is now visible.
+  useEffect(() => {
+    const sub = Notifications.addNotificationResponseReceivedListener(() => {
+      router.push({ pathname: "/", params: { tab: "history" } });
+    });
+    return () => sub.remove();
+  }, [router]);
+
   if (initializing) {
     return (
       <View style={styles.splash}>
-        <ActivityIndicator size="large" color="#4F46E5" />
+        <ActivityIndicator size="large" color={COLORS.primary} />
       </View>
     );
   }
@@ -56,17 +86,20 @@ export default function RootLayout() {
       <StatusBar style="auto" />
       <Stack
         screenOptions={{
-          headerStyle: { backgroundColor: "#4F46E5" },
-          headerTintColor: "#fff",
-          headerTitleStyle: { fontWeight: "bold" },
+          headerStyle: { backgroundColor: COLORS.primary },
+          headerTintColor: COLORS.card,
+          headerTitleStyle: { fontWeight: FONT.medium, fontSize: 18 },
         }}
       >
-        <Stack.Screen name="index" options={{ title: "GradeAI" }} />
+        <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="paper/[id]" options={{ title: "Paper" }} />
         <Stack.Screen name="question/[id]" options={{ title: "Question" }} />
         <Stack.Screen name="result/[sessionId]" options={{ title: "Your Result" }} />
         <Stack.Screen name="capture/[paperId]" options={{ title: "Capture Pages" }} />
         <Stack.Screen name="results/paper" options={{ title: "Your Results" }} />
+        <Stack.Screen name="generate-paper" options={{ title: "Create Paper" }} />
+        <Stack.Screen name="generated-paper" options={{ title: "Your Paper" }} />
+        <Stack.Screen name="paper-preview" options={{ headerShown: false }} />
         <Stack.Screen name="auth/sign-in" options={{ headerShown: false }} />
         <Stack.Screen name="auth/sign-up" options={{ headerShown: false }} />
       </Stack>
@@ -79,6 +112,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F9FAFB",
+    backgroundColor: COLORS.surface,
   },
 });

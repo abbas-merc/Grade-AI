@@ -1,13 +1,14 @@
 /**
  * components/GradeResult.tsx — Displays the full AI grading result.
  *
- * Shows: score, per-point mark breakdown with awarded/not-awarded icons,
+ * Shows: score, per-point mark breakdown with awarded/not-awarded badges,
  * and the feedback paragraph generated for the student.
  */
 
 import React from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import type { GradingResult, MarkBreakdownPoint } from "../types";
+import { COLORS, RADIUS, SPACING, FONT, ON } from "../constants/theme";
 
 interface Props {
   result: GradingResult;
@@ -21,8 +22,8 @@ export default function GradeResult({ result }: Props) {
   return (
     <View style={styles.container}>
       {/* Score hero */}
-      <View style={[styles.scoreCard, scoreCardColor(percentage)]}>
-        <Text style={styles.scoreLabel}>Your Score</Text>
+      <View style={styles.scoreCard}>
+        <Text style={styles.scoreLabel}>Total Score</Text>
         <Text style={styles.scoreValue}>
           {result.marks_awarded} / {result.marks_available}
         </Text>
@@ -34,9 +35,11 @@ export default function GradeResult({ result }: Props) {
         <Text style={styles.sectionTitle}>Mark Breakdown</Text>
         {result.mark_breakdown.map((point: MarkBreakdownPoint) => (
           <View key={point.point_number} style={styles.pointRow}>
-            <Text style={[styles.icon, point.awarded ? styles.iconAwarded : styles.iconMissed]}>
-              {point.awarded ? "✅" : "❌"}
-            </Text>
+            <View style={point.awarded ? styles.tickCircle : styles.crossCircle}>
+              <Text style={point.awarded ? styles.tickIcon : styles.crossIcon}>
+                {point.awarded ? "✓" : "✕"}
+              </Text>
+            </View>
             <View style={styles.pointBody}>
               <Text style={styles.criterion}>{point.criterion}</Text>
               <Text style={styles.reason}>{point.reason}</Text>
@@ -46,101 +49,121 @@ export default function GradeResult({ result }: Props) {
       </View>
 
       {/* Feedback */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Feedback</Text>
+      <View style={styles.feedbackBox}>
+        <Text style={styles.feedbackTitle}>Feedback</Text>
         <Text style={styles.feedbackText}>{result.feedback}</Text>
       </View>
     </View>
   );
 }
 
-function scoreCardColor(percentage: number): { backgroundColor: string } {
-  if (percentage >= 80) return { backgroundColor: "#059669" };
-  if (percentage >= 50) return { backgroundColor: "#4F46E5" };
-  return { backgroundColor: "#DC2626" };
-}
-
 const styles = StyleSheet.create({
   container: {
-    gap: 16,
+    gap: SPACING.lg,
   },
   scoreCard: {
-    borderRadius: 16,
-    padding: 24,
+    backgroundColor: COLORS.primary,
+    borderRadius: RADIUS.lg,
+    padding: SPACING.xl,
     alignItems: "center",
-    gap: 4,
+    gap: SPACING.xs,
   },
   scoreLabel: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: "rgba(255,255,255,0.8)",
+    fontSize: 11,
+    fontWeight: FONT.medium,
+    color: "rgba(255,255,255,0.6)",
     textTransform: "uppercase",
-    letterSpacing: 0.5,
+    letterSpacing: 0.8,
   },
   scoreValue: {
-    fontSize: 52,
-    fontWeight: "800",
-    color: "#fff",
-    lineHeight: 60,
+    fontSize: 36,
+    fontWeight: FONT.medium,
+    color: COLORS.card,
   },
   scorePercent: {
     fontSize: 18,
-    fontWeight: "600",
     color: "rgba(255,255,255,0.85)",
+    marginTop: SPACING.xs,
   },
   section: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    elevation: 2,
-    gap: 10,
+    backgroundColor: COLORS.card,
+    borderWidth: 0.5,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.lg,
+    padding: SPACING.lg,
+    gap: SPACING.sm,
   },
   sectionTitle: {
     fontSize: 15,
-    fontWeight: "700",
-    color: "#1F2937",
-    marginBottom: 4,
+    fontWeight: FONT.medium,
+    color: COLORS.textPrimary,
+    marginBottom: SPACING.xs,
   },
   pointRow: {
     flexDirection: "row",
-    gap: 10,
-    paddingVertical: 8,
-    borderTopWidth: 1,
-    borderTopColor: "#F3F4F6",
+    gap: SPACING.md,
+    paddingTop: SPACING.sm,
+    borderTopWidth: 0.5,
+    borderTopColor: COLORS.border,
   },
-  icon: {
-    fontSize: 18,
-    lineHeight: 24,
-    width: 28,
-    textAlign: "center",
+  tickCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: COLORS.passLight,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  iconAwarded: {
-    // colour baked into emoji
+  crossCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: COLORS.failLight,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  iconMissed: {
-    // colour baked into emoji
+  tickIcon: {
+    color: COLORS.pass,
+    fontSize: 11,
+    fontWeight: FONT.medium,
+  },
+  crossIcon: {
+    color: COLORS.fail,
+    fontSize: 11,
+    fontWeight: FONT.medium,
   },
   pointBody: {
     flex: 1,
   },
   criterion: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#1F2937",
+    fontSize: 13,
+    fontWeight: FONT.medium,
+    color: COLORS.textPrimary,
   },
   reason: {
+    fontSize: 12,
+    color: COLORS.textSecondary,
+    marginTop: SPACING.xs,
+    lineHeight: 17,
+  },
+  feedbackBox: {
+    backgroundColor: COLORS.primaryLight,
+    borderLeftWidth: 3,
+    borderLeftColor: COLORS.primary,
+    borderTopRightRadius: 8,
+    borderBottomRightRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    gap: SPACING.xs,
+  },
+  feedbackTitle: {
     fontSize: 13,
-    color: "#6B7280",
-    marginTop: 2,
-    lineHeight: 18,
+    fontWeight: FONT.medium,
+    color: ON.primaryText,
   },
   feedbackText: {
-    fontSize: 14,
-    color: "#374151",
-    lineHeight: 22,
+    fontSize: 13,
+    color: ON.primaryText,
+    lineHeight: 20,
   },
 });

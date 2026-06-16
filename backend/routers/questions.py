@@ -13,10 +13,15 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
 from auth import get_current_uid
-from firestore_service import get_question_by_id
+from firestore_service import get_distinct_topics, get_question_by_id
 from shared_schema import QuestionResponse
 
 router = APIRouter(prefix="/questions", tags=["questions"])
+
+
+class TopicsResponse(BaseModel):
+    """Deduplicated list of topics available for a subject."""
+    topics: list[str] = []
 
 
 class MarkPointResponse(BaseModel):
@@ -49,6 +54,23 @@ def _serialize_question_detail(question: dict) -> dict:
         "marks_available": question.get("marks_available"),
         "mark_scheme": points,
     }
+
+
+@router.get("/topics", response_model=TopicsResponse)
+def get_topics(
+    subject: str,
+    uid: str = Depends(get_current_uid),
+):
+    """Return the deduplicated list of topics for a subject, used by the Custom
+    Paper Generator to populate its topic picker.
+
+    Declared BEFORE `/{question_id}` so the literal path "topics" is matched
+    here rather than being coerced into the integer `question_id` param.
+    """
+    try:
+        return {"topics": get_distinct_topics(subject)}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Failed to load topics: {exc}")
 
 
 @router.get("/{question_id}", response_model=QuestionDetailResponse)

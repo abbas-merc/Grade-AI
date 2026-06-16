@@ -62,6 +62,9 @@ class QuestionResult(BaseModel):
     marks_available: int
     mark_breakdown: List[PaperMarkBreakdownPoint]
     feedback: str
+    # True when the transcript contains an [illegible] token — the model could
+    # not read part of this answer, so the teacher should check it manually.
+    has_illegible: bool = False
 
 
 class PaperGradeRequest(BaseModel):
@@ -76,6 +79,13 @@ class PaperGradingResponse(BaseModel):
     cost_usd: float
     results: List[QuestionResult]
     cost_cap_reached: bool = False
+    # True when the sum of the per-question maximum marks does not equal the
+    # paper's stored total_marks — individual question totals may be wrong.
+    marks_total_mismatch: bool = False
+    # Firestore document ID of the saved marking (teachers/{uid}/markings/{id}).
+    # Lets the client delete the exact history document later. Optional because
+    # the result is fully valid even if the Firestore save failed.
+    marking_id: Optional[str] = None
 
 
 # --- Async paper-grading job schemas ---

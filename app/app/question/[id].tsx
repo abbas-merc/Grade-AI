@@ -26,6 +26,7 @@ import * as ImagePicker from "expo-image-picker";
 import { getQuestion, gradeAnswer } from "../../services/api";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import type { Question } from "../../types";
+import { COLORS, RADIUS, SPACING, FONT, ON } from "../../constants/theme";
 
 export default function QuestionScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -151,7 +152,7 @@ export default function QuestionScreen() {
   if (loadingQuestion) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#4F46E5" />
+        <ActivityIndicator size="large" color={COLORS.primary} />
         <Text style={styles.loadingText}>Loading question…</Text>
       </View>
     );
@@ -245,139 +246,133 @@ export default function QuestionScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: COLORS.surface,
   },
   content: {
-    padding: 16,
-    gap: 16,
+    padding: SPACING.lg,
+    gap: SPACING.lg,
     paddingBottom: 40,
   },
   centered: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    gap: 12,
-    padding: 24,
+    gap: SPACING.md,
+    padding: SPACING.xl,
   },
   loadingText: {
-    color: "#6B7280",
+    color: COLORS.textSecondary,
     fontSize: 15,
   },
   errorText: {
     fontSize: 18,
-    fontWeight: "600",
-    color: "#EF4444",
+    fontWeight: FONT.medium,
+    color: COLORS.fail,
   },
   errorDetail: {
     fontSize: 14,
-    color: "#6B7280",
+    color: COLORS.textSecondary,
     textAlign: "center",
   },
   retryButton: {
-    backgroundColor: "#4F46E5",
-    borderRadius: 10,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    marginTop: 4,
+    backgroundColor: COLORS.primary,
+    borderRadius: RADIUS.md,
+    paddingHorizontal: SPACING.xl,
+    paddingVertical: SPACING.md,
+    marginTop: SPACING.xs,
   },
   retryButtonText: {
-    color: "#fff",
-    fontWeight: "600",
+    color: COLORS.card,
+    fontWeight: FONT.medium,
     fontSize: 15,
   },
 
   questionCard: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.07,
-    shadowRadius: 4,
-    elevation: 2,
-    gap: 10,
+    backgroundColor: COLORS.card,
+    borderWidth: 0.5,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.lg,
+    padding: SPACING.lg,
+    gap: SPACING.sm,
   },
   questionLabel: {
     fontSize: 12,
-    fontWeight: "700",
-    color: "#4F46E5",
+    fontWeight: FONT.medium,
+    color: COLORS.primary,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   questionText: {
     fontSize: 16,
-    color: "#1F2937",
+    color: COLORS.textPrimary,
     lineHeight: 26,
   },
   marksRow: {
     flexDirection: "row",
   },
   marksBadge: {
-    backgroundColor: "#EEF2FF",
-    borderRadius: 6,
+    backgroundColor: COLORS.primaryLight,
+    borderRadius: RADIUS.sm,
     paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingVertical: SPACING.xs,
   },
   marksText: {
-    color: "#4F46E5",
+    color: ON.primaryText,
     fontSize: 13,
-    fontWeight: "600",
+    fontWeight: FONT.medium,
   },
 
   previewContainer: {
-    gap: 8,
+    gap: SPACING.sm,
   },
   previewLabel: {
     fontSize: 13,
-    fontWeight: "600",
-    color: "#6B7280",
+    fontWeight: FONT.medium,
+    color: COLORS.textSecondary,
   },
   preview: {
     width: "100%",
     height: 240,
-    borderRadius: 12,
-    backgroundColor: "#E5E7EB",
+    borderRadius: RADIUS.lg,
+    backgroundColor: COLORS.border,
   },
 
   instructions: {
-    backgroundColor: "#F0FDF4",
-    borderRadius: 10,
+    backgroundColor: COLORS.primaryLight,
+    borderRadius: RADIUS.md,
     padding: 14,
     borderLeftWidth: 3,
-    borderLeftColor: "#059669",
+    borderLeftColor: COLORS.primary,
   },
   instructionText: {
     fontSize: 14,
-    color: "#065F46",
+    color: ON.primaryText,
     lineHeight: 20,
   },
 
   gradeButton: {
-    backgroundColor: "#4F46E5",
-    borderRadius: 12,
-    paddingVertical: 16,
+    backgroundColor: COLORS.primary,
+    borderRadius: RADIUS.lg,
+    paddingVertical: SPACING.lg,
     alignItems: "center",
-    shadowColor: "#4F46E5",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
   },
   gradeButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "700",
+    color: COLORS.card,
+    fontSize: 15,
+    fontWeight: FONT.medium,
   },
 
   libraryButton: {
-    backgroundColor: "#F3F4F6",
-    borderRadius: 12,
+    backgroundColor: COLORS.surface,
+    borderWidth: 0.5,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.lg,
     paddingVertical: 14,
     alignItems: "center",
   },
   libraryButtonText: {
-    color: "#374151",
+    color: COLORS.textSecondary,
     fontSize: 15,
-    fontWeight: "600",
+    fontWeight: FONT.medium,
   },
 });
