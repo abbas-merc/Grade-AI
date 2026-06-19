@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "671867254067",
+    "project_id": "grade-ai-b524c",
+    "storage_bucket": "grade-ai-b524c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:671867254067:android:021b4b678d17f7ca36ba46",
+        "android_client_info": {
+          "package_name": "com.gradeai.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlHk5lOhXpFldTuhdLqCxD_x3fs3PQ70o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

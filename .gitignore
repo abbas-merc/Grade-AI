@@ -5,6 +5,12 @@
 firebase-service-account.json
 *service-account*.json
 google-services.json
+# google-services.json (Android) MUST reach the EAS builder — the google-services
+# Gradle plugin fails the build without it. It is safe to commit (the API key is
+# restricted by package name + SHA; security is enforced by Firebase rules), so
+# un-ignore the project copies that the build needs.
+!/app/google-services.json
+!/app/android/app/google-services.json
 
 # ── Python ─────────────────────────────────────────────────────────────────────
 __pycache__/
