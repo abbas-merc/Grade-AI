@@ -14,6 +14,7 @@ page.
 from __future__ import annotations
 
 import io
+import os
 import re
 from xml.sax.saxutils import escape
 
@@ -22,12 +23,30 @@ from reportlab.lib.enums import TA_CENTER, TA_RIGHT
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import mm
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
+    KeepTogether,
     Paragraph,
     SimpleDocTemplate,
     Spacer,
     Table,
     TableStyle,
+)
+
+# Bundle the DejaVu Sans family (committed under backend/fonts/) so the full
+# Unicode maths range renders as real glyphs. The path resolves from this file so
+# it is independent of the process CWD, and the fonts travel in the repo so they
+# are present on Railway at deploy time.
+_FONT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "fonts")
+_FONT_NORMAL = "DejaVuSans"
+_FONT_BOLD = "DejaVuSans-Bold"
+pdfmetrics.registerFont(TTFont(_FONT_NORMAL, os.path.join(_FONT_DIR, "DejaVuSans.ttf")))
+pdfmetrics.registerFont(TTFont(_FONT_BOLD, os.path.join(_FONT_DIR, "DejaVuSans-Bold.ttf")))
+# Register the family so the inline <b> tag resolves to DejaVuSans-Bold.
+pdfmetrics.registerFontFamily(
+    _FONT_NORMAL, normal=_FONT_NORMAL, bold=_FONT_BOLD,
+    italic=_FONT_NORMAL, boldItalic=_FONT_BOLD,
 )
 
 # Page geometry. Usable width = page width minus both margins; the question
@@ -66,39 +85,87 @@ def _styles() -> dict:
     base = getSampleStyleSheet()
     return {
         "title": ParagraphStyle(
-            "GA_Title", parent=base["Title"], fontSize=18, spaceAfter=4,
-            alignment=TA_CENTER,
+            "GA_Title", parent=base["Title"], fontName=_FONT_BOLD, fontSize=18,
+            spaceAfter=4, alignment=TA_CENTER,
         ),
         "subtitle": ParagraphStyle(
-            "GA_Subtitle", parent=base["Normal"], fontSize=11,
+            "GA_Subtitle", parent=base["Normal"], fontName=_FONT_NORMAL, fontSize=11,
             alignment=TA_CENTER, textColor=colors.HexColor("#444444"),
             spaceAfter=2,
         ),
         "qnum": ParagraphStyle(
-            "GA_QNum", parent=base["Normal"], fontSize=11, leading=14,
+            "GA_QNum", parent=base["Normal"], fontName=_FONT_NORMAL, fontSize=11,
+            leading=14,
         ),
         "marks": ParagraphStyle(
-            "GA_Marks", parent=base["Normal"], fontSize=11, leading=14,
-            alignment=TA_RIGHT,
+            "GA_Marks", parent=base["Normal"], fontName=_FONT_NORMAL, fontSize=11,
+            leading=14, alignment=TA_RIGHT,
         ),
         "body": ParagraphStyle(
-            "GA_Body", parent=base["Normal"], fontSize=10.5, leading=14,
-            leftIndent=6,
+            "GA_Body", parent=base["Normal"], fontName=_FONT_NORMAL, fontSize=10.5,
+            leading=14, leftIndent=6,
         ),
         "part1": ParagraphStyle(
-            "GA_Part1", parent=base["Normal"], fontSize=10.5, leading=14,
-            leftIndent=16,
+            "GA_Part1", parent=base["Normal"], fontName=_FONT_NORMAL, fontSize=10.5,
+            leading=14, leftIndent=16,
         ),
         "part2": ParagraphStyle(
-            "GA_Part2", parent=base["Normal"], fontSize=10.5, leading=14,
-            leftIndent=30,
+            "GA_Part2", parent=base["Normal"], fontName=_FONT_NORMAL, fontSize=10.5,
+            leading=14, leftIndent=30,
         ),
     }
 
 
-def _para_text(line: str) -> str:
-    """XML-escape a single line for use inside a reportlab Paragraph."""
-    return escape(line)
+# --------------------------------------------------------------------------- #
+# Character sanitization
+# --------------------------------------------------------------------------- #
+# Cambridge PDFs embed maths via the Adobe "Symbol" font; PyMuPDF extracts those
+# glyphs as Private-Use-Area code points (U+F0xx) which are NOT real Unicode, so
+# no font can render them directly. We resolve those PUA code points to their true
+# Unicode characters (e.g. U+F0B4 -> ×, U+F0D6 -> √, U+F028 -> "("). Genuine
+# Unicode maths symbols are then left untouched: the bundled DejaVu Sans font
+# renders the full range as real glyphs, so nothing is transliterated to ASCII.
+
+# High Symbol-font codes (the byte left after stripping the U+F000 PUA offset)
+# that are not plain ASCII -> their real Unicode meaning.
+_SYMBOL_HIGH_TO_UNICODE = {
+    0xB4: "×",  # multiply ×
+    0xB1: "±",  # ±
+    0xB8: "÷",  # ÷
+    0xA3: "≤",  # ≤
+    0xB3: "≥",  # ≥
+    0xB9: "≠",  # ≠
+    0xD6: "√",  # √
+    0xA5: "∞",  # ∞
+    0xE6: "(", 0xE7: "(", 0xE8: "(",  # left bracket pieces (tall brackets / vectors)
+    0xF6: ")", 0xF7: ")", 0xF8: ")",  # right bracket pieces
+}
+
+
+def _depua(ch: str) -> str:
+    """Resolve a Symbol-font PUA character (U+F0xx) to its real Unicode meaning."""
+    o = ord(ch)
+    if 0xF000 <= o <= 0xF0FF:
+        base = o - 0xF000
+        if 0x20 <= base <= 0x7E:
+            return chr(base)  # plain ASCII operator / paren / digit / letter
+        return _SYMBOL_HIGH_TO_UNICODE.get(base, "")
+    return ch
+
+
+def _markup(text: str) -> str:
+    """Escape `text` for a reportlab Paragraph, resolving Symbol-font PUA code
+    points to their real Unicode characters. The bundled DejaVu Sans font renders
+    the full Unicode maths range, so genuine symbols (π, √, ≤, ², ×, ÷, …) pass
+    through unchanged — no transliteration. Unresolvable PUA code points (private
+    use, not real Unicode) are dropped rather than rendered as a tofu box."""
+    out: list[str] = []
+    for raw in text:
+        ch = _depua(raw)
+        if not ch:
+            continue
+        out.append(escape(ch))
+    return "".join(out)
 
 
 def _body_flowables(text: str, styles: dict) -> list:
@@ -117,7 +184,7 @@ def _body_flowables(text: str, styles: dict) -> list:
         m = _PART_RE.match(line.strip())
         if m:
             style = styles["part2"] if m.group(1) in _ROMAN else styles["part1"]
-        flow.append(Paragraph(_para_text(line), style))
+        flow.append(Paragraph(_markup(line), style))
     return flow
 
 
@@ -125,7 +192,7 @@ def _question_header(number: int, marks: int, meta: str, styles: dict) -> Table:
     """A two-column heading row: bold question number (+ meta) | marks, right."""
     left = f"<b>{number}</b>"
     if meta:
-        left += f"&nbsp;&nbsp;<font size=8 color='#777777'>{escape(meta)}</font>"
+        left += f"&nbsp;&nbsp;<font size=8 color='#777777'>{_markup(meta)}</font>"
     tbl = Table(
         [[Paragraph(left, styles["qnum"]),
           Paragraph(f"<b>[{marks}]</b>", styles["marks"])]],
@@ -160,12 +227,21 @@ def _header_story(title: str, subtitle: str, paper_data: dict, styles: dict) -> 
     return story
 
 
-def _draw_page_number(canvas, doc) -> None:
-    canvas.saveState()
-    canvas.setFont("Helvetica", 8)
-    canvas.setFillColor(colors.HexColor("#666666"))
-    canvas.drawCentredString(A4[0] / 2.0, 10 * mm, f"Page {doc.page}")
-    canvas.restoreState()
+def _make_page_decorator(subtitle: str):
+    """Return a canvas callback that draws a running header (so pages 2+ aren't
+    bare) plus a centred page number on every page."""
+    def _decorate(canvas, doc) -> None:
+        canvas.saveState()
+        canvas.setFont(_FONT_NORMAL, 8)
+        canvas.setFillColor(colors.HexColor("#999999"))
+        canvas.drawCentredString(
+            A4[0] / 2.0, A4[1] - 12 * mm,
+            f"Grade AI Custom Practice Paper - {subtitle}",
+        )
+        canvas.setFillColor(colors.HexColor("#666666"))
+        canvas.drawCentredString(A4[0] / 2.0, 10 * mm, f"Page {doc.page}")
+        canvas.restoreState()
+    return _decorate
 
 
 def _build(title: str, subtitle: str, paper_data: dict, blocks: list) -> bytes:
@@ -180,10 +256,15 @@ def _build(title: str, subtitle: str, paper_data: dict, blocks: list) -> bytes:
     )
     story = _header_story(title, subtitle, paper_data, styles)
     for number, marks, meta, body in blocks:
-        story.append(_question_header(number, marks, meta, styles))
-        story.extend(_body_flowables(body, styles))
+        # Keep each question's header + body together so a page break never
+        # orphans the number from its parts (reportlab still splits a question
+        # that is genuinely taller than one page).
+        block = [_question_header(number, marks, meta, styles)]
+        block.extend(_body_flowables(body, styles))
+        story.append(KeepTogether(block))
         story.append(Spacer(1, 12))
-    doc.build(story, onFirstPage=_draw_page_number, onLaterPages=_draw_page_number)
+    decorate = _make_page_decorator(subtitle)
+    doc.build(story, onFirstPage=decorate, onLaterPages=decorate)
     return buffer.getvalue()
 
 
