@@ -11,8 +11,10 @@ Endpoints (mounted under /api by main.py):
   POST /api/generate-paper/download-mark-scheme
       Render a generate-paper response to a mark-scheme PDF (file download).
 
-Diagram questions (hasImage == true) are excluded for now — we cannot yet
-reproduce their figures in the generated PDF.
+Diagram questions (hasImage == true) are now included: each carries an
+`imageUrl` ("/diagrams/<id>.png") pointing at the figure extracted from the
+source paper. The PDF generator embeds it inline and the app renders it in the
+preview card.
 """
 from __future__ import annotations
 
@@ -23,7 +25,7 @@ from typing import Literal
 
 from fastapi import APIRouter, Depends, Response
 from firebase_admin import firestore
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from auth import get_current_uid
 from firestore_service import _get_client
@@ -45,9 +47,12 @@ _MAX_QUESTIONS = 12
 # Schemas
 # --------------------------------------------------------------------------- #
 class GeneratePaperRequest(BaseModel):
-    subject: str = "math"
-    topics: list[str] = []
-    totalMarks: int
+    # Pydantic enforces these and FastAPI auto-returns 422 with a clear message
+    # if any fail: subject must be a known value, at least one topic must be
+    # supplied, and the mark total must sit in a sane range.
+    subject: Literal["math", "physics", "chemistry"] = "math"
+    topics: list[str] = Field(min_length=1)
+    totalMarks: int = Field(ge=20, le=200)
     difficulty: Literal["mixed", "easy", "medium", "hard"] = "mixed"
 
 
@@ -58,6 +63,11 @@ class GeneratedQuestion(BaseModel):
     questionText: str
     topic: str
     difficulty: str
+    # Diagram support: hasImage flags a figure question; imageUrl is the
+    # host-agnostic path ("/diagrams/<id>.png") the app prepends BASE_URL to and
+    # the PDF generator resolves to a local file. Empty for text-only questions.
+    hasImage: bool = False
+    imageUrl: str = ""
 
 
 class MarkSchemeItem(BaseModel):
@@ -79,11 +89,12 @@ class GeneratePaperResponse(BaseModel):
 # Selection logic
 # --------------------------------------------------------------------------- #
 def _fetch_pool(subject: str, topics: list[str]) -> list[dict]:
-    """Return non-diagram questions matching subject and (if given) topics.
+    """Return questions matching subject and (if given) topics.
 
     We filter on `subject` in Firestore (auto single-field index) and apply the
-    topic / hasImage filters in Python — the collection is tiny, so this avoids
-    needing a composite index or running into `in`-query limits.
+    topic filter in Python — the collection is tiny, so this avoids needing a
+    composite index or running into `in`-query limits. Diagram questions
+    (hasImage == true) are included now that each carries an `imageUrl`.
     """
     db = _get_client()
     topic_set = set(topics or [])
@@ -93,8 +104,6 @@ def _fetch_pool(subject: str, topics: list[str]) -> list[dict]:
     )
     for doc in query.stream():
         data = doc.to_dict() or {}
-        if data.get("hasImage"):
-            continue
         if topic_set and data.get("topic") not in topic_set:
             continue
         pool.append(data)
@@ -218,6 +227,8 @@ def generate_paper(
             questionText=q.get("questionText", "") or "",
             topic=q.get("topic", "") or "",
             difficulty=q.get("difficulty", "") or "",
+            hasImage=bool(q.get("hasImage")),
+            imageUrl=q.get("imageUrl", "") or "",
         ))
         mark_scheme.append(MarkSchemeItem(
             questionNumber=number,

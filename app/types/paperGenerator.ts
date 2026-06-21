@@ -22,6 +22,10 @@ export interface GeneratedQuestion {
   questionText: string;
   topic: string;
   difficulty: string;
+  /** True when the question has an extracted figure to render. */
+  hasImage?: boolean;
+  /** Host-agnostic figure path, e.g. "/diagrams/<id>.png"; prepend BASE_URL. */
+  imageUrl?: string;
 }
 
 export interface MarkSchemeItem {

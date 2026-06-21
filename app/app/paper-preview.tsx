@@ -8,10 +8,11 @@
  * cache as base64, and hand it to the OS share sheet.
  */
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
+  Image,
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
@@ -28,6 +29,45 @@ import { parseQuestionParts } from "../utils/parseQuestion";
 import { downloadQuestionPaperPdf, downloadMarkSchemePdf } from "../services/api";
 import type { GeneratedPaper, GeneratedQuestion } from "../types/paperGenerator";
 import { COLORS, RADIUS, SPACING, FONT } from "../constants/theme";
+import { BASE_URL } from "../constants/config";
+
+/**
+ * DiagramImage — render an extracted question figure at the card's width while
+ * preserving aspect ratio. imageUrl is host-agnostic ("/diagrams/<id>.png"), so
+ * we prepend BASE_URL. Image.getSize gives the natural dimensions, which we turn
+ * into an aspectRatio so the height tracks the (full) card width.
+ */
+function DiagramImage({ imageUrl }: { imageUrl: string }) {
+  const uri = `${BASE_URL}${imageUrl}`;
+  const [aspect, setAspect] = useState<number | null>(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    Image.getSize(
+      uri,
+      (w, h) => {
+        if (alive && h > 0) setAspect(w / h);
+      },
+      () => {
+        if (alive) setFailed(true);
+      }
+    );
+    return () => {
+      alive = false;
+    };
+  }, [uri]);
+
+  if (failed) return null;
+
+  return (
+    <Image
+      source={{ uri }}
+      resizeMode="contain"
+      style={[styles.diagram, aspect ? { aspectRatio: aspect } : { height: 180 }]}
+    />
+  );
+}
 
 type DownloadKind = "qp" | "ms";
 
@@ -58,6 +98,10 @@ function QuestionCard({ question }: { question: GeneratedQuestion }) {
       </View>
 
       {parsed.intro ? <Text style={styles.introText}>{parsed.intro}</Text> : null}
+
+      {question.hasImage && question.imageUrl ? (
+        <DiagramImage imageUrl={question.imageUrl} />
+      ) : null}
 
       {parsed.parts.map((part, idx) => (
         <View key={`${part.label}-${idx}`} style={styles.partRow}>
@@ -103,6 +147,9 @@ export default function PaperPreviewScreen() {
   }
 
   const handleDownload = async (kind: DownloadKind) => {
+    // Ignore taps while a download is already in flight (the bottom-sheet
+    // options aren't disabled, so guard here too — Section 9.2 debounce).
+    if (downloading) return;
     setSheetOpen(false);
     setDownloading(kind);
     try {
@@ -342,6 +389,12 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     color: COLORS.textPrimary,
     marginTop: SPACING.md,
+  },
+  diagram: {
+    width: "100%",
+    marginTop: SPACING.md,
+    borderRadius: RADIUS.md,
+    backgroundColor: "#FFFFFF",
   },
   partRow: {
     flexDirection: "row",

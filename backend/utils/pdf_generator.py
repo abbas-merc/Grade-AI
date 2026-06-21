@@ -23,9 +23,11 @@ from reportlab.lib.enums import TA_CENTER, TA_RIGHT
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import mm
+from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
+    Image as RLImage,
     KeepTogether,
     Paragraph,
     SimpleDocTemplate,
@@ -59,6 +61,42 @@ _LEFT_COL_W = _USABLE_W - _MARKS_COL_W
 # Roman-numeral tokens used to spot the deepest sub-parts, e.g. "(i)", "(ii)".
 _ROMAN = {"i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x", "xi", "xii"}
 _PART_RE = re.compile(r"^\(([a-z]{1,4})\)")
+
+# Diagram embedding. Figures live under backend/static/question_diagrams and the
+# question's imageUrl is "/diagrams/<id>.png"; resolve by basename to the file on
+# disk (no network). They were rasterised at this zoom, so pixels / zoom = points
+# at the figure's true on-page size. Display is clamped to the usable width and a
+# max height so a tall multi-figure stack still fits within the page margins.
+_DIAGRAM_DIR = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "..", "static", "question_diagrams"
+)
+_DIAGRAM_RENDER_ZOOM = 3.0
+_MAX_IMG_H = 200 * mm
+
+
+def _resolve_image(image_url: str) -> str | None:
+    """Map a question's imageUrl ("/diagrams/<id>.png") to a local file path."""
+    if not image_url:
+        return None
+    local = os.path.join(_DIAGRAM_DIR, os.path.basename(image_url))
+    return local if os.path.exists(local) else None
+
+
+def _image_flowable(path: str):
+    """A center-aligned reportlab Image sized to the figure's true scale, clamped
+    to the usable width and a max height, preserving aspect ratio."""
+    iw, ih = ImageReader(path).getSize()
+    if iw <= 0 or ih <= 0:
+        return None
+    aspect = ih / float(iw)
+    disp_w = min(iw / _DIAGRAM_RENDER_ZOOM, _USABLE_W)
+    disp_h = disp_w * aspect
+    if disp_h > _MAX_IMG_H:
+        disp_h = _MAX_IMG_H
+        disp_w = disp_h / aspect
+    img = RLImage(path, width=disp_w, height=disp_h)
+    img.hAlign = "CENTER"
+    return img
 
 
 # --------------------------------------------------------------------------- #
@@ -188,6 +226,30 @@ def _body_flowables(text: str, styles: dict) -> list:
     return flow
 
 
+def _split_body(text: str, styles: dict) -> tuple[list, list]:
+    """Split a question body into (intro_flowables, parts_flowables): everything
+    before the first "(a)"-style sub-part marker, and the sub-parts after it.
+    Lets a diagram sit directly below the intro and above the sub-parts."""
+    intro: list = []
+    parts: list = []
+    seen_part = False
+    for raw in (text or "").split("\n"):
+        line = raw.rstrip()
+        target = parts if seen_part else intro
+        if not line.strip():
+            target.append(Spacer(1, 3))
+            continue
+        m = _PART_RE.match(line.strip())
+        if m:
+            seen_part = True
+            target = parts
+            style = styles["part2"] if m.group(1) in _ROMAN else styles["part1"]
+        else:
+            style = styles["part1"] if seen_part else styles["body"]
+        target.append(Paragraph(_markup(line), style))
+    return intro, parts
+
+
 def _question_header(number: int, marks: int, meta: str, styles: dict) -> Table:
     """A two-column heading row: bold question number (+ meta) | marks, right."""
     left = f"<b>{number}</b>"
@@ -227,25 +289,36 @@ def _header_story(title: str, subtitle: str, paper_data: dict, styles: dict) -> 
     return story
 
 
-def _make_page_decorator(subtitle: str):
-    """Return a canvas callback that draws a running header (so pages 2+ aren't
-    bare) plus a centred page number on every page."""
+def _make_page_decorator(header_line: str):
+    """Return a canvas callback that draws a running header (paper title, subject,
+    total marks and time) on EVERY page plus a centred page number at the foot."""
     def _decorate(canvas, doc) -> None:
         canvas.saveState()
         canvas.setFont(_FONT_NORMAL, 8)
         canvas.setFillColor(colors.HexColor("#999999"))
-        canvas.drawCentredString(
-            A4[0] / 2.0, A4[1] - 12 * mm,
-            f"Grade AI Custom Practice Paper - {subtitle}",
-        )
+        canvas.drawCentredString(A4[0] / 2.0, A4[1] - 12 * mm, header_line)
         canvas.setFillColor(colors.HexColor("#666666"))
         canvas.drawCentredString(A4[0] / 2.0, 10 * mm, f"Page {doc.page}")
         canvas.restoreState()
     return _decorate
 
 
+def _running_header_line(subtitle: str, paper_data: dict) -> str:
+    """Compact one-line running header carrying the key paper metadata so every
+    page (not just page 1) shows title, subject, total marks and time allowed."""
+    subject = paper_data.get("subject", "")
+    subject_label = "Mathematics" if subject == "math" else str(subject).title()
+    total_marks = int(paper_data.get("totalMarks", 0) or 0)
+    time_str = _format_time(_time_minutes(total_marks))
+    return (
+        f"Grade AI Custom Practice Paper · {subtitle} · "
+        f"{subject_label} · {total_marks} marks · {time_str}"
+    )
+
+
 def _build(title: str, subtitle: str, paper_data: dict, blocks: list) -> bytes:
-    """Assemble a PDF from a header plus a list of (number, marks, meta, body)."""
+    """Assemble a PDF from a header plus a list of
+    (number, marks, meta, body, image_path) blocks (image_path may be None)."""
     styles = _styles()
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(
@@ -255,15 +328,24 @@ def _build(title: str, subtitle: str, paper_data: dict, blocks: list) -> bytes:
         title=title,
     )
     story = _header_story(title, subtitle, paper_data, styles)
-    for number, marks, meta, body in blocks:
-        # Keep each question's header + body together so a page break never
-        # orphans the number from its parts (reportlab still splits a question
-        # that is genuinely taller than one page).
-        block = [_question_header(number, marks, meta, styles)]
-        block.extend(_body_flowables(body, styles))
-        story.append(KeepTogether(block))
+    for number, marks, meta, body, image_path in blocks:
+        header = _question_header(number, marks, meta, styles)
+        img = _image_flowable(image_path) if image_path else None
+        if img is not None:
+            # Diagram question: keep header + intro + figure together (so the
+            # figure can never be orphaned from its question across a page
+            # break), then let the sub-parts flow after it.
+            intro, parts = _split_body(body, styles)
+            keep = [header, *intro, Spacer(1, 5), img, Spacer(1, 3)]
+            story.append(KeepTogether(keep))
+            story.extend(parts)
+        else:
+            # Text-only question: keep header + whole body together (reportlab
+            # still splits a question genuinely taller than one page).
+            block = [header, *_body_flowables(body, styles)]
+            story.append(KeepTogether(block))
         story.append(Spacer(1, 12))
-    decorate = _make_page_decorator(subtitle)
+    decorate = _make_page_decorator(_running_header_line(subtitle, paper_data))
     doc.build(story, onFirstPage=decorate, onLaterPages=decorate)
     return buffer.getvalue()
 
@@ -278,11 +360,13 @@ def generate_question_paper_pdf(paper_data: dict) -> bytes:
         meta = ", ".join(
             str(v) for v in (q.get("topic"), q.get("difficulty")) if v
         )
+        image_path = _resolve_image(q.get("imageUrl", "")) if q.get("hasImage") else None
         blocks.append((
             q.get("assignedNumber"),
             q.get("marks", 0),
             meta,
             q.get("questionText", ""),
+            image_path,
         ))
     return _build(
         "Grade AI Custom Practice Paper", "Question Paper", paper_data, blocks,
@@ -298,6 +382,7 @@ def generate_mark_scheme_pdf(paper_data: dict) -> bytes:
             item.get("marks", 0),
             "",
             item.get("markSchemeText", ""),
+            None,  # mark scheme never embeds the figure
         ))
     return _build(
         "Grade AI Custom Practice Paper", "Mark Scheme", paper_data, blocks,
