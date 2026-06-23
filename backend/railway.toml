@@ -1,0 +1,15 @@
+# Authoritative Railway config for the GradeAI backend.
+#
+# Railway reads this file from the service's Root Directory, which must be set to
+# `backend` (requirements.txt and main.py live here). The repo-root railway.toml
+# / Procfile are stale leftovers from an earlier repo-root layout and are ignored
+# when Root Directory = backend — they can be deleted once that is confirmed in
+# the Railway dashboard.
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "uvicorn main:app --host 0.0.0.0 --port $PORT"
+healthcheckPath = "/health"
+healthcheckTimeout = 30
+restartPolicyType = "on_failure"

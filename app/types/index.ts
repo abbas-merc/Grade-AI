@@ -21,6 +21,9 @@ export interface Question {
   question_number: string;
   question_text: string;
   marks_available: number;
+  /** Host-agnostic snippet path ("/question_snippets/<id>.png"); prepend BASE_URL.
+   *  Present for image-snippet papers, empty/absent for legacy text papers. */
+  question_image_url?: string;
 }
 
 export interface MarkBreakdownPoint {

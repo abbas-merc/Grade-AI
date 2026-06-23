@@ -29,6 +29,15 @@ export const firestoreInstance = firestore();
 export { auth, firestore };
 
 /**
+ * Lightweight email-shape check so we can reject obviously invalid input before
+ * making a network round-trip to Firebase. Not RFC-complete by design — it only
+ * needs to catch missing "@"/domain/typos; Firebase does the authoritative check.
+ */
+export function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+}
+
+/**
  * Map a Firebase auth error to a short, user-friendly message.
  * Firebase errors carry a `.code` like "auth/invalid-credential".
  */
@@ -51,10 +60,13 @@ export function authErrorMessage(error: unknown): string {
       return "Network error. Check your connection and try again.";
     case "auth/too-many-requests":
       return "Too many attempts. Please try again in a moment.";
+    case "auth/operation-not-allowed":
+      return "Email/password sign-in is currently unavailable.";
+    case "auth/internal-error":
+      return "Something went wrong on our end. Please try again.";
     default:
-      return (
-        (error as { message?: string })?.message ??
-        "Something went wrong. Please try again."
-      );
+      // Never surface a raw Firebase code/message (e.g. "[auth/...] ...") to a
+      // teacher. Unmapped codes get a friendly, generic message instead.
+      return "Something went wrong. Please try again.";
   }
 }

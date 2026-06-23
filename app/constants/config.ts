@@ -17,20 +17,34 @@ import Constants from "expo-constants";
 
 const BACKEND_PORT = 8001;
 
+/**
+ * Ensure a URL has an explicit scheme. EAS env vars are sometimes set without
+ * one (e.g. "grade-ai-production.up.railway.app"), which axios treats as an
+ * invalid/relative URL and every request silently fails. Default to https.
+ */
+function withScheme(url: string): string {
+  const trimmed = url.trim().replace(/\/+$/, ""); // drop trailing slashes
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  return `https://${trimmed}`;
+}
+
 function getBaseUrl(): string {
-  // Derive IP from Expo's dev-server host (same machine runs both Metro + FastAPI).
+  // 1. Explicit override via env var. Set in eas.json for preview/production
+  //    builds, so it must take priority — a release build has no Metro host to
+  //    fall back on. Checked first so production never accidentally uses a LAN IP.
+  const envUrl = process.env.EXPO_PUBLIC_API_URL;
+  if (envUrl && envUrl.trim()) return withScheme(envUrl);
+
+  // 2. Dev convenience: derive the IP from Expo's dev-server host (the same
+  //    machine runs both Metro + FastAPI), so the LAN IP never needs editing.
   const hostUri = Constants.expoConfig?.hostUri;
   if (hostUri) {
     const ip = hostUri.split(":")[0];
     if (ip) return `http://${ip}:${BACKEND_PORT}`;
   }
 
-  // Explicit override via env var (useful for production / EAS builds).
-  const envUrl = process.env.EXPO_PUBLIC_API_URL;
-  if (envUrl) return envUrl;
-
-  // Last-resort hardcoded fallback — update if above mechanisms fail.
-  return `http://192.168.68.63:${BACKEND_PORT}`;
+  // 3. Last-resort hardcoded fallback — update if the above mechanisms fail.
+  return `http://192.168.68.62:${BACKEND_PORT}`;
 }
 
 export const BASE_URL = getBaseUrl();

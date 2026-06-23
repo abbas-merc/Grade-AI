@@ -1,0 +1,6 @@
+# Local diagram-extraction debug/verification output (page renders, contact
+# sheets, test PDFs). Regenerable via scripts/extract_diagrams.py + montage.py —
+# do not commit. The real, shipped assets live in backend/static/question_diagrams.
+*
+!.gitignore
+!_manifest.json

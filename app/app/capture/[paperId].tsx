@@ -23,6 +23,7 @@ import {
   ScrollView,
   Image,
   Alert,
+  Linking,
   StyleSheet,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -38,7 +39,6 @@ const LOADING_MESSAGES = ["Uploading pages…"];
 
 interface CapturedPage {
   uri: string;
-  base64: string;
 }
 
 type Phase = "scanning" | "review";
@@ -83,21 +83,16 @@ export default function CaptureScreen() {
       // Capture at full original resolution with no compression or downscaling,
       // so the backend receives the sharpest possible image for handwriting
       // recognition. quality: 1 disables JPEG compression on the capture.
-      const photo = await cameraRef.current.takePictureAsync({
-        base64: true,
-        quality: 1,
-      });
-      if (!photo) return;
-
-      if (!photo.base64) {
-        Alert.alert("Photo error", "Could not encode the photo. Please try again.");
+      // We only need the file URI — markingQueue re-reads + compresses from it at
+      // submit time, so requesting base64 here would just hold a full-resolution
+      // copy of every page in memory for nothing.
+      const photo = await cameraRef.current.takePictureAsync({ quality: 1 });
+      if (!photo?.uri) {
+        Alert.alert("Photo error", "Could not capture the photo. Please try again.");
         return;
       }
 
-      const newPage: CapturedPage = {
-        uri: photo.uri,
-        base64: photo.base64,
-      };
+      const newPage: CapturedPage = { uri: photo.uri };
 
       if (retakeIndex !== null) {
         setPages((prev) => prev.map((p, i) => (i === retakeIndex ? newPage : p)));
@@ -132,7 +127,9 @@ export default function CaptureScreen() {
   }, []);
 
   const handleSubmit = useCallback(async () => {
-    if (pages.length === 0) return;
+    // Guard against a double-tap firing two submissions before the screen swaps
+    // to the loading view (Section 5.1 / 9.2).
+    if (pages.length === 0 || submitting) return;
     setSubmitting(true);
     try {
       // Compress pages, write them to Firestore + the "queued" marking document,
@@ -167,7 +164,7 @@ export default function CaptureScreen() {
       // Stay on the review screen so the teacher can retry.
       setSubmitting(false);
     }
-  }, [pages, paperId, paperName, generatedPaper, router]);
+  }, [pages, submitting, paperId, paperName, generatedPaper, router]);
 
   // ── Permission states ───────────────────────────────────────────────────────
 
@@ -176,17 +173,24 @@ export default function CaptureScreen() {
   }
 
   if (!permission.granted) {
+    // After a permanent denial, requestPermission() can no longer show the OS
+    // prompt (canAskAgain === false) — the teacher must enable it in Settings.
+    const canAsk = permission.canAskAgain;
     return (
       <View style={styles.centered}>
         <Text style={styles.permissionText}>
-          Camera access is required to scan your answer booklet.
+          {canAsk
+            ? "Camera access is required to scan your answer booklet."
+            : "Camera access is turned off. Enable the camera for GradeAI in your device Settings, then come back to scan."}
         </Text>
         <TouchableOpacity
           style={styles.permissionButton}
-          onPress={requestPermission}
+          onPress={canAsk ? requestPermission : () => Linking.openSettings()}
           activeOpacity={0.85}
         >
-          <Text style={styles.permissionButtonText}>Grant Camera Access</Text>
+          <Text style={styles.permissionButtonText}>
+            {canAsk ? "Grant Camera Access" : "Open Settings"}
+          </Text>
         </TouchableOpacity>
       </View>
     );
@@ -273,6 +277,13 @@ export default function CaptureScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.reviewHeader}>
+        <View style={styles.markingBanner}>
+          <Text style={styles.markingBannerText} numberOfLines={2}>
+            {generatedPaper
+              ? "✎ Marking against your custom paper"
+              : `✎ Marking: ${paperName || `Paper ${paperId}`}`}
+          </Text>
+        </View>
         <Text style={styles.reviewTitle}>
           {pages.length} page{pages.length !== 1 ? "s" : ""} captured
         </Text>
@@ -479,6 +490,19 @@ const styles = StyleSheet.create({
     paddingBottom: SPACING.md,
     backgroundColor: COLORS.surface,
     gap: SPACING.xs,
+  },
+  markingBanner: {
+    backgroundColor: COLORS.primaryLight,
+    borderRadius: RADIUS.md,
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.md,
+    marginBottom: SPACING.sm,
+    alignSelf: "flex-start",
+  },
+  markingBannerText: {
+    color: ON.primaryText,
+    fontSize: 13,
+    fontWeight: FONT.medium,
   },
   reviewTitle: {
     fontSize: 18,

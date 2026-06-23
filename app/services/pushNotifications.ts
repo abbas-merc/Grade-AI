@@ -34,7 +34,7 @@ export async function registerForPushNotifications(uid: string): Promise<void> {
       granted = requested.granted;
     }
     if (!granted) {
-      console.log("[push] notification permission not granted");
+      // Push is a convenience, not a blocker — exit quietly if not granted.
       return;
     }
 
@@ -47,7 +47,6 @@ export async function registerForPushNotifications(uid: string): Promise<void> {
     );
     const token = tokenResponse.data;
     if (!token) {
-      console.log("[push] no Expo push token returned");
       return;
     }
 
@@ -55,7 +54,6 @@ export async function registerForPushNotifications(uid: string): Promise<void> {
       .collection("teachers")
       .doc(uid)
       .set({ pushToken: token }, { merge: true });
-    console.log("[push] push token saved for uid", uid);
   } catch (err) {
     console.error("[push] registration failed", err);
   }

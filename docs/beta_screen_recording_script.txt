@@ -1,0 +1,60 @@
+GRADE AI — 90-SECOND BETA DEMO SCREEN RECORDING
+================================================
+Target length: ~90s. Scripted content below is ~54s, leaving buffer for natural
+pauses and transitions. Record on a real phone, portrait. Use a real generated
+paper (topics: Algebra, Geometry, Number; 60 marks). Button labels below match
+the app exactly.
+
+SHOT LIST (timestamps are cumulative)
+-------------------------------------
+0:00–0:02  (2s)  OPEN APP
+                 Launch Grade AI. Land on the "Papers" tab (blue header,
+                 Papers / History segmented control visible).
+
+0:02–0:05  (3s)  START A CUSTOM PAPER
+                 Tap "+ Create Custom Paper" at the top of the Papers list.
+                 The "Create Paper" form opens.
+
+0:05–0:10  (5s)  CHOOSE TOPICS + MARKS
+                 In Topics, tap to select Algebra, Geometry, Number (or leave
+                 "All"). Set Total marks to 60. Tap a difficulty (e.g. Mixed).
+
+0:10–0:13  (3s)  GENERATE
+                 Tap "Generate Paper". Show the button's loading spinner while
+                 the paper is compiled.
+
+0:13–0:23 (10s)  PREVIEW THE PAPER
+                 On "Your Paper", tap "Preview Paper". Slowly scroll the preview:
+                 summary card (subject, total marks, questions, time), then the
+                 numbered questions with their sub-parts and marks.
+
+0:23–0:31  (8s)  DOWNLOAD QUESTION PAPER
+                 Tap "Download Question Paper". When the share sheet appears,
+                 open/preview the PDF so the formatted question paper is on screen.
+
+0:31–0:36  (5s)  DOWNLOAD MARK SCHEME
+                 Go back, tap "Download Mark Scheme". Open the PDF briefly so the
+                 matching mark scheme (answers tied to each question number) shows.
+
+0:36–0:41  (5s)  MARK STUDENT RESPONSES
+                 Back on the preview, tap "Mark Student Responses".
+
+0:41–0:46  (5s)  CAPTURE SCREEN
+                 Show the camera capture screen: page counter at top, shutter at
+                 bottom. Tap the shutter once to "capture" a page, then Done.
+
+0:46–0:54  (8s)  RESULT (PRE-RECORDED / SCREENSHOT)
+                 Cut to a finished result screen (use a previously graded paper or
+                 a screenshot — live grading runs in the background and isn't
+                 instant). Show the total score, then a per-question breakdown with
+                 ticks/crosses and the short feedback line.
+
+0:54–end         HOLD on the result screen for a beat, then end.
+
+NOTES
+-----
+- Keep it silent or add a short voiceover: "Pick topics and marks → get a paper +
+  mark scheme → photograph answers → instant marking."
+- Do the real generate + download live (they're fast). Only the final marking
+  result should be pre-recorded, since grading is asynchronous.
+- Hide any other students'/personal data before recording.

@@ -54,7 +54,10 @@ function buildInlinePaper(paper: GeneratedPaper) {
       id: `gen_${q.assignedNumber}`,
       question_number: String(q.assignedNumber),
       marks_available: q.marks,
-      question_text: q.questionText,
+      // Questions are image snippets now, so there's no extracted question text;
+      // give the grader a short context line and let it mark strictly against the
+      // mark scheme (which carries the required answers + mark allocation).
+      question_text: `Question ${q.assignedNumber} — ${q.topic} (${q.marks} marks). Mark strictly against the mark scheme below.`,
       mark_scheme: [
         { description: markSchemeByNumber.get(q.assignedNumber)?.markSchemeText ?? "" },
       ],

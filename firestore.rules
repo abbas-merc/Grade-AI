@@ -1,0 +1,64 @@
+rules_version = '2';
+
+// GradeAI Firestore security rules.
+//
+// The mobile app talks to Firestore DIRECTLY for a teacher's own data
+// (grading history, the marking queue, and captured page images) and for its
+// push token. Everything else — the question bank and seeded papers — is served
+// to the app through the FastAPI backend, which uses the Firebase Admin SDK and
+// therefore BYPASSES these rules entirely. So these rules only need to constrain
+// the client, and they do so on a strict "owner-only, default-deny" basis.
+//
+// Deploy with:  firebase deploy --only firestore:rules
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    // ── A teacher's private space ───────────────────────────────────────────
+    match /teachers/{uid} {
+      // The teacher document holds a client-managed `pushToken` plus
+      // backend-only fields (`is_beta`, `usage_count`). The owner may read it
+      // and create/update ONLY the pushToken. is_beta / usage_count can never be
+      // written from the client — they are provisioned solely by the backend
+      // (Admin SDK bypasses these rules).
+      allow read: if isOwner(uid);
+      allow create: if isOwner(uid)
+                    && request.resource.data.keys().hasOnly(['pushToken']);
+      allow update: if isOwner(uid)
+                    && request.resource.data.diff(resource.data)
+                         .affectedKeys().hasOnly(['pushToken']);
+      allow delete: if false;
+
+      // Grading jobs + results. Fully scoped to the owner so one teacher can
+      // never read or modify another teacher's markings.
+      match /markings/{markingId} {
+        allow read, create, update, delete: if isOwner(uid);
+
+        // Captured answer-booklet page images, written at submit time and read
+        // by the backend worker (Admin SDK, bypasses rules).
+        match /pages/{pageId} {
+          allow read, write: if isOwner(uid);
+        }
+      }
+    }
+
+    // ── Backend-only collections ────────────────────────────────────────────
+    // The question bank and seeded papers are read/written exclusively by the
+    // backend Admin SDK. No client may read or modify them directly — this keeps
+    // mark schemes (the answer key) off-device and the question bank read-only.
+    match /questions/{document=**} {
+      allow read, write: if false;
+    }
+    match /papers/{document=**} {
+      allow read, write: if false;
+    }
+
+    // ── Default deny ────────────────────────────────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

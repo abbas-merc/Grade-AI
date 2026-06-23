@@ -15,11 +15,12 @@ import {
   ActivityIndicator,
   StyleSheet,
   KeyboardAvoidingView,
+  Keyboard,
   Platform,
 } from "react-native";
 import { Link } from "expo-router";
 
-import { auth, authErrorMessage } from "../../services/firebase";
+import { auth, authErrorMessage, isValidEmail } from "../../services/firebase";
 import { COLORS, RADIUS, SPACING, FONT } from "../../constants/theme";
 
 export default function SignUpScreen() {
@@ -34,10 +35,15 @@ export default function SignUpScreen() {
       setError("Please enter both an email and a password.");
       return;
     }
+    if (!isValidEmail(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
     if (password.length < 6) {
       setError("Password should be at least 6 characters.");
       return;
     }
+    Keyboard.dismiss();
     setLoading(true);
     try {
       await auth().createUserWithEmailAndPassword(email.trim(), password);

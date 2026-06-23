@@ -42,6 +42,11 @@ import { COLORS, RADIUS, SPACING, FONT, ON } from "../constants/theme";
 // Width of the red delete zone revealed by a left swipe
 const DELETE_WIDTH = 80;
 
+// A queued/processing job older than this is almost certainly stuck (a typical
+// paper grades in 30–90 s). We surface that to the teacher instead of spinning
+// "Grading…" forever. The backend also sweeps stale jobs to "failed" on restart.
+const STUCK_AFTER_MS = 3 * 60 * 1000;
+
 type Tab = "papers" | "history";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -228,6 +233,10 @@ function HistoryRow({
   const queued = entry.status === "queued";
   const processing = entry.status === "processing";
   const failed = entry.status === "failed" || entry.status === "error";
+  // Surface jobs that have been queued/processing far longer than normal.
+  const stale =
+    (queued || processing) &&
+    Date.now() - new Date(entry.graded_at).getTime() > STUCK_AFTER_MS;
 
   return (
     // overflow:hidden clips the row as it slides left, keeping layout clean
@@ -269,6 +278,11 @@ function HistoryRow({
             <Text style={styles.historyDate}>
               {formatDate(entry.graded_at)}
             </Text>
+            {stale && (
+              <Text style={styles.staleNote}>
+                Taking longer than expected — check back soon.
+              </Text>
+            )}
           </View>
           {queued ? (
             <View style={styles.queuePill}>
@@ -489,11 +503,10 @@ export default function HomeScreen() {
                 <Text style={styles.retryText}>Retry</Text>
               </TouchableOpacity>
             </View>
-          ) : papers.length === 0 ? (
-            <View style={styles.centered}>
-              <Text style={styles.mutedText}>No papers available yet.</Text>
-            </View>
           ) : (
+            // The "Create Custom Paper" button is the primary teacher action and
+            // does NOT depend on seeded past papers, so it is always rendered
+            // first — even when the past-paper list is empty.
             <ScrollView contentContainerStyle={styles.listContent}>
               <TouchableOpacity
                 style={styles.createPaperButton}
@@ -502,8 +515,18 @@ export default function HomeScreen() {
               >
                 <Text style={styles.createPaperButtonText}>+ Create Custom Paper</Text>
               </TouchableOpacity>
-              <Text style={styles.sectionLabel}>Select a paper to begin</Text>
-              {Object.entries(groupPapersBySubject(papers)).map(
+              {papers.length === 0 ? (
+                <View style={styles.emptyPapers}>
+                  <Text style={styles.emptyTitle}>No past papers yet</Text>
+                  <Text style={styles.emptySubtitle}>
+                    Tap “Create Custom Paper” above to build a practice paper from
+                    real IGCSE questions.
+                  </Text>
+                </View>
+              ) : (
+                <>
+                  <Text style={styles.sectionLabel}>Select a paper to begin</Text>
+                  {Object.entries(groupPapersBySubject(papers)).map(
                 ([subjectName, subjectPapers], groupIndex) => (
                   <React.Fragment key={subjectName}>
                     {groupIndex > 0 && <View style={{ height: 24 }} />}
@@ -527,6 +550,8 @@ export default function HomeScreen() {
                     ))}
                   </React.Fragment>
                 ),
+                  )}
+                </>
               )}
             </ScrollView>
           )}
@@ -583,6 +608,9 @@ export default function HomeScreen() {
                       paperName: item.paper_name,
                       gradedAt: item.graded_at,
                       fromHistory: "true",
+                      // Firestore doc id → lets the results PDF download verify
+                      // ownership server-side.
+                      markingId: item.marking_id ?? "",
                     },
                   })
                 }
@@ -746,6 +774,14 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
 
+  // Empty past-paper list (Create button stays above this)
+  emptyPapers: {
+    alignItems: "center",
+    gap: SPACING.sm,
+    paddingVertical: 64,
+    paddingHorizontal: SPACING.lg,
+  },
+
   // Empty history (FlatList content style + the empty component itself)
   emptyListContent: {
     flexGrow: 1,
@@ -833,6 +869,11 @@ const styles = StyleSheet.create({
   historyDate: {
     fontSize: 13,
     color: COLORS.textSecondary,
+    marginTop: SPACING.xs,
+  },
+  staleNote: {
+    fontSize: 12,
+    color: COLORS.warning,
     marginTop: SPACING.xs,
   },
   scoreBadge: {

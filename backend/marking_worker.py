@@ -22,6 +22,7 @@ from __future__ import annotations
 import threading
 import time
 import traceback
+from datetime import datetime, timezone, timedelta
 
 import httpx
 from firebase_admin import firestore as admin_firestore
@@ -37,6 +38,13 @@ from pipeline import run_full_paper_grading
 
 _EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send"
 _MARKINGS_COLLECTION = "markings"
+
+# A job still "processing" this long after it was created was almost certainly
+# orphaned by a worker crash/restart (a real job finishes in well under a
+# minute). The startup sweep fails those so the History row stops spinning.
+# Comfortably larger than the worst-case grading time so a genuinely in-flight
+# job is never swept.
+_STALE_PROCESSING_AFTER = timedelta(minutes=15)
 
 # Progress steps written to the document as the job advances (Issue 3). The
 # pipeline emits the middle three via its progress_callback; the worker owns the
@@ -232,8 +240,40 @@ def _on_snapshot(col_snapshot, changes, read_time) -> None:
 # Listener lifecycle
 # ---------------------------------------------------------------------------
 
+def _sweep_stale_processing() -> None:
+    """Fail any job stuck in "processing" from a previous (crashed/restarted)
+    worker, so it doesn't hang forever. Queued jobs are deliberately NOT touched
+    — the listener's initial snapshot re-delivers them for normal processing.
+    Runs once at listener startup; best-effort (never raises)."""
+    try:
+        db = _get_client()
+        now = datetime.now(timezone.utc)
+        swept = 0
+        for snap in db.collection_group(_MARKINGS_COLLECTION).stream():
+            data = snap.to_dict() or {}
+            if data.get("status") != "processing":
+                continue
+            created = data.get("created_at")
+            # created_at is a tz-aware datetime from Firestore. If it's recent the
+            # job may still be legitimately in flight, so leave it alone.
+            if isinstance(created, datetime) and (now - created) < _STALE_PROCESSING_AFTER:
+                continue
+            snap.reference.update({
+                "status": "failed",
+                "error_message": "Grading was interrupted. Please resubmit this paper.",
+                "progress_step": admin_firestore.DELETE_FIELD,
+            })
+            swept += 1
+        if swept:
+            print(f"[worker] startup sweep: failed {swept} stale 'processing' job(s)")
+    except Exception as exc:  # noqa: BLE001
+        print(f"[worker] startup sweep failed (non-fatal): {exc}")
+
+
 def _run_listener() -> None:
     """Register the collection-group listener and keep it alive forever."""
+    # One-time cleanup of jobs orphaned by a prior crash before we start listening.
+    _sweep_stale_processing()
     while True:
         try:
             db = _get_client()

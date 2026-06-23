@@ -137,9 +137,6 @@ export async function getHistory(): Promise<HistoryEntry[]> {
       const entries = snap.docs.map((doc) =>
         docToEntry(doc.id, (doc.data() as Record<string, any>) || {})
       );
-      console.log(
-        `[historyService] getHistory → loaded ${entries.length} entries from Firestore`
-      );
       // Refresh the offline cache.
       try {
         await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
@@ -224,9 +221,6 @@ export async function deleteHistoryEntry(
   if (col && docId) {
     // Let any failure propagate — the caller must NOT update local state.
     await col.doc(docId).delete();
-    console.log(
-      `[historyService] deleteHistoryEntry → Firestore delete OK (docId=${docId})`
-    );
   }
 
   // Only reached if the Firestore delete succeeded (or there was nothing to

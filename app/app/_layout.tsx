@@ -11,15 +11,28 @@
  *     are sitting on an auth screen are bounced back into the app.
  */
 
-import { useEffect, useState } from "react";
+import { createContext, useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, View, StyleSheet } from "react-native";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import * as Notifications from "expo-notifications";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 
 import { COLORS, FONT } from "../constants/theme";
 import { registerForPushNotifications } from "../services/pushNotifications";
+
+/** AsyncStorage key recording that the one-time onboarding has been completed. */
+export const ONBOARDING_COMPLETE_KEY = "onboarding_complete";
+
+/**
+ * Lets the onboarding screen notify the root layout that onboarding is done, so
+ * the layout's cached flag updates immediately and its redirect effect doesn't
+ * send the user straight back to /onboarding after "Get Started".
+ */
+export const OnboardingContext = createContext<{ complete: () => void }>({
+  complete: () => {},
+});
 
 // Show notifications even while the app is foregrounded.
 Notifications.setNotificationHandler({
@@ -34,6 +47,7 @@ Notifications.setNotificationHandler({
 export default function RootLayout() {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
+  const [onboardingComplete, setOnboardingComplete] = useState<boolean | null>(null);
   const segments = useSegments();
   const router = useRouter();
 
@@ -46,16 +60,35 @@ export default function RootLayout() {
     return unsubscribe;
   }, []);
 
-  // Redirect whenever auth state or the active route group changes.
+  // Load the one-time onboarding flag once on mount. Fail-open (treat as done)
+  // so a storage error can never trap the user on the onboarding screen.
   useEffect(() => {
-    if (initializing) return;
+    AsyncStorage.getItem(ONBOARDING_COMPLETE_KEY)
+      .then((value) => setOnboardingComplete(value === "true"))
+      .catch(() => setOnboardingComplete(true));
+  }, []);
+
+  const completeOnboarding = useCallback(() => setOnboardingComplete(true), []);
+
+  // Redirect whenever auth state, onboarding state, or the active route changes.
+  useEffect(() => {
+    if (initializing || onboardingComplete === null) return;
     const inAuthGroup = segments[0] === "auth";
-    if (!user && !inAuthGroup) {
-      router.replace("/auth/sign-in");
-    } else if (user && inAuthGroup) {
-      router.replace("/");
+    const onOnboarding = segments[0] === "onboarding";
+
+    if (!user) {
+      // Signed out → auth flow (unless already there).
+      if (!inAuthGroup) router.replace("/auth/sign-in");
+      return;
     }
-  }, [user, initializing, segments, router]);
+    // Signed in but hasn't seen onboarding → show it once.
+    if (!onboardingComplete) {
+      if (!onOnboarding) router.replace("/onboarding");
+      return;
+    }
+    // Signed in and onboarded → bounce out of auth/onboarding into the app.
+    if (inAuthGroup || onOnboarding) router.replace("/");
+  }, [user, initializing, onboardingComplete, segments, router]);
 
   // Once authenticated, register this device for push notifications so the
   // backend can alert the teacher when a grading job finishes.
@@ -73,7 +106,7 @@ export default function RootLayout() {
     return () => sub.remove();
   }, [router]);
 
-  if (initializing) {
+  if (initializing || onboardingComplete === null) {
     return (
       <View style={styles.splash}>
         <ActivityIndicator size="large" color={COLORS.primary} />
@@ -82,7 +115,7 @@ export default function RootLayout() {
   }
 
   return (
-    <>
+    <OnboardingContext.Provider value={{ complete: completeOnboarding }}>
       <StatusBar style="auto" />
       <Stack
         screenOptions={{
@@ -100,10 +133,11 @@ export default function RootLayout() {
         <Stack.Screen name="generate-paper" options={{ title: "Create Paper" }} />
         <Stack.Screen name="generated-paper" options={{ title: "Your Paper" }} />
         <Stack.Screen name="paper-preview" options={{ headerShown: false }} />
+        <Stack.Screen name="onboarding" options={{ headerShown: false }} />
         <Stack.Screen name="auth/sign-in" options={{ headerShown: false }} />
         <Stack.Screen name="auth/sign-up" options={{ headerShown: false }} />
       </Stack>
-    </>
+    </OnboardingContext.Provider>
   );
 }
 

@@ -18,7 +18,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from database import Base, engine
-from routers import papers, questions, grading, paper_generator
+from routers import papers, questions, grading, paper_generator, results
 from marking_worker import start_marking_listener
 
 app = FastAPI(
@@ -40,6 +40,7 @@ app.include_router(papers.router)
 app.include_router(questions.router)
 app.include_router(grading.router)
 app.include_router(paper_generator.router, prefix="/api")
+app.include_router(results.router, prefix="/api")
 
 # Serve the extracted question diagrams (committed under static/question_diagrams)
 # at /diagrams/<questionId>.png. These back the `imageUrl` ("/diagrams/<id>.png")
@@ -49,6 +50,16 @@ app.include_router(paper_generator.router, prefix="/api")
 _DIAGRAMS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "question_diagrams")
 os.makedirs(_DIAGRAMS_DIR, exist_ok=True)
 app.mount("/diagrams", StaticFiles(directory=_DIAGRAMS_DIR), name="diagrams")
+
+# Serve the cropped question-snippet images (committed under
+# static/question_snippets) at /question_snippets/<id>.png. These back the
+# `questionImageUrl` ("/question_snippets/<id>.png") stored on every question in
+# the image-snippet bank — the app prepends its BASE_URL and the question-paper
+# PDF generator reads the same files off disk. (Firebase Storage is unavailable:
+# the project has no billing account, so a bucket cannot be provisioned.)
+_SNIPPETS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "question_snippets")
+os.makedirs(_SNIPPETS_DIR, exist_ok=True)
+app.mount("/question_snippets", StaticFiles(directory=_SNIPPETS_DIR), name="question_snippets")
 
 
 @app.exception_handler(Exception)

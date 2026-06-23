@@ -51,6 +51,9 @@ class GeneratePaperRequest(BaseModel):
     # if any fail: subject must be a known value, at least one topic must be
     # supplied, and the mark total must sit in a sane range.
     subject: Literal["math", "physics", "chemistry"] = "math"
+    # Paper 2 (non-calculator, structured) / Paper 4 (calculator, longer
+    # structured) / both. "both" draws from the full pool.
+    paperType: Literal["P2", "P4", "both"] = "both"
     topics: list[str] = Field(min_length=1)
     totalMarks: int = Field(ge=20, le=200)
     difficulty: Literal["mixed", "easy", "medium", "hard"] = "mixed"
@@ -59,15 +62,17 @@ class GeneratePaperRequest(BaseModel):
 class GeneratedQuestion(BaseModel):
     assignedNumber: int
     originalPaperCode: str
+    # Which source paper type this question came from ("P2" | "P4").
+    paperType: str
+    # True when sourced from a specimen paper (vs a past exam).
+    isSpecimen: bool = False
     marks: int
-    questionText: str
     topic: str
     difficulty: str
-    # Diagram support: hasImage flags a figure question; imageUrl is the
-    # host-agnostic path ("/diagrams/<id>.png") the app prepends BASE_URL to and
-    # the PDF generator resolves to a local file. Empty for text-only questions.
-    hasImage: bool = False
-    imageUrl: str = ""
+    # Every question now IS an image: questionImageUrl is the host-agnostic path
+    # ("/question_snippets/<id>.png") the app prepends BASE_URL to and the PDF
+    # generator resolves to a local file under backend/static.
+    questionImageUrl: str
 
 
 class MarkSchemeItem(BaseModel):
@@ -88,13 +93,13 @@ class GeneratePaperResponse(BaseModel):
 # --------------------------------------------------------------------------- #
 # Selection logic
 # --------------------------------------------------------------------------- #
-def _fetch_pool(subject: str, topics: list[str]) -> list[dict]:
-    """Return questions matching subject and (if given) topics.
+def _fetch_pool(subject: str, topics: list[str], paper_type: str) -> list[dict]:
+    """Return questions matching subject, paperType ("both" = no filter) and
+    (if given) topics.
 
     We filter on `subject` in Firestore (auto single-field index) and apply the
-    topic filter in Python — the collection is tiny, so this avoids needing a
-    composite index or running into `in`-query limits. Diagram questions
-    (hasImage == true) are included now that each carries an `imageUrl`.
+    paperType + topic filters in Python — the collection is tiny, so this avoids
+    needing a composite index or running into `in`-query limits.
     """
     db = _get_client()
     topic_set = set(topics or [])
@@ -104,6 +109,8 @@ def _fetch_pool(subject: str, topics: list[str]) -> list[dict]:
     )
     for doc in query.stream():
         data = doc.to_dict() or {}
+        if paper_type != "both" and data.get("paperType") != paper_type:
+            continue
         if topic_set and data.get("topic") not in topic_set:
             continue
         pool.append(data)
@@ -212,7 +219,7 @@ def generate_paper(
     uid: str = Depends(get_current_uid),
 ):
     """Build a custom paper from the questions collection."""
-    pool = _fetch_pool(req.subject, req.topics)
+    pool = _fetch_pool(req.subject, req.topics, req.paperType)
     ordered = _ordered_pool(pool, req.difficulty)
     selected = _select(ordered, req.totalMarks)
 
@@ -223,12 +230,12 @@ def generate_paper(
         questions.append(GeneratedQuestion(
             assignedNumber=number,
             originalPaperCode=q.get("paperCode", "") or "",
+            paperType=q.get("paperType", "") or "",
+            isSpecimen=bool(q.get("isSpecimen")),
             marks=marks,
-            questionText=q.get("questionText", "") or "",
             topic=q.get("topic", "") or "",
             difficulty=q.get("difficulty", "") or "",
-            hasImage=bool(q.get("hasImage")),
-            imageUrl=q.get("imageUrl", "") or "",
+            questionImageUrl=q.get("questionImageUrl", "") or "",
         ))
         mark_scheme.append(MarkSchemeItem(
             questionNumber=number,
@@ -244,6 +251,49 @@ def generate_paper(
         questions=questions,
         markScheme=mark_scheme,
     )
+
+
+class PoolQuestion(BaseModel):
+    """One question's selection metadata (no image / mark scheme) — enough for
+    the app to compute the available-marks ceiling for any filter combination."""
+    paperType: str
+    topic: str
+    difficulty: str
+    marks: int
+
+
+class PoolResponse(BaseModel):
+    topics: list[str]
+    questions: list[PoolQuestion]
+
+
+@router.get("/generate-paper/pool", response_model=PoolResponse)
+def generate_paper_pool(
+    subject: str = "math",
+    uid: str = Depends(get_current_uid),
+):
+    """Return the lightweight selection metadata for every question in a subject
+    plus the sorted distinct topics. The Custom Paper form fetches this once and
+    computes both the topic chips and the reactive "Available: X marks in
+    [difficulty] [paperType] questions" ceiling entirely client-side, so the
+    teacher always sees the pool limit before tapping Generate."""
+    db = _get_client()
+    questions: list[PoolQuestion] = []
+    topics: set[str] = set()
+    query = db.collection(_QUESTIONS_COLLECTION).where(
+        filter=firestore.FieldFilter("subject", "==", subject)
+    )
+    for doc in query.stream():
+        d = doc.to_dict() or {}
+        questions.append(PoolQuestion(
+            paperType=d.get("paperType", "") or "",
+            topic=d.get("topic", "") or "",
+            difficulty=d.get("difficulty", "") or "",
+            marks=int(d.get("marks", 0) or 0),
+        ))
+        if d.get("topic"):
+            topics.add(d["topic"])
+    return PoolResponse(topics=sorted(topics), questions=questions)
 
 
 @router.post("/generate-paper/download-question-paper")

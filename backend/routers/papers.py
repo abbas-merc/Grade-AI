@@ -37,6 +37,7 @@ def _serialize_question(q: dict) -> dict:
         "question_number": q.get("question_number"),
         "question_text": q.get("question_text"),
         "marks_available": q.get("marks_available"),
+        "question_image_url": q.get("question_image_url") or "",
     }
 
 

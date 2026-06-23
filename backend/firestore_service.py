@@ -171,6 +171,33 @@ def get_grading_history(uid: str) -> list:
     return history
 
 
+def get_marking_for_user(uid: str, marking_id: str) -> Optional[dict]:
+    """
+    Fetch a single marking document at teachers/{uid}/markings/{marking_id}.
+
+    Because the read is scoped to the caller's own uid path, this also enforces
+    ownership: a teacher can only ever resolve a marking that lives under their
+    own subcollection. A marking_id belonging to another teacher simply does not
+    exist here and returns None (the caller turns that into a 404).
+
+    The Firestore document ID is exposed as 'marking_id'. Returns None if the
+    document does not exist.
+    """
+    db = _get_client()
+    snap = (
+        db.collection(_TEACHERS_COLLECTION)
+        .document(uid)
+        .collection(_MARKINGS_SUBCOLLECTION)
+        .document(marking_id)
+        .get()
+    )
+    if not snap.exists:
+        return None
+    data: dict[str, Any] = snap.to_dict() or {}
+    data["marking_id"] = snap.id
+    return data
+
+
 def create_pending_marking(
     uid: str, paper_id: int, paper_name: str, total_marks_available: int
 ) -> str:
@@ -466,6 +493,29 @@ def get_question_by_id(question_id: int | str) -> Optional[dict]:
 # ---------------------------------------------------------------------------
 # Custom Paper Generator — flat `questions` collection
 # ---------------------------------------------------------------------------
+
+def clear_custom_questions() -> int:
+    """
+    Delete every document in the flat `questions` collection, in batches of 500
+    (Firestore's batch cap). Returns the number of documents deleted.
+
+    Used when rebuilding the question bank from scratch (e.g. switching from the
+    old text-based questions to image-snippet questions). Back up first.
+    """
+    db = _get_client()
+    collection = db.collection(_CUSTOM_QUESTIONS_COLLECTION)
+    deleted = 0
+    while True:
+        docs = list(collection.limit(_BATCH_LIMIT).stream())
+        if not docs:
+            break
+        batch = db.batch()
+        for doc in docs:
+            batch.delete(doc.reference)
+        batch.commit()
+        deleted += len(docs)
+    return deleted
+
 
 def batch_write_custom_questions(questions: list[dict]) -> int:
     """

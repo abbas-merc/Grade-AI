@@ -34,6 +34,9 @@ class QuestionResponse(BaseModel):
     question_number: str
     question_text: str
     marks_available: int
+    # Host-agnostic snippet path ("/question_snippets/<id>.png") for papers whose
+    # questions are image snippets; empty for legacy text-only questions.
+    question_image_url: str = ""
 
 
 class PaperResponse(BaseModel):

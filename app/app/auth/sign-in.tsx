@@ -15,11 +15,12 @@ import {
   ActivityIndicator,
   StyleSheet,
   KeyboardAvoidingView,
+  Keyboard,
   Platform,
 } from "react-native";
 import { Link } from "expo-router";
 
-import { auth, authErrorMessage } from "../../services/firebase";
+import { auth, authErrorMessage, isValidEmail } from "../../services/firebase";
 import { COLORS, RADIUS, SPACING, FONT } from "../../constants/theme";
 
 export default function SignInScreen() {
@@ -34,6 +35,11 @@ export default function SignInScreen() {
       setError("Please enter both your email and password.");
       return;
     }
+    if (!isValidEmail(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+    Keyboard.dismiss();
     setLoading(true);
     try {
       await auth().signInWithEmailAndPassword(email.trim(), password);

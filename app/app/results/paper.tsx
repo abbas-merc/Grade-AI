@@ -5,15 +5,19 @@
  * History replay (fromHistory="true"): shows the result but never re-saves.
  */
 
-import React, { useMemo, useCallback, useRef } from "react";
+import React, { useMemo, useCallback, useRef, useState } from "react";
 import {
   View,
   Text,
   FlatList,
   TouchableOpacity,
+  ActivityIndicator,
+  Alert,
   StyleSheet,
 } from "react-native";
 import { useLocalSearchParams, useRouter, useNavigation, useFocusEffect } from "expo-router";
+import * as FileSystem from "expo-file-system/legacy";
+import * as Sharing from "expo-sharing";
 import type {
   PaperGradingResult,
   QuestionResult,
@@ -21,6 +25,7 @@ import type {
   HistoryEntry,
 } from "../../types";
 import { saveHistoryEntry } from "../../services/historyService";
+import { downloadResultsPdf } from "../../services/api";
 import { COLORS, RADIUS, SPACING, FONT, ON } from "../../constants/theme";
 
 function formatDate(iso: string): string {
@@ -99,16 +104,21 @@ function QuestionCard({ item }: { item: QuestionResult }) {
 }
 
 export default function PaperResultsScreen() {
-  const { resultData, paperName, gradedAt, fromHistory } = useLocalSearchParams<{
-    resultData: string;
-    paperName?: string;
-    gradedAt?: string;
-    fromHistory?: string;
-  }>();
+  const { resultData, paperName, gradedAt, fromHistory, markingId } =
+    useLocalSearchParams<{
+      resultData: string;
+      paperName?: string;
+      gradedAt?: string;
+      fromHistory?: string;
+      // Firestore marking doc id, passed from History so the download endpoint
+      // can verify ownership server-side. Absent for legacy entries.
+      markingId?: string;
+    }>();
   const router = useRouter();
   const navigation = useNavigation();
   // Guard against double-save if the button is tapped twice quickly
   const hasSaved = useRef(false);
+  const [downloading, setDownloading] = useState(false);
 
   const result: PaperGradingResult | null = useMemo(() => {
     if (!resultData) return null;
@@ -131,9 +141,6 @@ export default function PaperResultsScreen() {
   // Called when the user explicitly taps "Done".
   // This is the single save point — intentional, never automatic.
   const handleDone = useCallback(async () => {
-    console.log(
-      `[results/paper] handleDone → fromHistory=${fromHistory}, hasResult=${!!result}, hasSaved=${hasSaved.current}`
-    );
     if (fromHistory !== "true" && result && !hasSaved.current) {
       hasSaved.current = true;
       const name = paperName || `Paper ${result.paper_id}`;
@@ -156,12 +163,8 @@ export default function PaperResultsScreen() {
         // teachers/{uid}/markings later. May be undefined if the save failed.
         marking_id: result.marking_id,
       };
-      console.log(
-        `[results/paper] handleDone → calling saveHistoryEntry (id=${entry.id}, paper=${name})`
-      );
       try {
         await saveHistoryEntry(entry);
-        console.log(`[results/paper] handleDone → saveHistoryEntry resolved OK (id=${entry.id})`);
       } catch (err) {
         // AsyncStorage failure is non-fatal for navigation, but no longer silent —
         // surface it so we can actually see write failures in Metro logs.
@@ -176,6 +179,46 @@ export default function PaperResultsScreen() {
     }
     router.replace({ pathname: "/", params: { tab: "history" } });
   }, [result, paperName, fromHistory, router]);
+
+  // Fetch the shareable "Marked Results" PDF from the backend, write it to the
+  // cache, and hand it to the OS share sheet — the same pattern the paper/mark
+  // scheme downloads use.
+  const handleDownload = useCallback(async () => {
+    if (!result || downloading) return;
+    setDownloading(true);
+    try {
+      const base64 = await downloadResultsPdf({
+        resultId: markingId || result.marking_id,
+        result,
+        paperName,
+        gradedAt,
+      });
+      const safe =
+        (paperName || "results")
+          .replace(/[^A-Za-z0-9]+/g, "_")
+          .replace(/^_+|_+$/g, "") || "results";
+      const fileUri = `${FileSystem.cacheDirectory}results_${safe}.pdf`;
+      await FileSystem.writeAsStringAsync(fileUri, base64, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(fileUri, {
+          mimeType: "application/pdf",
+          UTI: "com.adobe.pdf",
+          dialogTitle: "Marked Results",
+        });
+      } else {
+        Alert.alert("Saved", `Results PDF saved to:\n${fileUri}`);
+      }
+    } catch (err) {
+      Alert.alert(
+        "Download failed",
+        err instanceof Error ? err.message : "Could not download the results PDF."
+      );
+    } finally {
+      setDownloading(false);
+    }
+  }, [result, downloading, markingId, paperName, gradedAt]);
 
   if (!result) {
     return (
@@ -235,13 +278,27 @@ export default function PaperResultsScreen() {
       }
       renderItem={({ item }) => <QuestionCard item={item} />}
       ListFooterComponent={
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={handleDone}
-          activeOpacity={0.85}
-        >
-          <Text style={styles.backButtonText}>Done</Text>
-        </TouchableOpacity>
+        <View style={styles.footer}>
+          <TouchableOpacity
+            style={[styles.downloadButton, downloading && styles.buttonDisabled]}
+            onPress={handleDownload}
+            disabled={downloading}
+            activeOpacity={0.85}
+          >
+            {downloading ? (
+              <ActivityIndicator color={COLORS.primary} />
+            ) : (
+              <Text style={styles.downloadButtonText}>Download Results</Text>
+            )}
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.doneButton}
+            onPress={handleDone}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.backButtonText}>Done</Text>
+          </TouchableOpacity>
+        </View>
       }
       ItemSeparatorComponent={() => <View style={styles.separator} />}
     />
@@ -472,6 +529,35 @@ const styles = StyleSheet.create({
   separator: {
     height: SPACING.md,
   },
+  // Footer action stack: outlined "Download Results" (secondary) above the
+  // filled "Done" (primary) so both are clearly visible without competing.
+  footer: {
+    marginTop: SPACING.xl,
+    gap: SPACING.md,
+  },
+  downloadButton: {
+    backgroundColor: COLORS.card,
+    borderRadius: RADIUS.lg,
+    borderWidth: 1.5,
+    borderColor: COLORS.primary,
+    paddingVertical: SPACING.lg,
+    alignItems: "center",
+  },
+  downloadButtonText: {
+    color: COLORS.primary,
+    fontSize: 15,
+    fontWeight: FONT.medium,
+  },
+  buttonDisabled: {
+    opacity: 0.6,
+  },
+  doneButton: {
+    backgroundColor: COLORS.primary,
+    borderRadius: RADIUS.lg,
+    paddingVertical: SPACING.lg,
+    alignItems: "center",
+  },
+  // Used by the error-state button and the footer "Done" button.
   backButton: {
     backgroundColor: COLORS.primary,
     borderRadius: RADIUS.lg,

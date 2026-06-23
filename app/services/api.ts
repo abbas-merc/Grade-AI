@@ -14,8 +14,12 @@ import type { AxiosError, InternalAxiosRequestConfig } from "axios";
 import auth from "@react-native-firebase/auth";
 import { encode as encodeBase64 } from "base64-arraybuffer";
 import { BASE_URL, GRADING_TIMEOUT_MS } from "../constants/config";
-import type { Paper, Question, GradingResult } from "../types";
-import type { GeneratedPaper, GeneratePaperRequest } from "../types/paperGenerator";
+import type { Paper, Question, GradingResult, PaperGradingResult } from "../types";
+import type {
+  GeneratedPaper,
+  GeneratePaperRequest,
+  GeneratorPool,
+} from "../types/paperGenerator";
 
 // ---------------------------------------------------------------------------
 // Axios instance
@@ -39,14 +43,10 @@ client.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     const currentUser = auth().currentUser;
     if (currentUser) {
-      try {
-        const token = await currentUser.getIdToken();
-        config.headers.Authorization = `Bearer ${token}`;
-      } catch {
-        // Token refresh failed temporarily (e.g. Firebase re-initializing after
-        // a hot reload). Proceed without the header — the backend will return
-        // a 401, which is an AxiosError and produces a proper error message.
-      }
+      // Propagate token errors instead of swallowing — sending a tokenless
+      // request always yields a 401 and wastes the retry budget.
+      const token = await currentUser.getIdToken();
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   }
@@ -104,7 +104,8 @@ export async function getPapers(): Promise<Paper[]> {
     if (axios.isAxiosError(err)) {
       throw new Error(`Failed to load papers: ${extractAxiosMessage(err)}`);
     }
-    throw new Error("Failed to load papers");
+    const msg = err instanceof Error ? err.message : String(err);
+    throw new Error(`Failed to load papers: ${msg}`);
   }
 }
 
@@ -237,9 +238,33 @@ export async function getTopics(subject: string): Promise<string[]> {
 }
 
 /**
+ * Fetch the question pool summary for a subject: the distinct topics plus
+ * lightweight per-question metadata (paperType, topic, difficulty, marks). The
+ * Custom Paper form uses this to render the topic chips and to compute the
+ * reactive "Available: X marks" ceiling for any filter combination client-side.
+ *
+ * @param subject - e.g. "math".
+ * @returns GeneratorPool from GET /api/generate-paper/pool?subject=...
+ * @throws  Error("Failed to load question pool") on any failure.
+ */
+export async function getQuestionPool(subject: string): Promise<GeneratorPool> {
+  try {
+    const { data } = await client.get<GeneratorPool>("/api/generate-paper/pool", {
+      params: { subject },
+    });
+    return { topics: data.topics ?? [], questions: data.questions ?? [] };
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      throw new Error(`Failed to load question pool: ${extractAxiosMessage(err)}`);
+    }
+    throw new Error("Failed to load question pool");
+  }
+}
+
+/**
  * Generate a custom paper from the questions collection.
  *
- * @param req - Subject, topics, totalMarks, difficulty.
+ * @param req - Subject, paperType, topics, totalMarks, difficulty.
  * @returns The generated paper (questions + mark scheme) from
  *          POST /api/generate-paper.
  * @throws  Error("Failed to generate paper") on any failure.
@@ -312,5 +337,46 @@ export async function downloadMarkSchemePdf(
       throw new Error(`Failed to download mark scheme: ${extractAxiosMessage(err)}`);
     }
     throw new Error("Failed to download mark scheme");
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Marked-results PDF
+// ---------------------------------------------------------------------------
+
+/**
+ * Download the shareable "Marked Results" PDF for a completed marking.
+ *
+ * Sends the Firestore marking id (`resultId`) when known — the backend reads it
+ * from the caller's own markings, which enforces ownership — and always carries
+ * the full result + display fields as a fallback for legacy entries that have no
+ * stored id.
+ *
+ * @returns base64-encoded PDF bytes (ready for FileSystem.writeAsStringAsync).
+ * @throws  Error("Failed to download results: {detail}") on any failure.
+ */
+export async function downloadResultsPdf(params: {
+  resultId?: string;
+  result: PaperGradingResult;
+  paperName?: string;
+  gradedAt?: string;
+}): Promise<string> {
+  try {
+    const { data } = await client.post<ArrayBuffer>(
+      "/api/results/download-pdf",
+      {
+        result_id: params.resultId,
+        result: params.result,
+        paper_name: params.paperName,
+        graded_at: params.gradedAt,
+      },
+      { responseType: "arraybuffer", timeout: GRADING_TIMEOUT_MS }
+    );
+    return encodeBase64(data);
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      throw new Error(`Failed to download results: ${extractAxiosMessage(err)}`);
+    }
+    throw new Error("Failed to download results");
   }
 }

@@ -25,19 +25,19 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as FileSystem from "expo-file-system/legacy";
 import * as Sharing from "expo-sharing";
 
-import { parseQuestionParts } from "../utils/parseQuestion";
 import { downloadQuestionPaperPdf, downloadMarkSchemePdf } from "../services/api";
 import type { GeneratedPaper, GeneratedQuestion } from "../types/paperGenerator";
 import { COLORS, RADIUS, SPACING, FONT } from "../constants/theme";
 import { BASE_URL } from "../constants/config";
 
 /**
- * DiagramImage — render an extracted question figure at the card's width while
- * preserving aspect ratio. imageUrl is host-agnostic ("/diagrams/<id>.png"), so
- * we prepend BASE_URL. Image.getSize gives the natural dimensions, which we turn
- * into an aspectRatio so the height tracks the (full) card width.
+ * QuestionImage — render a question's cropped snippet at the card's width while
+ * preserving aspect ratio. questionImageUrl is host-agnostic
+ * ("/question_snippets/<id>.png"), so we prepend BASE_URL. Image.getSize gives
+ * the natural dimensions, which we turn into an aspectRatio so the height tracks
+ * the (full) card width. Tall multi-page questions simply scroll.
  */
-function DiagramImage({ imageUrl }: { imageUrl: string }) {
+function QuestionImage({ imageUrl }: { imageUrl: string }) {
   const uri = `${BASE_URL}${imageUrl}`;
   const [aspect, setAspect] = useState<number | null>(null);
   const [failed, setFailed] = useState(false);
@@ -58,13 +58,15 @@ function DiagramImage({ imageUrl }: { imageUrl: string }) {
     };
   }, [uri]);
 
-  if (failed) return null;
+  if (failed) {
+    return <Text style={styles.imageUnavailable}>Question image unavailable</Text>;
+  }
 
   return (
     <Image
       source={{ uri }}
       resizeMode="contain"
-      style={[styles.diagram, aspect ? { aspectRatio: aspect } : { height: 180 }]}
+      style={[styles.questionImage, aspect ? { aspectRatio: aspect } : { height: 220 }]}
     />
   );
 }
@@ -85,35 +87,20 @@ function formatTime(minutes: number): string {
 }
 
 function QuestionCard({ question }: { question: GeneratedQuestion }) {
-  const parsed = useMemo(
-    () => parseQuestionParts(question.questionText),
-    [question.questionText]
-  );
-
+  // Every question is now an image snippet that already contains its text,
+  // sub-parts, diagrams and answer space in the original Cambridge formatting —
+  // so the card is just the assigned number + marks above the image.
   return (
     <View style={styles.questionCard}>
       <View style={styles.questionHeader}>
         <Text style={styles.questionNumber}>{question.assignedNumber}</Text>
         <Text style={styles.questionMarks}>[{question.marks} marks]</Text>
       </View>
-
-      {parsed.intro ? <Text style={styles.introText}>{parsed.intro}</Text> : null}
-
-      {question.hasImage && question.imageUrl ? (
-        <DiagramImage imageUrl={question.imageUrl} />
-      ) : null}
-
-      {parsed.parts.map((part, idx) => (
-        <View key={`${part.label}-${idx}`} style={styles.partRow}>
-          <Text style={styles.partText}>
-            <Text style={styles.partLabel}>({part.label}) </Text>
-            {part.text}
-          </Text>
-          {part.marks != null ? (
-            <Text style={styles.partMarks}>[{part.marks}]</Text>
-          ) : null}
-        </View>
-      ))}
+      {question.questionImageUrl ? (
+        <QuestionImage imageUrl={question.questionImageUrl} />
+      ) : (
+        <Text style={styles.imageUnavailable}>Question image unavailable</Text>
+      )}
     </View>
   );
 }
@@ -384,38 +371,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: COLORS.textSecondary,
   },
-  introText: {
-    fontSize: 15,
-    lineHeight: 22,
-    color: COLORS.textPrimary,
-    marginTop: SPACING.md,
-  },
-  diagram: {
+  questionImage: {
     width: "100%",
     marginTop: SPACING.md,
     borderRadius: RADIUS.md,
     backgroundColor: "#FFFFFF",
   },
-  partRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    marginTop: SPACING.md,
-    paddingLeft: SPACING.md, // indent sub-parts
-  },
-  partText: {
-    flex: 1,
-    fontSize: 15,
-    lineHeight: 22,
-    color: COLORS.textPrimary,
-  },
-  partLabel: {
-    fontWeight: FONT.medium,
-    color: COLORS.textPrimary,
-  },
-  partMarks: {
+  imageUnavailable: {
     fontSize: 14,
-    color: COLORS.textSecondary,
-    marginLeft: SPACING.sm,
+    color: COLORS.textTertiary,
+    fontStyle: "italic",
+    marginTop: SPACING.md,
   },
   markButton: {
     backgroundColor: COLORS.primary,

@@ -18,6 +18,9 @@ from shared_schema import QuestionResponse
 
 router = APIRouter(prefix="/questions", tags=["questions"])
 
+# Subjects the question bank supports. Used to reject bad ?subject= values.
+_ALLOWED_SUBJECTS = {"math", "physics", "chemistry"}
+
 
 class TopicsResponse(BaseModel):
     """Deduplicated list of topics available for a subject."""
@@ -67,8 +70,18 @@ def get_topics(
     Declared BEFORE `/{question_id}` so the literal path "topics" is matched
     here rather than being coerced into the integer `question_id` param.
     """
+    if subject not in _ALLOWED_SUBJECTS:
+        raise HTTPException(
+            status_code=422,
+            detail=(
+                f"Unsupported subject '{subject}'. "
+                f"Allowed values: {', '.join(sorted(_ALLOWED_SUBJECTS))}."
+            ),
+        )
     try:
         return {"topics": get_distinct_topics(subject)}
+    except HTTPException:
+        raise
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Failed to load topics: {exc}")
 

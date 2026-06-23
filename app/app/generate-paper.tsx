@@ -1,12 +1,15 @@
 /**
  * app/generate-paper.tsx — Custom Paper Generator: the request form.
  *
- * The teacher picks topics (chip row with an "All" chip), a total mark target,
- * and a difficulty, then taps Generate. On success we navigate to
- * /generated-paper with the API response serialised as a route param.
+ * The teacher picks a paper type (Paper 2 / Paper 4 / Both), a total mark target
+ * (preset chips or a custom value), a difficulty, and topics, then taps
+ * Generate. A reactive "Available: X marks" line shows the pool ceiling for the
+ * current selection BEFORE generating, so they never aim above what exists.
+ *
+ * On success we navigate to /generated-paper with the API response serialised.
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -14,54 +17,125 @@ import {
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
+  Alert,
   StyleSheet,
 } from "react-native";
 import { useRouter } from "expo-router";
 
 import TopicChips from "../components/TopicChips";
-import { getTopics, generatePaper } from "../services/api";
-import type { GeneratorDifficulty } from "../types/paperGenerator";
+import { getQuestionPool, generatePaper } from "../services/api";
+import type {
+  GeneratorDifficulty,
+  GeneratorPool,
+  PaperType,
+} from "../types/paperGenerator";
 import { COLORS, RADIUS, SPACING, FONT } from "../constants/theme";
 
 const SUBJECT = "math";
 const DIFFICULTIES: GeneratorDifficulty[] = ["mixed", "easy", "medium", "hard"];
+const MARK_PRESETS = [40, 60, 80, 100];
+const MIN_MARKS = 20;
+const MAX_MARKS = 200;
+
+const PAPER_TYPES: { value: PaperType; label: string; desc: string }[] = [
+  { value: "P2", label: "Paper 2", desc: "Non-calculator, structured questions" },
+  { value: "P4", label: "Paper 4", desc: "Calculator allowed, longer structured questions" },
+  { value: "both", label: "Both", desc: "Mix from both paper types" },
+];
+
+// The pool is static per subject, so cache it at module scope and reuse across
+// every mount instead of re-fetching. Cleared only when the app process restarts.
+let poolCache: GeneratorPool | null = null;
+
+function paperTypeLabel(pt: PaperType): string {
+  return pt === "both" ? "Paper 2 + 4" : pt === "P2" ? "Paper 2" : "Paper 4";
+}
 
 export default function GeneratePaperScreen() {
   const router = useRouter();
 
+  const [pool, setPool] = useState<GeneratorPool | null>(null);
   const [topics, setTopics] = useState<string[]>([]);
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
-  const [totalMarks, setTotalMarks] = useState("60");
+  const [paperType, setPaperType] = useState<PaperType>("both");
+  // Total marks is either an active preset chip OR a custom typed value — the
+  // two are mutually exclusive so the custom field is always obviously usable.
+  const [preset, setPreset] = useState<number | null>(60);
+  const [custom, setCustom] = useState("");
   const [difficulty, setDifficulty] = useState<GeneratorDifficulty>("mixed");
 
-  const [topicsLoading, setTopicsLoading] = useState(true);
-  const [topicsError, setTopicsError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
-  const loadTopics = async () => {
-    setTopicsLoading(true);
-    setTopicsError(null);
+  const loadPool = async (force = false) => {
+    if (!force && poolCache) {
+      setPool(poolCache);
+      setTopics(poolCache.topics);
+      setSelectedTopics(poolCache.topics);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    setLoadError(null);
     try {
-      const fetched = await getTopics(SUBJECT);
-      setTopics(fetched);
-      setSelectedTopics(fetched); // default: All selected
+      const fetched = await getQuestionPool(SUBJECT);
+      poolCache = fetched;
+      setPool(fetched);
+      setTopics(fetched.topics);
+      setSelectedTopics(fetched.topics); // default: All selected
     } catch (err) {
-      setTopicsError(err instanceof Error ? err.message : "Failed to load topics");
+      setLoadError(err instanceof Error ? err.message : "Failed to load questions");
     } finally {
-      setTopicsLoading(false);
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadTopics();
+    loadPool();
   }, []);
+
+  // Effective requested marks: the active preset, else the parsed custom value.
+  const marks = preset != null ? preset : parseInt(custom, 10);
+  const marksValid = Number.isFinite(marks) && marks >= MIN_MARKS && marks <= MAX_MARKS;
+
+  // Reactive pool ceiling for the current paperType + difficulty + topics.
+  const available = useMemo(() => {
+    if (!pool) return { count: 0, marks: 0 };
+    const topicSet = new Set(selectedTopics);
+    let count = 0;
+    let total = 0;
+    for (const q of pool.questions) {
+      if (paperType !== "both" && q.paperType !== paperType) continue;
+      if (difficulty !== "mixed" && q.difficulty !== difficulty) continue;
+      if (topicSet.size > 0 && !topicSet.has(q.topic)) continue;
+      count += 1;
+      total += q.marks;
+    }
+    return { count, marks: total };
+  }, [pool, paperType, difficulty, selectedTopics]);
+
+  const difficultyLabel = difficulty === "mixed" ? "all-difficulty" : difficulty;
+  const exceedsPool = marksValid && marks > available.marks;
+
+  const canGenerate =
+    !generating && !loading && marksValid && selectedTopics.length > 0 && available.count > 0;
+
+  const selectPreset = (p: number) => {
+    setPreset(p);
+    setCustom(""); // tapping a preset clears any custom value
+  };
+
+  const onCustomChange = (t: string) => {
+    setCustom(t.replace(/[^0-9]/g, ""));
+    setPreset(null); // typing a custom value deselects all presets
+  };
 
   const onGenerate = async () => {
     setFormError(null);
-    const marks = parseInt(totalMarks, 10);
-    if (!Number.isFinite(marks) || marks <= 0) {
-      setFormError("Enter a total mark greater than 0.");
+    if (!marksValid) {
+      setFormError(`Enter a total between ${MIN_MARKS} and ${MAX_MARKS} marks.`);
       return;
     }
     if (selectedTopics.length === 0) {
@@ -73,17 +147,33 @@ export default function GeneratePaperScreen() {
     try {
       const paper = await generatePaper({
         subject: SUBJECT,
+        paperType,
         topics: selectedTopics, // resolved topic strings, never "all"
         totalMarks: marks,
         difficulty,
       });
-      // The selector returns an empty paper when nothing fits the request (e.g.
-      // the mark target is below the smallest available question, or the chosen
-      // topics/difficulty have no non-diagram questions). Surface that here
-      // instead of navigating into a "0 / 0" paper that can't be marked.
       if (paper.questions.length === 0) {
         setFormError(
-          "No questions match these settings. Try selecting more topics, a different difficulty, or a higher mark total."
+          "No questions match these settings. Try a different paper type, more topics, another difficulty, or a higher mark total."
+        );
+        return;
+      }
+      // Limited pool: the selector never exceeds the target but may fall short.
+      if (paper.totalMarks < marks) {
+        Alert.alert(
+          "Fewer marks available",
+          `We could only fit ${paper.totalMarks} marks from the questions matching these settings (you asked for ${marks}). Continue with this paper, or go back and widen the filters.`,
+          [
+            { text: "Back", style: "cancel" },
+            {
+              text: "Continue",
+              onPress: () =>
+                router.push({
+                  pathname: "/generated-paper",
+                  params: { paper: JSON.stringify(paper) },
+                }),
+            },
+          ]
         );
         return;
       }
@@ -98,6 +188,8 @@ export default function GeneratePaperScreen() {
     }
   };
 
+  const activePaperDesc = PAPER_TYPES.find((p) => p.value === paperType)?.desc ?? "";
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Text style={styles.label}>Subject</Text>
@@ -105,17 +197,61 @@ export default function GeneratePaperScreen() {
         <Text style={styles.subjectText}>Mathematics (0580)</Text>
       </View>
 
-      <Text style={styles.label}>Total marks</Text>
-      <TextInput
-        style={styles.input}
-        value={totalMarks}
-        onChangeText={(t) => setTotalMarks(t.replace(/[^0-9]/g, ""))}
-        keyboardType="number-pad"
-        placeholder="e.g. 60"
-        placeholderTextColor={COLORS.textTertiary}
-        maxLength={3}
-      />
+      {/* Paper type */}
+      <Text style={styles.label}>Paper Type</Text>
+      <View style={styles.segmentRow}>
+        {PAPER_TYPES.map((p) => {
+          const active = paperType === p.value;
+          return (
+            <TouchableOpacity
+              key={p.value}
+              style={[styles.segment, active ? styles.segmentActive : styles.segmentInactive]}
+              onPress={() => setPaperType(p.value)}
+              activeOpacity={0.8}
+            >
+              <Text style={[styles.segmentText, active ? styles.segmentTextActive : styles.segmentTextInactive]}>
+                {p.label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+      <Text style={styles.helperText}>{activePaperDesc}</Text>
 
+      {/* Total marks */}
+      <Text style={styles.label}>Total Marks</Text>
+      <Text style={styles.subLabel}>Select or enter a custom value</Text>
+      <View style={styles.presetRow}>
+        {MARK_PRESETS.map((p) => {
+          const active = preset === p;
+          return (
+            <TouchableOpacity
+              key={p}
+              style={[styles.preset, active ? styles.presetActive : styles.presetInactive]}
+              onPress={() => selectPreset(p)}
+              activeOpacity={0.8}
+            >
+              <Text style={[styles.presetText, active ? styles.presetTextActive : styles.presetTextInactive]}>
+                {p}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+      <View style={styles.customRow}>
+        <Text style={styles.customLabel}>Or enter custom:</Text>
+        <TextInput
+          style={[styles.customInput, preset == null && custom !== "" && styles.customInputActive]}
+          value={custom}
+          onChangeText={onCustomChange}
+          keyboardType="number-pad"
+          placeholder="e.g. 75"
+          placeholderTextColor={COLORS.textTertiary}
+          maxLength={3}
+        />
+      </View>
+
+      {/* Difficulty */}
       <Text style={styles.label}>Difficulty</Text>
       <View style={styles.segmentRow}>
         {DIFFICULTIES.map((d) => {
@@ -135,13 +271,14 @@ export default function GeneratePaperScreen() {
         })}
       </View>
 
+      {/* Topics */}
       <Text style={styles.label}>Topics</Text>
-      {topicsLoading ? (
+      {loading ? (
         <ActivityIndicator color={COLORS.primary} style={styles.topicsLoading} />
-      ) : topicsError ? (
+      ) : loadError ? (
         <View>
-          <Text style={styles.errorText}>{topicsError}</Text>
-          <TouchableOpacity style={styles.retryButton} onPress={loadTopics} activeOpacity={0.8}>
+          <Text style={styles.errorText}>{loadError}</Text>
+          <TouchableOpacity style={styles.retryButton} onPress={() => loadPool(true)} activeOpacity={0.8}>
             <Text style={styles.retryText}>Retry</Text>
           </TouchableOpacity>
         </View>
@@ -152,9 +289,9 @@ export default function GeneratePaperScreen() {
       {formError ? <Text style={styles.errorText}>{formError}</Text> : null}
 
       <TouchableOpacity
-        style={[styles.generateButton, generating && styles.buttonDisabled]}
+        style={[styles.generateButton, !canGenerate && styles.buttonDisabled]}
         onPress={onGenerate}
-        disabled={generating}
+        disabled={!canGenerate}
         activeOpacity={0.8}
       >
         {generating ? (
@@ -163,6 +300,17 @@ export default function GeneratePaperScreen() {
           <Text style={styles.generateButtonText}>Generate Paper</Text>
         )}
       </TouchableOpacity>
+
+      {/* Reactive pool ceiling — always visible so the teacher knows the limit
+          before tapping Generate. */}
+      {!loading && !loadError ? (
+        <Text style={[styles.availabilityText, exceedsPool && styles.availabilityWarn]}>
+          {available.count === 0
+            ? `No ${difficultyLabel} questions in ${paperTypeLabel(paperType)} for the selected topics.`
+            : `Available: ${available.marks} marks across ${available.count} ${difficultyLabel} ${paperTypeLabel(paperType)} question${available.count === 1 ? "" : "s"}.` +
+              (exceedsPool ? ` You asked for ${marks} — the paper will be capped at what fits.` : "")}
+        </Text>
+      ) : null}
     </ScrollView>
   );
 }
@@ -183,6 +331,17 @@ const styles = StyleSheet.create({
     marginTop: SPACING.lg,
     marginBottom: SPACING.sm,
   },
+  subLabel: {
+    fontSize: 12,
+    color: COLORS.textTertiary,
+    marginTop: -SPACING.xs,
+    marginBottom: SPACING.sm,
+  },
+  helperText: {
+    fontSize: 13,
+    color: COLORS.textTertiary,
+    marginTop: SPACING.xs,
+  },
   subjectBox: {
     backgroundColor: COLORS.card,
     borderRadius: RADIUS.lg,
@@ -195,15 +354,62 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
     fontWeight: FONT.medium,
   },
-  input: {
+  // Total marks
+  presetRow: {
+    flexDirection: "row",
+    gap: SPACING.sm,
+  },
+  preset: {
+    flex: 1,
+    paddingVertical: SPACING.md,
+    borderRadius: RADIUS.lg,
+    borderWidth: 1,
+    alignItems: "center",
+  },
+  presetActive: {
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
+  },
+  presetInactive: {
+    backgroundColor: COLORS.card,
+    borderColor: COLORS.border,
+  },
+  presetText: {
+    fontSize: 16,
+    fontWeight: FONT.medium,
+  },
+  presetTextActive: {
+    color: COLORS.card,
+  },
+  presetTextInactive: {
+    color: COLORS.textSecondary,
+  },
+  customRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: SPACING.md,
+    gap: SPACING.md,
+  },
+  customLabel: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+  },
+  customInput: {
+    flex: 1,
     backgroundColor: COLORS.card,
     borderRadius: RADIUS.lg,
     borderWidth: 1,
     borderColor: COLORS.border,
-    padding: SPACING.md,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.md,
     fontSize: 16,
     color: COLORS.textPrimary,
   },
+  customInputActive: {
+    borderColor: COLORS.primary,
+    borderWidth: 1.5,
+  },
+  // Segmented rows (paper type, difficulty)
   segmentRow: {
     flexDirection: "row",
     gap: SPACING.sm,
@@ -250,6 +456,16 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: {
     opacity: 0.6,
+  },
+  availabilityText: {
+    fontSize: 13,
+    color: COLORS.textSecondary,
+    textAlign: "center",
+    marginTop: SPACING.md,
+    lineHeight: 19,
+  },
+  availabilityWarn: {
+    color: COLORS.warning,
   },
   errorText: {
     color: COLORS.fail,

@@ -10,6 +10,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
+  Image,
   FlatList,
   ActivityIndicator,
   TouchableOpacity,
@@ -20,6 +21,41 @@ import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
 import { getQuestions } from "../../services/api";
 import type { Question } from "../../types";
 import { COLORS, RADIUS, SPACING, FONT, ON } from "../../constants/theme";
+import { BASE_URL } from "../../constants/config";
+
+/** Render a question's snippet image at the card width, preserving aspect ratio.
+ *  question_image_url is host-agnostic, so we prepend BASE_URL. */
+function QuestionImage({ imageUrl }: { imageUrl: string }) {
+  const uri = `${BASE_URL}${imageUrl}`;
+  const [aspect, setAspect] = useState<number | null>(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    Image.getSize(
+      uri,
+      (w, h) => {
+        if (alive && h > 0) setAspect(w / h);
+      },
+      () => {
+        if (alive) setFailed(true);
+      }
+    );
+    return () => {
+      alive = false;
+    };
+  }, [uri]);
+
+  if (failed) return null;
+
+  return (
+    <Image
+      source={{ uri }}
+      resizeMode="contain"
+      style={[styles.questionImage, aspect ? { aspectRatio: aspect } : { height: 200 }]}
+    />
+  );
+}
 
 function QuestionCard({ question }: { question: Question }) {
   return (
@@ -34,7 +70,11 @@ function QuestionCard({ question }: { question: Question }) {
           </Text>
         </View>
       </View>
-      <Text style={styles.questionText}>{question.question_text}</Text>
+      {question.question_image_url ? (
+        <QuestionImage imageUrl={question.question_image_url} />
+      ) : (
+        <Text style={styles.questionText}>{question.question_text}</Text>
+      )}
     </View>
   );
 }
@@ -215,6 +255,12 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     lineHeight: 20,
     marginTop: SPACING.xs,
+  },
+  questionImage: {
+    width: "100%",
+    marginTop: SPACING.sm,
+    borderRadius: RADIUS.md,
+    backgroundColor: "#FFFFFF",
   },
   footer: {
     padding: SPACING.lg,

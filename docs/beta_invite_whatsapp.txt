@@ -1,0 +1,12 @@
+Hi [Name] — I built something I think you'll find useful.
+
+Grade AI generates a custom IGCSE Maths practice paper from real past-paper questions in seconds: pick the topics and total marks, and get a question paper PDF plus a matching mark scheme PDF to print.
+
+You can also photograph students' answers and have them marked instantly.
+
+It's completely free during the beta and takes 2 minutes to try.
+
+iPhone: [IOS_LINK]
+Android: [ANDROID_LINK]
+
+Would love for you to generate one paper, download it, and tell me if this is something you'd actually use.

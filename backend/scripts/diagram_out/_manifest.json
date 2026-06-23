@@ -1,0 +1,826 @@
+[
+  {
+    "questionId": "math_2021_MJ_058042_Q2",
+    "paperCode": "0580/42/M/J/21",
+    "qNo": 2,
+    "status": "OK",
+    "nRegions": 2,
+    "pages": [
+      3,
+      3
+    ],
+    "boxes": [
+      [
+        72,
+        63,
+        480,
+        163
+      ],
+      [
+        113,
+        203,
+        481,
+        550
+      ]
+    ],
+    "png": "diagram_out\\math_2021_MJ_058042_Q2.png"
+  },
+  {
+    "questionId": "math_2021_MJ_058042_Q4",
+    "paperCode": "0580/42/M/J/21",
+    "qNo": 4,
+    "status": "OK",
+    "nRegions": 3,
+    "pages": [
+      6,
+      6,
+      7
+    ],
+    "boxes": [
+      [
+        72,
+        74,
+        524,
+        146
+      ],
+      [
+        84,
+        174,
+        512,
+        505
+      ],
+      [
+        161,
+        324,
+        436,
+        426
+      ]
+    ],
+    "png": "diagram_out\\math_2021_MJ_058042_Q4.png"
+  },
+  {
+    "questionId": "math_2021_MJ_058042_Q6",
+    "paperCode": "0580/42/M/J/21",
+    "qNo": 6,
+    "status": "OK",
+    "nRegions": 1,
+    "pages": [
+      10
+    ],
+    "boxes": [
+      [
+        103,
+        77,
+        492,
+        260
+      ]
+    ],
+    "png": "diagram_out\\math_2021_MJ_058042_Q6.png"
+  },
+  {
+    "questionId": "math_2021_MJ_058042_Q7",
+    "paperCode": "0580/42/M/J/21",
+    "qNo": 7,
+    "status": "OK",
+    "nRegions": 1,
+    "pages": [
+      11
+    ],
+    "boxes": [
+      [
+        98,
+        207,
+        494,
+        584
+      ]
+    ],
+    "png": "diagram_out\\math_2021_MJ_058042_Q7.png"
+  },
+  {
+    "questionId": "math_2021_MJ_058042_Q8",
+    "paperCode": "0580/42/M/J/21",
+    "qNo": 8,
+    "status": "OK",
+    "nRegions": 2,
+    "pages": [
+      12,
+      13
+    ],
+    "boxes": [
+      [
+        90,
+        90,
+        495,
+        259
+      ],
+      [
+        158,
+        77,
+        382,
+        266
+      ]
+    ],
+    "png": "diagram_out\\math_2021_MJ_058042_Q8.png"
+  },
+  {
+    "questionId": "math_2021_MJ_058042_Q9",
+    "paperCode": "0580/42/M/J/21",
+    "qNo": 9,
+    "status": "OK",
+    "nRegions": 1,
+    "pages": [
+      14
+    ],
+    "boxes": [
+      [
+        135,
+        250,
+        454,
+        508
+      ]
+    ],
+    "png": "diagram_out\\math_2021_MJ_058042_Q9.png"
+  },
+  {
+    "questionId": "math_2022_MJ_058042_Q2",
+    "paperCode": "0580/42/M/J/22",
+    "qNo": 2,
+    "status": "OK",
+    "nRegions": 2,
+    "pages": [
+      3,
+      3
+    ],
+    "boxes": [
+      [
+        186,
+        73,
+        303,
+        204
+      ],
+      [
+        133,
+        373,
+        462,
+        570
+      ]
+    ],
+    "png": "diagram_out\\math_2022_MJ_058042_Q2.png"
+  },
+  {
+    "questionId": "math_2022_MJ_058042_Q5",
+    "paperCode": "0580/42/M/J/22",
+    "qNo": 5,
+    "status": "OK",
+    "nRegions": 2,
+    "pages": [
+      6,
+      6
+    ],
+    "boxes": [
+      [
+        225,
+        114,
+        370,
+        188
+      ],
+      [
+        72,
+        229,
+        509,
+        698
+      ]
+    ],
+    "png": "diagram_out\\math_2022_MJ_058042_Q5.png"
+  },
+  {
+    "questionId": "math_2022_MJ_058042_Q7",
+    "paperCode": "0580/42/M/J/22",
+    "qNo": 7,
+    "status": "OK",
+    "nRegions": 3,
+    "pages": [
+      10,
+      10,
+      11
+    ],
+    "boxes": [
+      [
+        50,
+        61,
+        532,
+        142
+      ],
+      [
+        95,
+        377,
+        487,
+        669
+      ],
+      [
+        50,
+        61,
+        546,
+        170
+      ]
+    ],
+    "png": "diagram_out\\math_2022_MJ_058042_Q7.png"
+  },
+  {
+    "questionId": "math_2022_MJ_058042_Q9",
+    "paperCode": "0580/42/M/J/22",
+    "qNo": 9,
+    "status": "OK",
+    "nRegions": 3,
+    "pages": [
+      14,
+      14,
+      14
+    ],
+    "boxes": [
+      [
+        146,
+        73,
+        449,
+        232
+      ],
+      [
+        282,
+        388,
+        496,
+        520
+      ],
+      [
+        100,
+        393,
+        253,
+        488
+      ]
+    ],
+    "png": "diagram_out\\math_2022_MJ_058042_Q9.png"
+  },
+  {
+    "questionId": "math_2022_MJ_058042_Q11",
+    "paperCode": "0580/42/M/J/22",
+    "qNo": 11,
+    "status": "OK",
+    "nRegions": 2,
+    "pages": [
+      16,
+      16
+    ],
+    "boxes": [
+      [
+        319,
+        88,
+        434,
+        229
+      ],
+      [
+        102,
+        99,
+        282,
+        222
+      ]
+    ],
+    "png": "diagram_out\\math_2022_MJ_058042_Q11.png"
+  },
+  {
+    "questionId": "math_2023_MJ_058042_Q1",
+    "paperCode": "0580/42/M/J/23",
+    "qNo": 1,
+    "status": "OK",
+    "nRegions": 4,
+    "pages": [
+      2,
+      2,
+      3,
+      3
+    ],
+    "boxes": [
+      [
+        197,
+        79,
+        385,
+        190
+      ],
+      [
+        321,
+        367,
+        422,
+        487
+      ],
+      [
+        109,
+        76,
+        415,
+        219
+      ],
+      [
+        199,
+        480,
+        289,
+        575
+      ]
+    ],
+    "png": "diagram_out\\math_2023_MJ_058042_Q1.png"
+  },
+  {
+    "questionId": "math_2023_MJ_058042_Q3",
+    "paperCode": "0580/42/M/J/23",
+    "qNo": 3,
+    "status": "OK",
+    "nRegions": 1,
+    "pages": [
+      6
+    ],
+    "boxes": [
+      [
+        195,
+        77,
+        425,
+        183
+      ]
+    ],
+    "png": "diagram_out\\math_2023_MJ_058042_Q3.png"
+  },
+  {
+    "questionId": "math_2023_MJ_058042_Q4",
+    "paperCode": "0580/42/M/J/23",
+    "qNo": 4,
+    "status": "OK",
+    "nRegions": 3,
+    "pages": [
+      8,
+      9,
+      9
+    ],
+    "boxes": [
+      [
+        72,
+        61,
+        523,
+        183
+      ],
+      [
+        72,
+        61,
+        508,
+        158
+      ],
+      [
+        92,
+        181,
+        546,
+        470
+      ]
+    ],
+    "png": "diagram_out\\math_2023_MJ_058042_Q4.png"
+  },
+  {
+    "questionId": "math_2023_MJ_058042_Q7",
+    "paperCode": "0580/42/M/J/23",
+    "qNo": 7,
+    "status": "OK",
+    "nRegions": 1,
+    "pages": [
+      13
+    ],
+    "boxes": [
+      [
+        156,
+        77,
+        431,
+        200
+      ]
+    ],
+    "png": "diagram_out\\math_2023_MJ_058042_Q7.png"
+  },
+  {
+    "questionId": "math_2023_MJ_058042_Q8",
+    "paperCode": "0580/42/M/J/23",
+    "qNo": 8,
+    "status": "OK",
+    "nRegions": 1,
+    "pages": [
+      14
+    ],
+    "boxes": [
+      [
+        136,
+        263,
+        451,
+        542
+      ]
+    ],
+    "png": "diagram_out\\math_2023_MJ_058042_Q8.png"
+  },
+  {
+    "questionId": "math_2023_MJ_058042_Q10",
+    "paperCode": "0580/42/M/J/23",
+    "qNo": 10,
+    "status": "OK",
+    "nRegions": 2,
+    "pages": [
+      18,
+      19
+    ],
+    "boxes": [
+      [
+        148,
+        90,
+        302,
+        256
+      ],
+      [
+        174,
+        77,
+        313,
+        243
+      ]
+    ],
+    "png": "diagram_out\\math_2023_MJ_058042_Q10.png"
+  },
+  {
+    "questionId": "math_2022_ON_058042_Q2",
+    "paperCode": "0580/42/O/N/22",
+    "qNo": 2,
+    "status": "OK",
+    "nRegions": 3,
+    "pages": [
+      4,
+      4,
+      5
+    ],
+    "boxes": [
+      [
+        167,
+        88,
+        281,
+        226
+      ],
+      [
+        72,
+        279,
+        511,
+        379
+      ],
+      [
+        150,
+        62,
+        445,
+        420
+      ]
+    ],
+    "png": "diagram_out\\math_2022_ON_058042_Q2.png"
+  },
+  {
+    "questionId": "math_2022_ON_058042_Q3",
+    "paperCode": "0580/42/O/N/22",
+    "qNo": 3,
+    "status": "OK",
+    "nRegions": 2,
+    "pages": [
+      6,
+      6
+    ],
+    "boxes": [
+      [
+        49,
+        87,
+        547,
+        192
+      ],
+      [
+        49,
+        450,
+        549,
+        556
+      ]
+    ],
+    "png": "diagram_out\\math_2022_ON_058042_Q3.png"
+  },
+  {
+    "questionId": "math_2022_ON_058042_Q4",
+    "paperCode": "0580/42/O/N/22",
+    "qNo": 4,
+    "status": "OK",
+    "nRegions": 1,
+    "pages": [
+      8
+    ],
+    "boxes": [
+      [
+        126,
+        73,
+        470,
+        426
+      ]
+    ],
+    "png": "diagram_out\\math_2022_ON_058042_Q4.png"
+  },
+  {
+    "questionId": "math_2022_ON_058042_Q6",
+    "paperCode": "0580/42/O/N/22",
+    "qNo": 6,
+    "status": "NO_FIGURE_FOUND",
+    "nRegions": 0,
+    "pages": [],
+    "png": null
+  },
+  {
+    "questionId": "math_2022_ON_058042_Q7",
+    "paperCode": "0580/42/O/N/22",
+    "qNo": 7,
+    "status": "OK",
+    "nRegions": 3,
+    "pages": [
+      12,
+      12,
+      13
+    ],
+    "boxes": [
+      [
+        139,
+        73,
+        304,
+        184
+      ],
+      [
+        167,
+        522,
+        314,
+        628
+      ],
+      [
+        196,
+        190,
+        321,
+        423
+      ]
+    ],
+    "png": "diagram_out\\math_2022_ON_058042_Q7.png"
+  },
+  {
+    "questionId": "math_2022_ON_058042_Q8",
+    "paperCode": "0580/42/O/N/22",
+    "qNo": 8,
+    "status": "NO_FIGURE_FOUND",
+    "nRegions": 0,
+    "pages": [],
+    "png": null
+  },
+  {
+    "questionId": "math_2022_ON_058042_Q9",
+    "paperCode": "0580/42/O/N/22",
+    "qNo": 9,
+    "status": "OK",
+    "nRegions": 1,
+    "pages": [
+      15
+    ],
+    "boxes": [
+      [
+        160,
+        73,
+        436,
+        247
+      ]
+    ],
+    "png": "diagram_out\\math_2022_ON_058042_Q9.png"
+  },
+  {
+    "questionId": "math_2022_ON_058042_Q10",
+    "paperCode": "0580/42/O/N/22",
+    "qNo": 10,
+    "status": "OK",
+    "nRegions": 2,
+    "pages": [
+      16,
+      17
+    ],
+    "boxes": [
+      [
+        175,
+        257,
+        288,
+        371
+      ],
+      [
+        175,
+        75,
+        288,
+        188
+      ]
+    ],
+    "png": "diagram_out\\math_2022_ON_058042_Q10.png"
+  },
+  {
+    "questionId": "math_2023_ON_058042_Q1",
+    "paperCode": "0580/42/O/N/23",
+    "qNo": 1,
+    "status": "OK",
+    "nRegions": 1,
+    "pages": [
+      2
+    ],
+    "boxes": [
+      [
+        86,
+        73,
+        510,
+        540
+      ]
+    ],
+    "png": "diagram_out\\math_2023_ON_058042_Q1.png"
+  },
+  {
+    "questionId": "math_2023_ON_058042_Q2",
+    "paperCode": "0580/42/O/N/23",
+    "qNo": 2,
+    "status": "OK",
+    "nRegions": 2,
+    "pages": [
+      3,
+      3
+    ],
+    "boxes": [
+      [
+        95,
+        74,
+        480,
+        170
+      ],
+      [
+        95,
+        481,
+        461,
+        621
+      ]
+    ],
+    "png": "diagram_out\\math_2023_ON_058042_Q2.png"
+  },
+  {
+    "questionId": "math_2023_ON_058042_Q4",
+    "paperCode": "0580/42/O/N/23",
+    "qNo": 4,
+    "status": "OK",
+    "nRegions": 4,
+    "pages": [
+      6,
+      6,
+      6,
+      7
+    ],
+    "boxes": [
+      [
+        318,
+        72,
+        453,
+        219
+      ],
+      [
+        78,
+        78,
+        255,
+        218
+      ],
+      [
+        145,
+        452,
+        324,
+        631
+      ],
+      [
+        164,
+        270,
+        332,
+        420
+      ]
+    ],
+    "png": "diagram_out\\math_2023_ON_058042_Q4.png"
+  },
+  {
+    "questionId": "math_2023_ON_058042_Q6",
+    "paperCode": "0580/42/O/N/23",
+    "qNo": 6,
+    "status": "OK",
+    "nRegions": 1,
+    "pages": [
+      9
+    ],
+    "boxes": [
+      [
+        137,
+        76,
+        310,
+        186
+      ]
+    ],
+    "png": "diagram_out\\math_2023_ON_058042_Q6.png"
+  },
+  {
+    "questionId": "math_2023_ON_058042_Q7",
+    "paperCode": "0580/42/O/N/23",
+    "qNo": 7,
+    "status": "OK",
+    "nRegions": 3,
+    "pages": [
+      10,
+      10,
+      11
+    ],
+    "boxes": [
+      [
+        185,
+        73,
+        336,
+        191
+      ],
+      [
+        146,
+        524,
+        352,
+        648
+      ],
+      [
+        135,
+        73,
+        401,
+        191
+      ]
+    ],
+    "png": "diagram_out\\math_2023_ON_058042_Q7.png"
+  },
+  {
+    "questionId": "math_2023_ON_058042_Q8",
+    "paperCode": "0580/42/O/N/23",
+    "qNo": 8,
+    "status": "OK",
+    "nRegions": 2,
+    "pages": [
+      12,
+      12
+    ],
+    "boxes": [
+      [
+        205,
+        74,
+        260,
+        145
+      ],
+      [
+        335,
+        74,
+        390,
+        145
+      ]
+    ],
+    "png": "diagram_out\\math_2023_ON_058042_Q8.png"
+  },
+  {
+    "questionId": "math_2023_ON_058042_Q9",
+    "paperCode": "0580/42/O/N/23",
+    "qNo": 9,
+    "status": "OK",
+    "nRegions": 1,
+    "pages": [
+      14
+    ],
+    "boxes": [
+      [
+        50,
+        61,
+        536,
+        354
+      ]
+    ],
+    "png": "diagram_out\\math_2023_ON_058042_Q9.png"
+  },
+  {
+    "questionId": "math_2023_ON_058042_Q10",
+    "paperCode": "0580/42/O/N/23",
+    "qNo": 10,
+    "status": "OK",
+    "nRegions": 2,
+    "pages": [
+      15,
+      15
+    ],
+    "boxes": [
+      [
+        218,
+        73,
+        376,
+        218
+      ],
+      [
+        129,
+        376,
+        413,
+        541
+      ]
+    ],
+    "png": "diagram_out\\math_2023_ON_058042_Q10.png"
+  }
+]
