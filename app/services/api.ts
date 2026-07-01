@@ -32,6 +32,26 @@ const client = axios.create({
 });
 
 // ---------------------------------------------------------------------------
+// Auth readiness
+// ---------------------------------------------------------------------------
+
+// On a cold start, Firebase restores any persisted session asynchronously, so
+// auth().currentUser is momentarily null even for a signed-in user. A request
+// that fires in that window goes out without a token and gets a 401 — the
+// classic "works on retry" cold-start flakiness. authReady resolves on the
+// first onAuthStateChanged emission (Firebase guarantees one shortly after
+// init, with the restored user or null), so we can gate requests until the
+// session is known. A 3 s safety cap guarantees it can never hang a request if
+// that callback is delayed for any reason.
+const authReady: Promise<void> = new Promise((resolve) => {
+  const unsubscribe = auth().onAuthStateChanged(() => {
+    unsubscribe();
+    resolve();
+  });
+  setTimeout(resolve, 3000);
+});
+
+// ---------------------------------------------------------------------------
 // Auth interceptor
 // ---------------------------------------------------------------------------
 
@@ -41,6 +61,9 @@ const client = axios.create({
 // without an Authorization header (e.g. the open /health check).
 client.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
+    // Wait for the persisted session to be restored before reading currentUser,
+    // so the first request after launch reliably carries the token.
+    await authReady;
     const currentUser = auth().currentUser;
     if (currentUser) {
       // Propagate token errors instead of swallowing — sending a tokenless
