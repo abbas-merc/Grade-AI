@@ -6,15 +6,23 @@ Initializes the Firebase Admin SDK from a service account and exposes:
   - get_current_uid      : FastAPI dependency that pulls the Bearer token from
                            the Authorization header and returns the verified uid
 
-Service account credentials are loaded from one of two environment variables
-(JSON string is checked first, since it is the reliable option on Railway):
+Service account credentials are loaded from one of three environment variables,
+checked in this order of decreasing robustness:
 
+  FIREBASE_SERVICE_ACCOUNT_B64   — the service account JSON, base64-encoded. This
+                                   is the PREFERRED option on Railway and any
+                                   hosted env: it is a single line of
+                                   [A-Za-z0-9+/=] with no quotes, spaces, or
+                                   newlines, so a dashboard/shell cannot mangle
+                                   it (raw JSON with embedded quotes and \n was
+                                   the historical cause of "Invalid service
+                                   account certificate" on deploy).
   FIREBASE_SERVICE_ACCOUNT_JSON  — the entire service account JSON as a single
-                                   string. Preferred on Railway and other hosts
-                                   where committing/mounting a file is awkward.
+                                   string. Works, but pasteable-JSON is fragile.
   FIREBASE_SERVICE_ACCOUNT_PATH  — filesystem path to the service account JSON.
 """
 
+import base64
 import json
 import os
 
@@ -47,12 +55,26 @@ def _build_credentials() -> credentials.Certificate:
     """
     Build Firebase credentials from the environment.
 
-    Prefers FIREBASE_SERVICE_ACCOUNT_JSON (inline JSON string); falls back to
-    FIREBASE_SERVICE_ACCOUNT_PATH (file path). Raises RuntimeError if neither
-    is set or the inline JSON is malformed.
+    Checks, in order: FIREBASE_SERVICE_ACCOUNT_B64 (base64 JSON — most robust),
+    FIREBASE_SERVICE_ACCOUNT_JSON (inline JSON string), then
+    FIREBASE_SERVICE_ACCOUNT_PATH (file path). Raises RuntimeError if none are
+    set or a provided value is malformed.
     """
+    raw_b64 = os.getenv("FIREBASE_SERVICE_ACCOUNT_B64")
+    if raw_b64 and raw_b64.strip():
+        try:
+            decoded = base64.b64decode(raw_b64.strip()).decode("utf-8")
+            service_account_info = json.loads(decoded)
+        except (ValueError, UnicodeDecodeError) as exc:
+            # ValueError covers binascii.Error (bad base64) and JSONDecodeError.
+            raise RuntimeError(
+                "FIREBASE_SERVICE_ACCOUNT_B64 is set but is not valid "
+                "base64-encoded JSON"
+            ) from exc
+        return credentials.Certificate(service_account_info)
+
     raw_json = os.getenv("FIREBASE_SERVICE_ACCOUNT_JSON")
-    if raw_json:
+    if raw_json and raw_json.strip():
         try:
             service_account_info = json.loads(raw_json)
         except json.JSONDecodeError as exc:
@@ -66,8 +88,8 @@ def _build_credentials() -> credentials.Certificate:
         return credentials.Certificate(path)
 
     raise RuntimeError(
-        "Firebase service account not configured. Set either "
-        "FIREBASE_SERVICE_ACCOUNT_JSON or FIREBASE_SERVICE_ACCOUNT_PATH."
+        "Firebase service account not configured. Set FIREBASE_SERVICE_ACCOUNT_B64 "
+        "(recommended), FIREBASE_SERVICE_ACCOUNT_JSON, or FIREBASE_SERVICE_ACCOUNT_PATH."
     )
 
 
