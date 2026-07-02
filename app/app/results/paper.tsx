@@ -56,8 +56,18 @@ function QuestionCard({ item }: { item: QuestionResult }) {
   return (
     <View style={styles.questionCard}>
       <View style={styles.questionHeader}>
-        <View style={styles.qNumBadge}>
-          <Text style={styles.qNumText}>Q{item.question_number}</Text>
+        <View style={styles.qNumRow}>
+          <View style={styles.qNumBadge}>
+            <Text style={styles.qNumText}>Q{item.question_number}</Text>
+          </View>
+          {/* Subtle "check reading" hint: the model flagged the transcription of
+              this answer as uncertain. It does not change the marks — it just
+              tells the teacher to verify the reading manually. */}
+          {item.low_confidence && (
+            <View style={styles.lowConfBadge}>
+              <Text style={styles.lowConfText}>⚠ Check reading</Text>
+            </View>
+          )}
         </View>
         <Text style={styles.questionScore}>
           {item.marks_awarded} / {item.marks_available}
@@ -399,6 +409,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
+  qNumRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: SPACING.sm,
+    flexShrink: 1,
+  },
   qNumBadge: {
     backgroundColor: COLORS.primaryLight,
     borderRadius: RADIUS.sm,
@@ -409,6 +425,17 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: FONT.medium,
     color: ON.primaryText,
+  },
+  lowConfBadge: {
+    backgroundColor: COLORS.warningLight,
+    borderRadius: RADIUS.sm,
+    paddingHorizontal: 8,
+    paddingVertical: SPACING.xs,
+  },
+  lowConfText: {
+    fontSize: 11,
+    fontWeight: FONT.medium,
+    color: ON.warningText,
   },
   questionScore: {
     fontSize: 13,

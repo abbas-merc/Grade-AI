@@ -43,6 +43,14 @@ service cloud.firestore {
           allow read, write: if isOwner(uid);
         }
       }
+
+      // Saved custom papers ("My Generated Papers"). Owner-only, same as
+      // markings — the client writes and reads these directly. Nested under
+      // teachers/{uid} because a top-level collection would hit the default-deny
+      // rule below.
+      match /generated_papers/{paperId} {
+        allow read, create, update, delete: if isOwner(uid);
+      }
     }
 
     // ── Backend-only collections ────────────────────────────────────────────

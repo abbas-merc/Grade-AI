@@ -21,6 +21,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import TopicChips from "../components/TopicChips";
 import { getQuestionPool, generatePaper } from "../services/api";
@@ -36,6 +37,15 @@ const DIFFICULTIES: GeneratorDifficulty[] = ["mixed", "easy", "medium", "hard"];
 const MARK_PRESETS = [40, 60, 80, 100];
 const MIN_MARKS = 20;
 const MAX_MARKS = 200;
+
+// Mirrors the backend selector bounds (_MIN_QUESTIONS / _MAX_QUESTIONS) so the
+// "closest achievable totals" hint matches what Generate can actually build.
+const MIN_Q = 3;
+const MAX_Q = 12;
+
+// AsyncStorage key: the last School Name the teacher used, pre-filled next time
+// so they don't retype it for every paper.
+const SCHOOL_NAME_KEY = "@gradeai_school_name";
 
 const PAPER_TYPES: { value: PaperType; label: string; desc: string }[] = [
   { value: "P2", label: "Paper 2", desc: "Non-calculator, structured questions" },
@@ -63,6 +73,9 @@ export default function GeneratePaperScreen() {
   const [preset, setPreset] = useState<number | null>(60);
   const [custom, setCustom] = useState("");
   const [difficulty, setDifficulty] = useState<GeneratorDifficulty>("mixed");
+  // Optional school name printed in the generated paper's header. Persisted to
+  // AsyncStorage so it's remembered between papers (Part 6).
+  const [schoolName, setSchoolName] = useState("");
 
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -96,6 +109,23 @@ export default function GeneratePaperScreen() {
     loadPool();
   }, []);
 
+  // Pre-fill the School Name with the last value the teacher used.
+  useEffect(() => {
+    AsyncStorage.getItem(SCHOOL_NAME_KEY)
+      .then((v) => {
+        if (v) setSchoolName(v);
+      })
+      .catch(() => {
+        /* non-fatal: just start with an empty field */
+      });
+  }, []);
+
+  const onSchoolNameChange = (t: string) => {
+    setSchoolName(t);
+    // Remember it for next time (fire-and-forget).
+    AsyncStorage.setItem(SCHOOL_NAME_KEY, t).catch(() => {});
+  };
+
   // Effective requested marks: the active preset, else the parsed custom value.
   const marks = preset != null ? preset : parseInt(custom, 10);
   const marksValid = Number.isFinite(marks) && marks >= MIN_MARKS && marks <= MAX_MARKS;
@@ -115,6 +145,63 @@ export default function GeneratePaperScreen() {
     }
     return { count, marks: total };
   }, [pool, paperType, difficulty, selectedTopics]);
+
+  // The marks of every question matching the current filters (same predicate as
+  // `available`), used for the subset-sum reachability below.
+  const filteredMarks = useMemo(() => {
+    if (!pool) return [] as number[];
+    const topicSet = new Set(selectedTopics);
+    const out: number[] = [];
+    for (const q of pool.questions) {
+      if (paperType !== "both" && q.paperType !== paperType) continue;
+      if (difficulty !== "mixed" && q.difficulty !== difficulty) continue;
+      if (topicSet.size > 0 && !topicSet.has(q.topic)) continue;
+      if (q.marks > 0) out.push(q.marks);
+    }
+    return out;
+  }, [pool, paperType, difficulty, selectedTopics]);
+
+  // Every exam total reachable by picking between MIN_Q and MAX_Q questions from
+  // the filtered pool. This mirrors the backend subset-sum selector (which caps
+  // at 12 questions), so the "closest achievable" hint below always matches what
+  // Generate can actually produce. Bounded 0/1 knapsack over (count, sum).
+  const reachableTotals = useMemo(() => {
+    const n = filteredMarks.length;
+    const maxK = Math.min(MAX_Q, n);
+    const reach: Set<number>[] = Array.from(
+      { length: maxK + 1 },
+      () => new Set<number>()
+    );
+    reach[0].add(0);
+    for (const m of filteredMarks) {
+      // Walk k high→low so each question is used at most once per subset.
+      for (let k = maxK; k >= 1; k--) {
+        for (const s of reach[k - 1]) reach[k].add(s + m);
+      }
+    }
+    // Require ≥ MIN_Q questions where the pool allows it (else as many as exist).
+    const minK = Math.max(1, Math.min(MIN_Q, maxK));
+    const totals = new Set<number>();
+    for (let k = minK; k <= maxK; k++) {
+      for (const s of reach[k]) if (s > 0) totals.add(s);
+    }
+    return totals;
+  }, [filteredMarks]);
+
+  // When the exact requested total can't be hit, the nearest totals that CAN be.
+  const closestTotals = useMemo(() => {
+    if (!marksValid || reachableTotals.has(marks)) return null;
+    let below = -Infinity;
+    let above = Infinity;
+    for (const t of reachableTotals) {
+      if (t < marks && t > below) below = t;
+      if (t > marks && t < above) above = t;
+    }
+    const options: number[] = [];
+    if (Number.isFinite(below)) options.push(below);
+    if (Number.isFinite(above)) options.push(above);
+    return options.length ? options : null;
+  }, [reachableTotals, marks, marksValid]);
 
   const difficultyLabel = difficulty === "mixed" ? "all-difficulty" : difficulty;
   const exceedsPool = marksValid && marks > available.marks;
@@ -151,6 +238,7 @@ export default function GeneratePaperScreen() {
         topics: selectedTopics, // resolved topic strings, never "all"
         totalMarks: marks,
         difficulty,
+        schoolName: schoolName.trim(),
       });
       if (paper.questions.length === 0) {
         setFormError(
@@ -196,6 +284,20 @@ export default function GeneratePaperScreen() {
       <View style={styles.subjectBox}>
         <Text style={styles.subjectText}>Mathematics (0580)</Text>
       </View>
+
+      {/* School name (optional) — printed in the generated paper header and
+          remembered for next time. */}
+      <Text style={styles.label}>School Name</Text>
+      <Text style={styles.subLabel}>Optional — shown on the paper header</Text>
+      <TextInput
+        style={styles.schoolInput}
+        value={schoolName}
+        onChangeText={onSchoolNameChange}
+        placeholder="e.g. Springfield High School"
+        placeholderTextColor={COLORS.textTertiary}
+        maxLength={80}
+        returnKeyType="done"
+      />
 
       {/* Paper type */}
       <Text style={styles.label}>Paper Type</Text>
@@ -311,6 +413,17 @@ export default function GeneratePaperScreen() {
               (exceedsPool ? ` You asked for ${marks} — the paper will be capped at what fits.` : "")}
         </Text>
       ) : null}
+
+      {/* Closest achievable totals — when the exact requested mark total can't be
+          hit with the current filters, tell the teacher which nearby totals CAN,
+          so they can adjust rather than just being told it fell short (Part 4). */}
+      {!loading && !loadError && available.count > 0 && closestTotals ? (
+        <Text style={styles.closestText}>
+          {`${marks} marks isn't achievable with these filters — closest options: ${closestTotals
+            .map((t) => `${t}`)
+            .join(" or ")} marks.`}
+        </Text>
+      ) : null}
     </ScrollView>
   );
 }
@@ -353,6 +466,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: COLORS.textPrimary,
     fontWeight: FONT.medium,
+  },
+  schoolInput: {
+    backgroundColor: COLORS.card,
+    borderRadius: RADIUS.lg,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.md,
+    fontSize: 16,
+    color: COLORS.textPrimary,
   },
   // Total marks
   presetRow: {
@@ -466,6 +589,13 @@ const styles = StyleSheet.create({
   },
   availabilityWarn: {
     color: COLORS.warning,
+  },
+  closestText: {
+    fontSize: 13,
+    color: COLORS.primary,
+    textAlign: "center",
+    marginTop: SPACING.sm,
+    lineHeight: 19,
   },
   errorText: {
     color: COLORS.fail,

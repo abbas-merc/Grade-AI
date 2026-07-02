@@ -14,6 +14,7 @@ import {
   Text,
   Image,
   ScrollView,
+  TextInput,
   TouchableOpacity,
   ActivityIndicator,
   StyleSheet,
@@ -26,9 +27,20 @@ import * as FileSystem from "expo-file-system/legacy";
 import * as Sharing from "expo-sharing";
 
 import { downloadQuestionPaperPdf, downloadMarkSchemePdf } from "../services/api";
+import { saveGeneratedPaper } from "../services/generatedPapers";
 import type { GeneratedPaper, GeneratedQuestion } from "../types/paperGenerator";
 import { COLORS, RADIUS, SPACING, FONT } from "../constants/theme";
 import { BASE_URL } from "../constants/config";
+
+/** Default name suggestion when saving, e.g. "Math Paper - 2 Jul 2026". */
+function defaultPaperName(): string {
+  const date = new Date().toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+  return `Math Paper - ${date}`;
+}
 
 /**
  * QuestionImage — render a question's cropped snippet at the card's width while
@@ -106,7 +118,12 @@ function QuestionCard({ question }: { question: GeneratedQuestion }) {
 }
 
 export default function PaperPreviewScreen() {
-  const { paper: paperParam } = useLocalSearchParams<{ paper: string }>();
+  // `saved` is "true" when opened from the "My Generated Papers" list — the
+  // paper is already persisted, so the Save action is shown as done.
+  const { paper: paperParam, saved: savedParam } = useLocalSearchParams<{
+    paper: string;
+    saved?: string;
+  }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
@@ -121,6 +138,13 @@ export default function PaperPreviewScreen() {
 
   const [sheetOpen, setSheetOpen] = useState(false);
   const [downloading, setDownloading] = useState<DownloadKind | null>(null);
+
+  // Save-paper flow: a name-input modal, then a write to generated_papers.
+  const [saveOpen, setSaveOpen] = useState(false);
+  const [nameDraft, setNameDraft] = useState("");
+  const [saving, setSaving] = useState(false);
+  // Already-saved once we arrive from a saved paper, or after a successful save.
+  const [alreadySaved, setAlreadySaved] = useState(savedParam === "true");
 
   if (!paper) {
     return (
@@ -177,10 +201,39 @@ export default function PaperPreviewScreen() {
       pathname: "/capture/[paperId]",
       params: {
         paperId: "0",
-        paperName: "Custom Paper",
+        paperName: paper?.paperName || "Custom Paper",
         generatedPaper: JSON.stringify(paper),
       },
     });
+  };
+
+  // Open the naming modal with a sensible, fully-editable default.
+  const openSaveModal = () => {
+    setNameDraft(paper?.paperName || defaultPaperName());
+    setSaveOpen(true);
+  };
+
+  const handleSave = async () => {
+    if (!paper || saving) return;
+    const name = nameDraft.trim();
+    if (!name) {
+      Alert.alert("Name required", "Please enter a name for this paper.");
+      return;
+    }
+    setSaving(true);
+    try {
+      await saveGeneratedPaper(paper, name);
+      setAlreadySaved(true);
+      setSaveOpen(false);
+      Alert.alert("Paper saved", `"${name}" is now in My Generated Papers.`);
+    } catch (err) {
+      Alert.alert(
+        "Couldn't save",
+        err instanceof Error ? err.message : "Could not save this paper."
+      );
+    } finally {
+      setSaving(false);
+    }
   };
 
   const minutes = estimatedMinutes(paper.totalMarks);
@@ -211,6 +264,18 @@ export default function PaperPreviewScreen() {
         {paper.questions.map((q) => (
           <QuestionCard key={q.assignedNumber} question={q} />
         ))}
+
+        {/* Save this paper into "My Generated Papers" (or show it as saved). */}
+        <TouchableOpacity
+          style={[styles.saveButton, alreadySaved && styles.saveButtonDone]}
+          onPress={openSaveModal}
+          disabled={alreadySaved}
+          activeOpacity={0.8}
+        >
+          <Text style={[styles.saveButtonText, alreadySaved && styles.saveButtonTextDone]}>
+            {alreadySaved ? "✓ Saved" : "Save Paper"}
+          </Text>
+        </TouchableOpacity>
 
         {/* Primary action: mark student responses against this paper */}
         <TouchableOpacity
@@ -263,6 +328,52 @@ export default function PaperPreviewScreen() {
             </TouchableOpacity>
           </View>
         </TouchableOpacity>
+      </Modal>
+
+      {/* Save-paper naming modal */}
+      <Modal visible={saveOpen} transparent animationType="fade" onRequestClose={() => setSaveOpen(false)}>
+        <View style={styles.saveBackdrop}>
+          <View style={styles.saveCard}>
+            <Text style={styles.saveTitle}>Name this paper</Text>
+            <Text style={styles.saveSubtitle}>
+              Save it to My Generated Papers so you can reopen, download, or mark it later.
+            </Text>
+            <TextInput
+              style={styles.saveInput}
+              value={nameDraft}
+              onChangeText={setNameDraft}
+              placeholder="e.g. Mock Paper 2026"
+              placeholderTextColor={COLORS.textTertiary}
+              maxLength={80}
+              autoFocus
+              selectTextOnFocus
+              returnKeyType="done"
+              onSubmitEditing={handleSave}
+            />
+            <View style={styles.saveActions}>
+              <TouchableOpacity
+                style={styles.saveCancel}
+                onPress={() => setSaveOpen(false)}
+                disabled={saving}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.saveCancelText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.saveConfirm, saving && styles.buttonDisabled]}
+                onPress={handleSave}
+                disabled={saving}
+                activeOpacity={0.8}
+              >
+                {saving ? (
+                  <ActivityIndicator color={COLORS.card} />
+                ) : (
+                  <Text style={styles.saveConfirmText}>Save</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
       </Modal>
     </View>
   );
@@ -383,12 +494,33 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     marginTop: SPACING.md,
   },
+  saveButton: {
+    backgroundColor: COLORS.card,
+    borderRadius: RADIUS.lg,
+    borderWidth: 1.5,
+    borderColor: COLORS.primary,
+    paddingVertical: SPACING.lg,
+    alignItems: "center",
+    marginTop: SPACING.lg,
+  },
+  saveButtonDone: {
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.surface,
+  },
+  saveButtonText: {
+    color: COLORS.primary,
+    fontSize: 16,
+    fontWeight: FONT.medium,
+  },
+  saveButtonTextDone: {
+    color: COLORS.textSecondary,
+  },
   markButton: {
     backgroundColor: COLORS.primary,
     borderRadius: RADIUS.lg,
     paddingVertical: SPACING.lg,
     alignItems: "center",
-    marginTop: SPACING.lg,
+    marginTop: SPACING.md,
   },
   markButtonText: {
     color: COLORS.card,
@@ -467,5 +599,69 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
     fontWeight: FONT.medium,
     textAlign: "center",
+  },
+  // Save-paper naming modal
+  saveBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+    padding: SPACING.xl,
+  },
+  saveCard: {
+    backgroundColor: COLORS.card,
+    borderRadius: RADIUS.xl,
+    padding: SPACING.lg,
+  },
+  saveTitle: {
+    fontSize: 18,
+    fontWeight: FONT.medium,
+    color: COLORS.textPrimary,
+    marginBottom: SPACING.xs,
+  },
+  saveSubtitle: {
+    fontSize: 13,
+    color: COLORS.textSecondary,
+    lineHeight: 18,
+    marginBottom: SPACING.lg,
+  },
+  saveInput: {
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.lg,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.md,
+    fontSize: 16,
+    color: COLORS.textPrimary,
+    marginBottom: SPACING.lg,
+  },
+  saveActions: {
+    flexDirection: "row",
+    gap: SPACING.md,
+  },
+  saveCancel: {
+    flex: 1,
+    paddingVertical: SPACING.md,
+    borderRadius: RADIUS.lg,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    alignItems: "center",
+  },
+  saveCancelText: {
+    color: COLORS.textSecondary,
+    fontSize: 15,
+    fontWeight: FONT.medium,
+  },
+  saveConfirm: {
+    flex: 1,
+    paddingVertical: SPACING.md,
+    borderRadius: RADIUS.lg,
+    backgroundColor: COLORS.primary,
+    alignItems: "center",
+  },
+  saveConfirmText: {
+    color: COLORS.card,
+    fontSize: 15,
+    fontWeight: FONT.medium,
   },
 });

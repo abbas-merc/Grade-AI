@@ -61,6 +61,10 @@ export interface PaperMarkBreakdownPoint {
 export interface QuestionResult {
   question_number: string;
   question_text: string;
+  // Topic this question belongs to (e.g. "algebra"). Present for generated
+  // papers (and re-seeded reference papers); drives the results PDF's per-topic
+  // performance analysis. Empty/absent when the source carries no topic.
+  topic?: string;
   extracted_answer: string;
   marks_awarded: number;
   marks_available: number;
@@ -69,6 +73,10 @@ export interface QuestionResult {
   // True when the transcript contains an [illegible] token — the model could
   // not read part of this answer, so the teacher should check it manually.
   has_illegible?: boolean;
+  // True when the model was unsure about reading part of this answer (a digit or
+  // symbol was ambiguous). Surfaced as a subtle "check reading" hint so a human
+  // verifies the transcription. Does not affect the marks awarded.
+  low_confidence?: boolean;
 }
 
 export interface PaperGradingResult {

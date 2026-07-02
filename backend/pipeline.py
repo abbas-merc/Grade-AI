@@ -388,37 +388,65 @@ def run_full_paper_grading(
         "recalculate. If you calculated something yourself and it differs from "
         "what the student wrote, ignore your calculation entirely and mark only "
         "what the student wrote against the mark scheme criteria.\n\n"
-        "HANDWRITING: The image contains handwritten student answers. "
-        "Handwriting quality may vary significantly between students. Some "
-        "handwriting may be messy, rushed, or unconventional. Read every "
-        "written character as carefully as possible. If a word or number is "
-        "genuinely impossible to interpret after careful analysis, write the "
-        "token [illegible] in place of that word. Do not skip any written "
-        "content and do not guess randomly. Apply extra attention to numbers, "
-        "units, and technical scientific terms as these are the most critical "
-        "parts of student answers.\n\n"
+        "READING HANDWRITING — accuracy here is the single most important thing "
+        "you do. Handwriting quality varies a lot; some is messy, rushed, or "
+        "unconventional. Read every written character as carefully as possible, "
+        "and follow these rules:\n"
+        "- Take EXTRA care distinguishing visually similar handwritten digits: "
+        "0 vs 6, 1 vs 7, 3 vs 8, 5 vs 6, and transposition-style misreads such as "
+        "20 vs 23. Also distinguish 0/O/Ø, decimal points, fractions, indices, "
+        "±, √, π, and '=' vs '≈'. When a symbol is ambiguous, infer from the "
+        "surrounding mathematics and the question — but see the next rule.\n"
+        "- CROSS-CHECK the final numeric answer against the working the student "
+        "has shown. If the working clearly leads to a different number than the "
+        "value you first transcribed as the final answer, trust the working: "
+        "re-read that final answer and transcribe the value the working supports.\n"
+        "- If a number or symbol remains genuinely ambiguous after careful "
+        "analysis, DO NOT silently guess. Transcribe your best reading, then in "
+        "that question's feedback note the uncertainty in plain words (for "
+        "example: 'the final answer appears to be 20 but is hard to read — please "
+        "verify legibility'), and set \"low_confidence\": true for that question. "
+        "Marking a question this way does not change how you award marks; it only "
+        "flags the question so a human can double-check the reading.\n"
+        "- If a character is truly impossible to interpret at all, write the "
+        "token [illegible] in its place rather than inventing content.\n"
+        "- Give the most attention to numbers, units, and technical terms — these "
+        "are the most critical parts of an answer.\n\n"
         "TASK — for EACH question listed above:\n"
         "1. Scan all pages for the student's answer (question numbers like "
         "'1a', '13b(ii)' will be written by the student). An answer may "
         "continue onto a later page — concatenate continuations.\n"
-        "2. Read handwriting CAREFULLY. Students aged 14-17 write quickly and "
-        "messily. Mathematical notation matters: distinguish 1/7, 0/O/Ø, "
-        "decimal points, fractions, indices, ±, √, π, equal vs approx. If a "
-        "symbol is ambiguous, infer from context (the surrounding maths and "
-        "the question). Better to infer the intended reading than to give up.\n"
-        "3. If no answer found anywhere, mark unanswered (0 marks).\n"
+        "2. Read the handwriting carefully following the rules above.\n"
+        "3. If no answer found anywhere, mark unanswered (0 marks) and set the "
+        "feedback to note that no answer was found for this question.\n"
         "4. Grade strictly point-by-point against the mark scheme criteria.\n"
-        "5. If you cannot read the student's handwriting for a question with "
-        "high confidence, do not attempt to interpret it. Instead set the "
-        "awarded marks to 0 for that question and set the feedback to say "
-        "'handwriting unclear, please resubmit this page'. Never award or "
-        "deduct marks based on a guess.\n"
+        "5. If the whole answer to a question is genuinely unreadable, set its "
+        "awarded marks to 0, set \"low_confidence\": true, and set the feedback to "
+        "'Handwriting unclear — please resubmit a clearer photo of this page.' "
+        "Never award or deduct marks based on a pure guess.\n"
         "6. You must only evaluate what is physically written on the paper. "
         "Do not infer, assume, or construct an answer. If the student wrote "
         "'anti-clockwise', mark that as the answer. Do not replace it with "
         "your own interpretation of what the answer should be.\n"
         "7. If you are unsure whether an answer satisfies a criterion, award "
-        "the mark. Uncertainty defaults to awarding, not withholding.\n\n"
+        "the mark. Uncertainty about a CRITERION defaults to awarding; this is "
+        "separate from low_confidence, which is about reading the handwriting.\n\n"
+        "FEEDBACK — write each question's feedback as an experienced subject "
+        "teacher marking the script by hand, NOT as a chatbot or customer-service "
+        "assistant:\n"
+        "- Be specific to what THIS student actually did in their working — refer "
+        "to their real method and values. Never generic praise or generic "
+        "criticism.\n"
+        "- When marks are lost, name the specific error type, e.g. 'correct "
+        "method but an arithmetic slip expanding the bracket in line 2', 'right "
+        "formula, wrong rearrangement', or 'units missing from the final answer' "
+        "— never a vague phrase like 'partially correct'.\n"
+        "- Keep it to 1–3 short sentences. Direct and plain: no filler, no "
+        "exclamation-mark cheerleading, no 'great job!' padding.\n"
+        "- When full marks are earned, still be substantive if there is something "
+        "worth noting (an efficient or elegant method, a well-chosen approach). "
+        "Do not manufacture praise where there is nothing to say — a short, honest "
+        "'Fully correct, clearly set out.' is fine.\n\n"
         "Return ONLY valid JSON. No markdown, no commentary, no explanation. "
         f"Include ALL {len(questions)} questions in `results`, in the order "
         "listed above. Shape:\n"
@@ -428,10 +456,13 @@ def run_full_paper_grading(
         '      "question_number": "1a",\n'
         '      "extracted_answer": "<verbatim student work, or empty string>",\n'
         '      "marks_awarded": <integer, 0..marks_available>,\n'
+        '      "low_confidence": <true if you were unsure about reading part of '
+        'this answer, otherwise false>,\n'
         '      "mark_breakdown": [\n'
         '        {"criterion": "<short>", "awarded": true|false, "reason": "<one sentence>"}\n'
         '      ],\n'
-        '      "feedback": "<one short encouraging sentence for a student aged 14-17>"\n'
+        '      "feedback": "<1-3 sentence teacher comment, specific to this '
+        'student\'s working>"\n'
         "    }\n"
         "  ]\n"
         "}"
@@ -545,16 +576,23 @@ def run_full_paper_grading(
                     matched.append(model_results[i])
                     consumed.add(i)
 
+        # Topic is carried through from the paper's question metadata (generated
+        # papers and re-seeded reference papers set it) so the results document can
+        # aggregate performance by topic. Empty string when the source has none.
+        topic = str(q.get("topic", "") or "").strip()
+
         if not matched:
             results.append({
                 "question_number": qnum,
                 "question_text": q["question_text"],
+                "topic": topic,
                 "extracted_answer": "",
                 "marks_awarded": 0,
                 "marks_available": marks_available,
                 "mark_breakdown": [],
                 "feedback": "Not graded (missing from AI response).",
                 "has_illegible": False,
+                "low_confidence": False,
             })
             continue
 
@@ -564,6 +602,7 @@ def run_full_paper_grading(
         extracted_parts: list[str] = []
         feedback_parts: list[str] = []
         breakdown: list = []
+        low_confidence = False
         for r in matched:
             try:
                 part_awarded = int(r.get("marks_awarded", 0))
@@ -579,6 +618,11 @@ def run_full_paper_grading(
             bd = r.get("mark_breakdown", [])
             if isinstance(bd, list):
                 breakdown.extend(bd)
+            # The model flags low_confidence when it was unsure about reading part
+            # of the answer. Any unsure sub-part flags the whole question so the
+            # teacher knows to double-check the transcription for this question.
+            if bool(r.get("low_confidence")):
+                low_confidence = True
 
         awarded = max(0, min(awarded, marks_available))
         total_awarded += awarded
@@ -609,12 +653,14 @@ def run_full_paper_grading(
         results.append({
             "question_number": qnum,
             "question_text": q["question_text"],
+            "topic": topic,
             "extracted_answer": extracted,
             "marks_awarded": awarded,
             "marks_available": marks_available,
             "mark_breakdown": breakdown,
             "feedback": feedback,
             "has_illegible": has_illegible,
+            "low_confidence": low_confidence,
         })
 
     db.commit()

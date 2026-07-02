@@ -45,10 +45,19 @@ def _serialize_question(q: dict) -> dict:
 def list_papers(
     uid: str = Depends(get_current_uid),
 ):
-    """Return all exam papers from Firestore."""
+    """Return the exam papers shown in the Papers tab.
+
+    Specimen papers (isSpecimen == true) are intentionally excluded from this
+    DISPLAY list so only real past papers (the 2024 Paper 2 and Paper 4 variants)
+    are directly selectable for marking. The specimen papers remain untouched in
+    Firestore and in the Custom Paper Generator's question bank (a separate
+    `questions` collection) — this filter affects the Papers tab list only, which
+    is this endpoint's sole consumer.
+    """
     try:
         papers = get_all_papers()
-        return [_serialize_paper(p) for p in papers]
+        visible = [p for p in papers if not p.get("isSpecimen")]
+        return [_serialize_paper(p) for p in visible]
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Failed to load papers: {exc}")
 

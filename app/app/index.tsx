@@ -35,6 +35,12 @@ import {
   deleteHistoryEntry,
   subscribeToHistory,
 } from "../services/historyService";
+import {
+  subscribeToGeneratedPapers,
+  savedToGeneratedPaper,
+  deleteGeneratedPaper,
+  type SavedGeneratedPaper,
+} from "../services/generatedPapers";
 import PaperCard from "../components/PaperCard";
 import type { Paper, HistoryEntry } from "../types";
 import { COLORS, RADIUS, SPACING, FONT, ON } from "../constants/theme";
@@ -312,6 +318,38 @@ function HistoryRow({
   );
 }
 
+// ─── GeneratedPaperRow (saved custom paper) ───────────────────────────────────
+
+function GeneratedPaperRow({
+  paper,
+  onPress,
+  onLongPress,
+}: {
+  paper: SavedGeneratedPaper;
+  onPress: () => void;
+  onLongPress: () => void;
+}) {
+  const subtitle = `${paper.totalMarks} marks · ${paper.numQuestions} question${
+    paper.numQuestions === 1 ? "" : "s"
+  } · ${formatDate(paper.createdAt)}`;
+  return (
+    <TouchableOpacity
+      style={styles.generatedRow}
+      activeOpacity={0.8}
+      onPress={onPress}
+      onLongPress={onLongPress}
+    >
+      <View style={styles.generatedMain}>
+        <Text style={styles.generatedName} numberOfLines={1}>
+          {paper.paperName}
+        </Text>
+        <Text style={styles.generatedMeta}>{subtitle}</Text>
+      </View>
+      <Text style={styles.generatedChevron}>›</Text>
+    </TouchableOpacity>
+  );
+}
+
 // ─── HomeScreen ───────────────────────────────────────────────────────────────
 
 export default function HomeScreen() {
@@ -359,6 +397,58 @@ export default function HomeScreen() {
   useEffect(() => {
     loadPapers();
   }, [loadPapers]);
+
+  // ── My Generated Papers ─────────────────────────────────────────────────────
+  const [generatedPapers, setGeneratedPapers] = useState<SavedGeneratedPaper[]>([]);
+
+  // Real-time listener so a paper saved on the preview screen appears here
+  // immediately, and a deletion is reflected without a manual refresh.
+  useEffect(() => {
+    const unsubscribe = subscribeToGeneratedPapers(
+      (papers) => setGeneratedPapers(papers),
+      () => setGeneratedPapers([]),
+    );
+    return unsubscribe;
+  }, []);
+
+  const openSavedPaper = useCallback(
+    (saved: SavedGeneratedPaper) => {
+      router.push({
+        pathname: "/paper-preview",
+        params: {
+          paper: JSON.stringify(savedToGeneratedPaper(saved)),
+          saved: "true",
+        },
+      });
+    },
+    [router],
+  );
+
+  const confirmDeleteSavedPaper = useCallback((saved: SavedGeneratedPaper) => {
+    Alert.alert(
+      "Delete paper",
+      `Delete "${saved.paperName}"? This can't be undone.`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await deleteGeneratedPaper(saved.id);
+              // The live listener removes the row; update optimistically too.
+              setGeneratedPapers((prev) => prev.filter((p) => p.id !== saved.id));
+            } catch {
+              Alert.alert(
+                "Couldn't delete",
+                "We couldn't remove this paper. Please try again.",
+              );
+            }
+          },
+        },
+      ],
+    );
+  }, []);
 
   // ── History ───────────────────────────────────────────────────────────────
   const [history, setHistory] = useState<HistoryEntry[]>([]);
@@ -515,6 +605,23 @@ export default function HomeScreen() {
               >
                 <Text style={styles.createPaperButtonText}>+ Create Custom Paper</Text>
               </TouchableOpacity>
+
+              {/* My Generated Papers — the teacher's own saved custom papers,
+                  kept visually separate from the fixed reference papers below. */}
+              {generatedPapers.length > 0 && (
+                <View style={styles.generatedSection}>
+                  <Text style={styles.sectionLabel}>My Generated Papers</Text>
+                  {generatedPapers.map((gp) => (
+                    <GeneratedPaperRow
+                      key={gp.id}
+                      paper={gp}
+                      onPress={() => openSavedPaper(gp)}
+                      onLongPress={() => confirmDeleteSavedPaper(gp)}
+                    />
+                  ))}
+                </View>
+              )}
+
               {papers.length === 0 ? (
                 <View style={styles.emptyPapers}>
                   <Text style={styles.emptyTitle}>No past papers yet</Text>
@@ -735,6 +842,39 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: COLORS.textTertiary,
     marginBottom: SPACING.sm,
+  },
+  generatedSection: {
+    marginBottom: SPACING.lg,
+  },
+  generatedRow: {
+    backgroundColor: COLORS.card,
+    borderWidth: 0.5,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.lg,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.lg,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 10,
+  },
+  generatedMain: {
+    flex: 1,
+  },
+  generatedName: {
+    fontSize: 15,
+    fontWeight: FONT.medium,
+    color: COLORS.textPrimary,
+  },
+  generatedMeta: {
+    fontSize: 13,
+    color: COLORS.textSecondary,
+    marginTop: SPACING.xs,
+  },
+  generatedChevron: {
+    fontSize: 24,
+    color: COLORS.textTertiary,
+    marginLeft: SPACING.sm,
   },
   subjectHeader: {
     fontSize: 11,

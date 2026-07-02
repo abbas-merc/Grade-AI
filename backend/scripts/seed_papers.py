@@ -111,6 +111,10 @@ def main() -> None:
                     f"Question {n} — {q['topic']} ({q['marks']} mark"
                     f"{'s' if q['marks'] != 1 else ''})."
                 ),
+                # Structured topic so graded results can be aggregated by topic on
+                # the results PDF's Performance Analysis page (parity with the
+                # generated-paper marking path). Re-seed to backfill existing docs.
+                "topic": q["topic"],
                 "marks_available": q["marks"],
                 "question_image_url": q["questionImageUrl"],
                 "mark_scheme": [{

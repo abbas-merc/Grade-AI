@@ -57,6 +57,9 @@ class GeneratePaperRequest(BaseModel):
     topics: list[str] = Field(min_length=1)
     totalMarks: int = Field(ge=20, le=200)
     difficulty: Literal["mixed", "easy", "medium", "hard"] = "mixed"
+    # Optional school name, echoed into the response so it rides through to the
+    # PDF header on download. Empty string when not provided.
+    schoolName: str = ""
 
 
 class GeneratedQuestion(BaseModel):
@@ -88,6 +91,12 @@ class GeneratePaperResponse(BaseModel):
     numQuestions: int
     questions: list[GeneratedQuestion]
     markScheme: list[MarkSchemeItem]
+    # Echoed from the request so downstream PDF downloads (which receive this
+    # object back) can print it in the header. Optional / defaults empty.
+    schoolName: str = ""
+    # Teacher-provided name, attached when the paper is saved to "My Generated
+    # Papers" and sent back on download so the PDF title can use it. Optional.
+    paperName: str = ""
 
 
 # --------------------------------------------------------------------------- #
@@ -250,6 +259,7 @@ def generate_paper(
         numQuestions=len(selected),
         questions=questions,
         markScheme=mark_scheme,
+        schoolName=(req.schoolName or "").strip(),
     )
 
 

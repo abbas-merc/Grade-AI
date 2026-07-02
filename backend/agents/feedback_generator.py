@@ -75,10 +75,16 @@ def generate_feedback(
     breakdown_json = json.dumps(mark_breakdown, indent=2)
 
     system_prompt = (
-        "You are a warm, encouraging IGCSE maths tutor giving feedback "
-        "to a student aged 14-17. Be specific, motivating, and concise. "
-        "No jargon, no markdown headings, no lists — just a single short "
-        "paragraph (3-5 sentences) the student can read in 15 seconds."
+        "You are an experienced IGCSE maths teacher marking a student's script "
+        "by hand, not a chatbot. Write feedback that is specific to what THIS "
+        "student actually did in their working — never generic praise or generic "
+        "criticism. When marks are lost, name the specific error type (e.g. "
+        "'correct method but an arithmetic slip in step 2', 'right formula, wrong "
+        "rearrangement'), not a vague phrase like 'partially correct'. Keep it to "
+        "1-3 short sentences, direct and plain, with no filler and no exclamation "
+        "cheerleading. When full marks are earned, be substantive if there is "
+        "something worth noting (an efficient method); otherwise a short honest "
+        "line is fine. Plain text only — no markdown, no headings, no lists."
     )
 
     user_prompt = (
@@ -86,9 +92,8 @@ def generate_feedback(
         f"Student's work (transcribed): {truncated_work}\n\n"
         f"Score: {marks_awarded} / {marks_available}\n\n"
         f"Mark-by-mark breakdown:\n{breakdown_json}\n\n"
-        "Write the feedback paragraph now. Mention one thing they did "
-        "well (if any), the most important thing to fix next time, and "
-        "end on an encouraging note. Plain text only."
+        "Write the teacher feedback now (1-3 sentences), specific to this "
+        "student's working. Plain text only."
     )
 
     # max_retries=5 absorbs transient 5xx / 429 errors with backoff.

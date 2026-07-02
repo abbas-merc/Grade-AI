@@ -22,6 +22,8 @@ export interface GeneratePaperRequest {
   topics: string[];
   totalMarks: number;
   difficulty: GeneratorDifficulty;
+  /** Optional school name printed in the generated paper's PDF header. */
+  schoolName?: string;
 }
 
 export interface GeneratedQuestion {
@@ -51,6 +53,10 @@ export interface GeneratedPaper {
   numQuestions: number;
   questions: GeneratedQuestion[];
   markScheme: MarkSchemeItem[];
+  /** Optional school name to print in the PDF header (echoed from the request). */
+  schoolName?: string;
+  /** Teacher-provided name, set when the paper is saved to "My Generated Papers". */
+  paperName?: string;
 }
 
 /** One question's selection metadata from GET /api/generate-paper/pool — enough

@@ -54,6 +54,9 @@ function buildInlinePaper(paper: GeneratedPaper) {
       id: `gen_${q.assignedNumber}`,
       question_number: String(q.assignedNumber),
       marks_available: q.marks,
+      // Topic is carried as a structured field so the graded result can be
+      // aggregated by topic for the Performance Analysis page on the results PDF.
+      topic: q.topic ?? "",
       // Questions are image snippets now, so there's no extracted question text;
       // give the grader a short context line and let it mark strictly against the
       // mark scheme (which carries the required answers + mark allocation).

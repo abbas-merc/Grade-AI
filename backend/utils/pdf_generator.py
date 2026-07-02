@@ -31,6 +31,7 @@ from reportlab.platypus import (
     Flowable,
     Image as RLImage,
     KeepTogether,
+    PageBreak,
     Paragraph,
     SimpleDocTemplate,
     Spacer,
@@ -203,6 +204,40 @@ def _styles() -> dict:
             "GA_Part2", parent=base["Normal"], fontName=_FONT_NORMAL, fontSize=10.5,
             leading=14, leftIndent=30,
         ),
+        # Exam-cover formalities (question paper only).
+        "school": ParagraphStyle(
+            "GA_School", parent=base["Normal"], fontName=_FONT_BOLD, fontSize=13,
+            alignment=TA_CENTER, textColor=colors.HexColor("#1A1A1A"), spaceAfter=2,
+        ),
+        "candLabel": ParagraphStyle(
+            "GA_CandLabel", parent=base["Normal"], fontName=_FONT_NORMAL, fontSize=10.5,
+            leading=20, textColor=colors.HexColor("#1A1A1A"),
+        ),
+        "candFill": ParagraphStyle(
+            "GA_CandFill", parent=base["Normal"], fontName=_FONT_NORMAL, fontSize=10.5,
+            leading=20, textColor=colors.HexColor("#9B9B97"),
+        ),
+        "instrHeading": ParagraphStyle(
+            "GA_InstrHeading", parent=base["Normal"], fontName=_FONT_BOLD, fontSize=10.5,
+            leading=14, textColor=colors.HexColor("#1A1A1A"), spaceAfter=3,
+        ),
+        "instrItem": ParagraphStyle(
+            "GA_InstrItem", parent=base["Normal"], fontName=_FONT_NORMAL, fontSize=9.5,
+            leading=13, leftIndent=10, textColor=colors.HexColor("#333333"),
+        ),
+        # Mark-scheme sub-part labels ("(a)", "(b)(i)") rendered bold/indented.
+        "msPart1": ParagraphStyle(
+            "GA_MSPart1", parent=base["Normal"], fontName=_FONT_BOLD, fontSize=10.5,
+            leading=14, leftIndent=14, spaceBefore=3, textColor=colors.HexColor("#1A1A1A"),
+        ),
+        "msPart2": ParagraphStyle(
+            "GA_MSPart2", parent=base["Normal"], fontName=_FONT_BOLD, fontSize=10.5,
+            leading=14, leftIndent=28, spaceBefore=2, textColor=colors.HexColor("#333333"),
+        ),
+        "msBody": ParagraphStyle(
+            "GA_MSBody", parent=base["Normal"], fontName=_FONT_NORMAL, fontSize=10.5,
+            leading=15, leftIndent=14,
+        ),
     }
 
 
@@ -278,6 +313,44 @@ def _body_flowables(text: str, styles: dict) -> list:
     return flow
 
 
+# A mark-scheme "label line" is one that consists ONLY of part labels — an
+# optional leading question number then one or more "(x)" groups, e.g. "(a)",
+# "1(a)", "(b)(i)", "1(a)(ii)". These become bold, indented sub-headers so the
+# scheme's structure is legible instead of a flat wall of text.
+_MS_LABEL_LINE = re.compile(r"^\s*\d{0,2}(?:\([a-z0-9ivx]{1,4}\))+\s*$", re.I)
+_MS_GROUP_RE = re.compile(r"\(([a-z0-9ivx]{1,4})\)", re.I)
+# Standalone Cambridge notation tokens that read better emphasised on their own
+# line (they annotate the mark point above them).
+_MS_ABBREV = {"cao", "oe", "ft", "isw", "soi", "nfww", "dep", "sc", "awrt", "www"}
+
+
+def _mark_scheme_flowables(text: str, styles: dict) -> list:
+    """Render one question's mark-scheme text with clear structure (Part 6):
+    bold, indented sub-part labels ("(a)", "(b)(i)"), one mark point per line,
+    and small spacers between blocks. Falls back gracefully on messy source text —
+    anything that isn't a recognised label is rendered as an indented body line."""
+    flow: list = []
+    for raw in (text or "").split("\n"):
+        line = raw.rstrip()
+        if not line.strip():
+            flow.append(Spacer(1, 3))
+            continue
+        stripped = line.strip()
+        if _MS_LABEL_LINE.match(stripped):
+            groups = _MS_GROUP_RE.findall(stripped)
+            innermost = groups[-1].lower() if groups else ""
+            style = styles["msPart2"] if innermost in _ROMAN else styles["msPart1"]
+            flow.append(Paragraph(_markup(stripped), style))
+        elif stripped.lower() in _MS_ABBREV:
+            flow.append(Paragraph(
+                f"<font size=8 color='#6B6B68'><b>{_markup(stripped)}</b></font>",
+                styles["msBody"],
+            ))
+        else:
+            flow.append(Paragraph(_markup(stripped), styles["msBody"]))
+    return flow
+
+
 def _question_header(number: int, marks: int, meta: str, styles: dict) -> Table:
     """A two-column heading row: bold question number (+ meta) | marks, right."""
     left = f"<b>{number}</b>"
@@ -304,8 +377,13 @@ def _header_story(title: str, subtitle: str, paper_data: dict, styles: dict) -> 
     total_marks = int(paper_data.get("totalMarks", 0) or 0)
     num_q = int(paper_data.get("numQuestions", 0) or 0)
     minutes = _time_minutes(total_marks)
+    school = str(paper_data.get("schoolName", "") or "").strip()
 
-    story = [
+    story: list = []
+    # School name sits above the title when provided (Part 6).
+    if school:
+        story.append(Paragraph(_markup(school), styles["school"]))
+    story.extend([
         Paragraph(escape(title), styles["title"]),
         Paragraph(escape(subtitle), styles["subtitle"]),
         Paragraph(f"Subject: {escape(subject_label)}", styles["subtitle"]),
@@ -313,8 +391,76 @@ def _header_story(title: str, subtitle: str, paper_data: dict, styles: dict) -> 
         Paragraph(f"Number of Questions: {num_q}", styles["subtitle"]),
         Paragraph(f"Time: {_format_time(minutes)}", styles["subtitle"]),
         Spacer(1, 10),
-    ]
+    ])
     return story
+
+
+def _calculator_note(paper_data: dict) -> str:
+    """Calculator policy for the instructions block, inferred from the mix of
+    source paper types. Any Paper 4 (calculator) question means a calculator is
+    permitted; an all-Paper-2 paper is non-calculator."""
+    types = {str(q.get("paperType", "")) for q in paper_data.get("questions", [])}
+    if "P4" in types:
+        return "You may use a calculator."
+    return "You must NOT use a calculator."
+
+
+def _exam_cover(paper_data: dict, styles: dict) -> list:
+    """Real-exam formalities printed on the question paper's first page (Part 7):
+    a candidate-details box (name, number, date, invigilator signature) and a
+    brief, standard 'Instructions to Candidates' block."""
+    total_marks = int(paper_data.get("totalMarks", 0) or 0)
+    fill = "_" * 30
+
+    # Candidate details as a bordered two-row × two-column grid, each cell a
+    # label above a writable line — the standard IGCSE cover-sheet layout.
+    def _field(label: str) -> list:
+        return [
+            Paragraph(escape(label), styles["candLabel"]),
+            Paragraph(fill, styles["candFill"]),
+        ]
+
+    col_w = _USABLE_W / 2.0
+    grid = Table(
+        [
+            [_field("Candidate Name"), _field("Candidate Number / Roll No")],
+            [_field("Date"), _field("Invigilator's Signature")],
+        ],
+        colWidths=[col_w, col_w],
+    )
+    grid.setStyle(TableStyle([
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ("LEFTPADDING", (0, 0), (-1, -1), 10),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 10),
+        ("TOPPADDING", (0, 0), (-1, -1), 8),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
+        ("BOX", (0, 0), (-1, -1), 0.75, colors.HexColor("#C9C9C4")),
+        ("INNERGRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#E4E4E0")),
+    ]))
+
+    instructions = [
+        "Answer all questions.",
+        "Write your answers in the spaces provided.",
+        "Write in dark blue or black ink.",
+        _calculator_note(paper_data),
+        "Show all necessary working clearly; marks may be awarded for correct method.",
+        f"The total mark for this paper is {total_marks}.",
+    ]
+    instr_flows: list = [Paragraph("Instructions to Candidates", styles["instrHeading"])]
+    for item in instructions:
+        instr_flows.append(Paragraph(f"•&nbsp;&nbsp;{_markup(item)}", styles["instrItem"]))
+
+    return [
+        grid,
+        Spacer(1, 12),
+        *instr_flows,
+        Spacer(1, 8),
+        # A thin rule visually separates the cover formalities from the questions.
+        Table([[""]], colWidths=[_USABLE_W], style=TableStyle([
+            ("LINEBELOW", (0, 0), (-1, -1), 0.75, colors.HexColor("#C9C9C4")),
+        ])),
+        Spacer(1, 12),
+    ]
 
 
 def _make_page_decorator(header_line: str):
@@ -344,12 +490,16 @@ def _running_header_line(subtitle: str, paper_data: dict) -> str:
     )
 
 
-def _build(title: str, subtitle: str, paper_data: dict, blocks: list) -> bytes:
+def _build(title: str, subtitle: str, paper_data: dict, blocks: list,
+           cover: list | None = None) -> bytes:
     """Assemble a PDF from a header plus a list of
     (number, marks, meta, flows, keep_all) blocks, where `flows` is the question
     body's flowables. keep_all=True keeps the header + whole body together (mark
     scheme); keep_all=False keeps the header with only the first flowable and
-    lets the rest flow across pages (sliced question images)."""
+    lets the rest flow across pages (sliced question images).
+
+    `cover` is an optional list of flowables inserted right after the header
+    (used by the question paper for its candidate-details + instructions block)."""
     styles = _styles()
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(
@@ -359,6 +509,8 @@ def _build(title: str, subtitle: str, paper_data: dict, blocks: list) -> bytes:
         title=title,
     )
     story = _header_story(title, subtitle, paper_data, styles)
+    if cover:
+        story.extend(cover)
     for number, marks, meta, flows, keep_all in blocks:
         header = _question_header(number, marks, meta, styles)
         if not flows:
@@ -406,17 +558,26 @@ def generate_question_paper_pdf(paper_data: dict) -> bytes:
             flows,
             False,
         ))
+    cover = _exam_cover(paper_data, styles)
     return _build(
         "Grade AI Custom Practice Paper", "Question Paper", paper_data, blocks,
+        cover=cover,
     )
 
 
 def generate_mark_scheme_pdf(paper_data: dict) -> bytes:
-    """Render the mark scheme to PDF bytes (still text-based)."""
+    """Render the mark scheme to PDF bytes.
+
+    Text-based by design (see Part 3 decision: the source mark-scheme PDFs are
+    table-layout with no reliable per-question anchors, and two of the four have
+    a reversed text layer, so clean per-question image cropping isn't feasible).
+    Instead the stored text is rendered with clear structure: bold question
+    numbers (the header), bold indented sub-part labels, one mark point per line,
+    and consistent spacing."""
     styles = _styles()
     blocks = []
     for item in paper_data.get("markScheme", []):
-        flows = _body_flowables(item.get("markSchemeText", ""), styles)
+        flows = _mark_scheme_flowables(item.get("markSchemeText", ""), styles)
         blocks.append((
             item.get("questionNumber"),
             item.get("marks", 0),
@@ -589,6 +750,23 @@ def _result_styles() -> dict:
             "R_Feedback", parent=base["Normal"], fontName=_FONT_NORMAL,
             fontSize=10.5, leading=15, textColor=colors.HexColor(_INK),
         ),
+        # Performance Analysis page (Part 9).
+        "anIntro": ParagraphStyle(
+            "R_AnIntro", parent=base["Normal"], fontName=_FONT_NORMAL, fontSize=10.5,
+            leading=15, textColor=colors.HexColor(_MUTED), spaceAfter=2,
+        ),
+        "topicName": ParagraphStyle(
+            "R_TopicName", parent=base["Normal"], fontName=_FONT_BOLD, fontSize=11,
+            textColor=colors.HexColor(_INK), leading=14,
+        ),
+        "topicScore": ParagraphStyle(
+            "R_TopicScore", parent=base["Normal"], fontName=_FONT_NORMAL, fontSize=11,
+            textColor=colors.HexColor(_MUTED), leading=14, alignment=TA_RIGHT,
+        ),
+        "anSummary": ParagraphStyle(
+            "R_AnSummary", parent=base["Normal"], fontName=_FONT_NORMAL, fontSize=10.5,
+            leading=15, textColor=colors.HexColor(_INK),
+        ),
     }
 
 
@@ -737,6 +915,123 @@ def _make_results_page_decorator(running_header: str, footer_left: str):
     return _decorate
 
 
+def _aggregate_topics(results: list) -> list[tuple[str, int, int]]:
+    """Sum (awarded, available) marks per topic across a paper's question results,
+    weakest first. Questions with no topic or zero available marks are skipped.
+    Returns [(topic, awarded, available)] sorted by ascending percentage."""
+    agg: dict[str, list[int]] = {}
+    order: list[str] = []
+    for q in results:
+        if not isinstance(q, dict):
+            continue
+        topic = str(q.get("topic") or "").strip()
+        if not topic:
+            continue
+        try:
+            aw = int(q.get("marks_awarded") or 0)
+            av = int(q.get("marks_available") or 0)
+        except (TypeError, ValueError):
+            continue
+        if av <= 0:
+            continue
+        if topic not in agg:
+            agg[topic] = [0, 0]
+            order.append(topic)
+        agg[topic][0] += aw
+        agg[topic][1] += av
+    rows = [(t, agg[t][0], agg[t][1]) for t in order]
+    # Weakest (lowest %) first; stable within equal percentages by first-seen.
+    rows.sort(key=lambda r: (r[1] / r[2]) if r[2] else 0.0)
+    return rows
+
+
+def _weakness_summary(rows: list[tuple[str, int, int]]) -> str:
+    """A factual one-liner naming the weakest topic(s). `rows` is weakest-first."""
+    def pct(aw: int, av: int) -> int:
+        return round((aw / av) * 100) if av else 0
+
+    weakest_pct = pct(rows[0][1], rows[0][2])
+    if weakest_pct >= 85:
+        return (
+            f"Strong performance across all topics — the lowest is "
+            f"{rows[0][0].title()} at {weakest_pct}%."
+        )
+    # Surface up to two clearly weak topics (below 50%) when there is more than one.
+    weak = [r for r in rows if pct(r[1], r[2]) < 50][:2]
+    if len(weak) >= 2:
+        named = ", ".join(f"{r[0].title()} ({pct(r[1], r[2])}%)" for r in weak)
+        return f"Weakest areas: {named}. Consider additional practice in these topics."
+    return (
+        f"Weakest area: {rows[0][0].title()} ({weakest_pct}%). "
+        f"Consider additional practice in this topic."
+    )
+
+
+def _performance_analysis_story(data: dict, styles: dict) -> list:
+    """The 'Performance Analysis' first page (Part 9): a per-topic marks
+    breakdown with a horizontal bar per topic and a weakest-area summary. Returns
+    an empty list when no question carries a topic, so the page is simply omitted
+    for papers whose source has no topic data."""
+    rows = _aggregate_topics(data.get("results") or [])
+    if not rows:
+        return []
+
+    paper_name = str(data.get("paper_name") or "Practice Paper").strip() or "Practice Paper"
+    date_str = format_marked_date(data)
+
+    story: list = [
+        Paragraph("Grade AI", styles["brand"]),
+        Paragraph("Performance Analysis", styles["title"]),
+        Paragraph(_markup(paper_name), styles["subtitle"]),
+        Paragraph(f"Marked {escape(date_str)}", styles["subtitle"]),
+        Spacer(1, 14),
+        Paragraph("Marks by Topic", styles["section"]),
+        Paragraph(
+            "How the marks broke down across the topics in this paper.",
+            styles["anIntro"],
+        ),
+        Spacer(1, 10),
+    ]
+
+    for topic, aw, av in rows:
+        pct = round((aw / av) * 100) if av else 0
+        head = Table(
+            [[
+                Paragraph(_markup(topic.title()), styles["topicName"]),
+                Paragraph(f"{aw} / {av}  ({pct}%)", styles["topicScore"]),
+            ]],
+            colWidths=[_USABLE_W * 0.6, _USABLE_W * 0.4],
+        )
+        head.setStyle(TableStyle([
+            ("VALIGN", (0, 0), (-1, -1), "BOTTOM"),
+            ("LEFTPADDING", (0, 0), (-1, -1), 0),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+            ("TOPPADDING", (0, 0), (-1, -1), 0),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
+        ]))
+        story.append(KeepTogether([
+            head,
+            _PerformanceBar(pct / 100.0, _USABLE_W),
+            Spacer(1, 12),
+        ]))
+
+    story.append(Spacer(1, 6))
+    summary = _weakness_summary(rows)
+    summary_tbl = Table([[Paragraph(_markup(summary), styles["anSummary"])]],
+                        colWidths=[_USABLE_W])
+    summary_tbl.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor(_BRAND_TINT)),
+        ("LINEBEFORE", (0, 0), (0, -1), 4, colors.HexColor(_BRAND)),
+        ("LEFTPADDING", (0, 0), (-1, -1), _SUMMARY_PAD),
+        ("RIGHTPADDING", (0, 0), (-1, -1), _SUMMARY_PAD),
+        ("TOPPADDING", (0, 0), (-1, -1), 12),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 12),
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+    ]))
+    story.append(KeepTogether(summary_tbl))
+    return story
+
+
 def generate_results_pdf(result_data: dict) -> bytes:
     """Render a completed marking (the Firestore marking document) to a clean,
     shareable PDF and return the bytes.
@@ -771,13 +1066,22 @@ def generate_results_pdf(result_data: dict) -> bytes:
     results = data.get("results") or []
 
     styles = _result_styles()
-    story: list = [
+    story: list = []
+
+    # Performance Analysis leads on its own first page when topic data exists
+    # (Part 9); otherwise it's omitted and the report opens on the summary.
+    analysis = _performance_analysis_story(data, styles)
+    if analysis:
+        story.extend(analysis)
+        story.append(PageBreak())
+
+    story.extend([
         Paragraph("Grade AI", styles["brand"]),
         Paragraph("Marked Results", styles["title"]),
         Paragraph(_markup(paper_name), styles["subtitle"]),
         Paragraph(f"Marked {escape(date_str)}", styles["subtitle"]),
         Spacer(1, 10),
-    ]
+    ])
     if student_name:
         story.append(Paragraph(f"<b>Student:</b> {_markup(student_name)}", styles["student"]))
     else:
