@@ -102,7 +102,16 @@ _LEAD_INT = re.compile(r"^\s*(\d{1,2})(?:\s|\(|$)")
 # QP: anchors + regions + rendering
 # --------------------------------------------------------------------------- #
 def question_anchors(doc) -> list[tuple[int, float, int]]:
-    """Ordered [(page_idx, y0, qnum)] for bold left-margin question numbers."""
+    """Ordered [(page_idx, y0, qnum)] for left-margin question numbers.
+
+    The discriminating signature is position (x0 ~= 49.6, left margin) + size
+    (~11.5) + a leading integer, validated by the caller's 1..N sequence check.
+    Boldness is deliberately NOT required: the 2024 papers and the 2025 specimen
+    render their question numbers bold (flags & 16), but the 2025 real exam
+    papers render them serifed-but-not-bold (flags == 4). Requiring bold silently
+    matched zero questions on every 2025 paper. Dropping it is verified to leave
+    the 2024/existing/specimen anchor sets byte-identical while unlocking 2025.
+    """
     anchors: list[tuple[int, float, int]] = []
     for pi in range(len(doc)):
         for block in doc[pi].get_text("dict").get("blocks", []):
@@ -110,8 +119,6 @@ def question_anchors(doc) -> list[tuple[int, float, int]]:
                 for span in line.get("spans", []):
                     x0, y0 = span["bbox"][0], span["bbox"][1]
                     if not (45 <= x0 <= 55) or y0 <= 55:
-                        continue
-                    if not (span["flags"] & BOLD):
                         continue
                     if not (11.0 <= span["size"] <= 12.0):
                         continue
@@ -147,11 +154,38 @@ def footer_bottom(page) -> float:
     return best
 
 
+def _content_top(page, desired_top: float) -> float:
+    """Push `desired_top` below any top-of-page barcode furniture.
+
+    The 2025 papers carry a 1-D barcode at y~54 (rendered in a barcode font, so
+    its span text is full of non-printable control characters) sitting just above
+    the first question and just below CONTENT_TOP. A crop starting at its normal
+    top slices that black strip in. We detect the barcode by its control chars
+    (no real question text has them) and, only when it actually intrudes at/above
+    the desired top, start the crop just beneath it. No-op on papers without such
+    furniture (all 2024 papers), so their crops are byte-identical."""
+    barcode_bottom = None
+    for block in page.get_text("dict").get("blocks", []):
+        for line in block.get("lines", []):
+            for span in line.get("spans", []):
+                if span["bbox"][1] > desired_top + 30:   # only near/above the top
+                    continue
+                if any(ord(c) < 32 and c not in "\t\n\r" for c in span["text"]):
+                    y1 = span["bbox"][3]
+                    barcode_bottom = y1 if barcode_bottom is None else max(barcode_bottom, y1)
+    if barcode_bottom is not None and barcode_bottom > desired_top:
+        return barcode_bottom + 2.0
+    return desired_top
+
+
 def question_regions(doc, anchors, i) -> list[tuple[int, float, float]]:
-    """[(page_idx, y_top, y_bottom)] for question i, spanning pages as needed."""
+    """[(page_idx, y_top, y_bottom)] for question i, spanning pages as needed.
+
+    Every region's top is pushed below any top-of-page barcode strip (see
+    _content_top) so the 2025 papers' barcode is never sliced into the crop."""
     p, y, _ = anchors[i]
     nxt = anchors[i + 1] if i + 1 < len(anchors) else None
-    top = y - ANCHOR_TOP_PAD
+    top = _content_top(doc[p], y - ANCHOR_TOP_PAD)
 
     if nxt and nxt[0] == p:                       # same page → single region
         return [(p, top, nxt[1] - NEXT_GAP)]
@@ -160,12 +194,12 @@ def question_regions(doc, anchors, i) -> list[tuple[int, float, float]]:
     if nxt:
         for mid in range(p + 1, nxt[0]):
             if not page_is_skippable(doc[mid]):
-                regions.append((mid, CONTENT_TOP, footer_bottom(doc[mid])))
-        regions.append((nxt[0], CONTENT_TOP, nxt[1] - NEXT_GAP))
+                regions.append((mid, _content_top(doc[mid], CONTENT_TOP), footer_bottom(doc[mid])))
+        regions.append((nxt[0], _content_top(doc[nxt[0]], CONTENT_TOP), nxt[1] - NEXT_GAP))
     else:                                         # last question
         mid = p + 1
         while mid < len(doc) and not page_is_skippable(doc[mid]):
-            regions.append((mid, CONTENT_TOP, footer_bottom(doc[mid])))
+            regions.append((mid, _content_top(doc[mid], CONTENT_TOP), footer_bottom(doc[mid])))
             mid += 1
     return regions
 
@@ -290,7 +324,12 @@ def detect_difficulty(paper_type: str, marks: int) -> str:
 # --------------------------------------------------------------------------- #
 # Mark scheme parsing (fitz)
 # --------------------------------------------------------------------------- #
-_MS_LABEL = re.compile(r"^(\d{1,2})((?:\([a-z0-9ivx]+\))*)$")
+# Tolerate optional whitespace between the number and its sub-parts: some schemes
+# print "18 (a)" (with a space) instead of "18(a)". Without this, a single spaced
+# label breaks the sequential parser for every question after it (observed on
+# 0580/23/O/N/25, which lost Q18-29). The char class stays restricted to a-z0-9
+# so real answer text like "3 (2x + 1)" (space/plus inside) still won't match.
+_MS_LABEL = re.compile(r"^(\d{1,2})\s*((?:\([a-z0-9ivx]+\)\s*)*)$")
 _MS_SKIP = re.compile(
     r"(Cambridge IGCSE|Mark Scheme|PUBLISHED|© Cambridge|UCLES|Page \d+ of|"
     r"May/June|October|SPECIMEN|For examination|Generic Marking|"

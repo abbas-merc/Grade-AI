@@ -137,7 +137,9 @@ export default function GeneratePaperScreen() {
     let count = 0;
     let total = 0;
     for (const q of pool.questions) {
-      if (paperType !== "both" && q.paperType !== paperType) continue;
+      // Paper 2 = non-calculator: count only hand-safe questions (mirrors the
+      // backend pool filter). Paper 4 / Both = any question.
+      if (paperType === "P2" && q.calculatorStatus !== "non_calc_safe") continue;
       if (difficulty !== "mixed" && q.difficulty !== difficulty) continue;
       if (topicSet.size > 0 && !topicSet.has(q.topic)) continue;
       count += 1;
@@ -153,7 +155,9 @@ export default function GeneratePaperScreen() {
     const topicSet = new Set(selectedTopics);
     const out: number[] = [];
     for (const q of pool.questions) {
-      if (paperType !== "both" && q.paperType !== paperType) continue;
+      // Paper 2 = non-calculator: count only hand-safe questions (mirrors the
+      // backend pool filter). Paper 4 / Both = any question.
+      if (paperType === "P2" && q.calculatorStatus !== "non_calc_safe") continue;
       if (difficulty !== "mixed" && q.difficulty !== difficulty) continue;
       if (topicSet.size > 0 && !topicSet.has(q.topic)) continue;
       if (q.marks > 0) out.push(q.marks);

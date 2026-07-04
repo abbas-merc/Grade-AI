@@ -51,8 +51,9 @@ class GeneratePaperRequest(BaseModel):
     # if any fail: subject must be a known value, at least one topic must be
     # supplied, and the mark total must sit in a sane range.
     subject: Literal["math", "physics", "chemistry"] = "math"
-    # Paper 2 (non-calculator, structured) / Paper 4 (calculator, longer
-    # structured) / both. "both" draws from the full pool.
+    # Calculator mode: "P2" = a non-calculator paper (pool restricted to
+    # calculatorStatus == "non_calc_safe", source-agnostic); "P4"/"both" = a
+    # calculator paper (any question eligible). See _fetch_pool.
     paperType: Literal["P2", "P4", "both"] = "both"
     topics: list[str] = Field(min_length=1)
     totalMarks: int = Field(ge=20, le=200)
@@ -103,11 +104,18 @@ class GeneratePaperResponse(BaseModel):
 # Selection logic
 # --------------------------------------------------------------------------- #
 def _fetch_pool(subject: str, topics: list[str], paper_type: str) -> list[dict]:
-    """Return questions matching subject, paperType ("both" = no filter) and
-    (if given) topics.
+    """Return questions matching subject, the calculator mode, and (if given) topics.
+
+    Paper-type selection is a CALCULATOR mode, not a source-paper label:
+      * "P2"  → a non-calculator paper: the pool is strictly every question
+        classified hand-safe (calculatorStatus == "non_calc_safe"), regardless of
+        which source paper it came from or its year. This is the whole point of
+        calculatorStatus — a 2024 "P2" question may require a calculator, and a
+        2024 "P4" question may be hand-safe, so we must NOT filter by paperType.
+      * "P4" / "both" → a calculator paper: any question is eligible.
 
     We filter on `subject` in Firestore (auto single-field index) and apply the
-    paperType + topic filters in Python — the collection is tiny, so this avoids
+    calculator + topic filters in Python — the collection is tiny, so this avoids
     needing a composite index or running into `in`-query limits.
     """
     db = _get_client()
@@ -118,7 +126,7 @@ def _fetch_pool(subject: str, topics: list[str], paper_type: str) -> list[dict]:
     )
     for doc in query.stream():
         data = doc.to_dict() or {}
-        if paper_type != "both" and data.get("paperType") != paper_type:
+        if paper_type == "P2" and data.get("calculatorStatus") != "non_calc_safe":
             continue
         if topic_set and data.get("topic") not in topic_set:
             continue
@@ -265,11 +273,17 @@ def generate_paper(
 
 class PoolQuestion(BaseModel):
     """One question's selection metadata (no image / mark scheme) — enough for
-    the app to compute the available-marks ceiling for any filter combination."""
+    the app to compute the available-marks ceiling for any filter combination.
+
+    `calculatorStatus` lets the app mirror the backend's non-calculator filter
+    exactly: a Paper-2 (non-calculator) selection counts only "non_calc_safe"
+    questions, so the reactive "Available: X marks" ceiling matches what Generate
+    actually produces."""
     paperType: str
     topic: str
     difficulty: str
     marks: int
+    calculatorStatus: str = ""
 
 
 class PoolResponse(BaseModel):
@@ -300,6 +314,7 @@ def generate_paper_pool(
             topic=d.get("topic", "") or "",
             difficulty=d.get("difficulty", "") or "",
             marks=int(d.get("marks", 0) or 0),
+            calculatorStatus=d.get("calculatorStatus", "") or "",
         ))
         if d.get("topic"):
             topics.add(d["topic"])

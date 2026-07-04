@@ -66,6 +66,9 @@ export interface PoolQuestion {
   topic: string;
   difficulty: string;
   marks: number;
+  /** "non_calc_safe" | "calc_required". A Paper-2 (non-calculator) selection
+   *  counts only "non_calc_safe" questions, mirroring the backend pool filter. */
+  calculatorStatus?: string;
 }
 
 export interface GeneratorPool {

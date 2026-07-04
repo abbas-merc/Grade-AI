@@ -1,0 +1,327 @@
+{
+ "_note": "Backfill classification for the existing 81 questions. 2024 v21/v41 classified manually; 2025 specimens by official designation. Merged onto existing docs (adds two fields only).",
+ "058021_2024_Q1": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "Coordinates of D from parallelogram on grid; integer."
+ },
+ "058021_2024_Q2": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "1-0.6=0.4; total 14/0.2=70, wooden=42; clean."
+ },
+ "058021_2024_Q3": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "60-20=40; 25-300=-275; 18^2-300=24; integer."
+ },
+ "058021_2024_Q4": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "Greatest common odd factor 5x7=35; factor-based."
+ },
+ "058021_2024_Q5": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "Calculate parts with messy decimals (40.96, 1.25); -> calc."
+ },
+ "058021_2024_Q6": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "Angles: 180/6=30, (360-40-30)/2=145; integer."
+ },
+ "058021_2024_Q7": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "Area/perimeter use pi, 12.8^2 and 12.8*sqrt2; -> calc."
+ },
+ "058021_2024_Q8": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "Arithmetic sequence nth term 7n+4; hand."
+ },
+ "058021_2024_Q9": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "8000x0.75x0.75x0.75=3375; clean repeated x3/4."
+ },
+ "058021_2024_Q10": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "8th root of 1656.73/1500 -> r=1.25%; calculator."
+ },
+ "058021_2024_Q11": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "Read inequalities (y<x, x<6, 1<=y<=5) off grid."
+ },
+ "058021_2024_Q12": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "Elimination: 6x=60->x=10, y=-2; integer."
+ },
+ "058021_2024_Q13": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "Cyclic quad 9m=180->m=20, p=62; integer."
+ },
+ "058021_2024_Q14": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "Major sector 312/360 x pi x 9^2=220.5; pi -> calc."
+ },
+ "058021_2024_Q15": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "Recurring 0.1(46)->29/198 via algebra; no calculator."
+ },
+ "058021_2024_Q16": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "Venn shade + count=17; no calculator."
+ },
+ "058021_2024_Q17": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "1/2 x 6.7 x 5.9 x sin81=19.5; non-standard trig."
+ },
+ "058021_2024_Q18": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "Draw line y=2x, read roots off graph; no calculator."
+ },
+ "058021_2024_Q19": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "Factorise 3(2m+5t)(2m-5t); (x+3)(y+5); algebra."
+ },
+ "058021_2024_Q20": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "sin x=-5/8 -> x=218.7/321.3; non-standard inverse trig."
+ },
+ "058021_2024_Q21": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "angle=tan^-1(6.5/sqrt(4^2+9.1^2))=33.2; non-perfect root+inverse trig."
+ },
+ "058021_2024_Q22": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "BORDERLINE: P(Jen red)=0.25/0.4=0.625; P(both blue)=0.6x0.375=0.225; clean fractions."
+ },
+ "058041_2024_Q1": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "(i) 250000/5.5M x100=4.55; (iv) 5.5M/27x50; (v) 60.7x60x24x365; messy -> calc."
+ },
+ "058041_2024_Q2": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "BORDERLINE: area=10x3^2x(2/5)^2=10x9x4/25=14.4; clean."
+ },
+ "058041_2024_Q3": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "BORDERLINE(long): formula gives integer C=80, y=5; algebra expand/simplify; clean."
+ },
+ "058041_2024_Q4": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "(a)(iii) 195m->km/h via /6,/13 x3.6=63; (b)(ii) grouped mean 411.25; messy -> calc."
+ },
+ "058041_2024_Q5": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "(iii) circumference=2 pi sqrt50 uses pi and sqrt50 -> calc."
+ },
+ "058041_2024_Q6": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "sine/cosine rule (sin25,sin100,cos), knots x1.852; -> calc."
+ },
+ "058041_2024_Q7": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "cone r from 750/8.9 with pi and cube root =2.99; surface area with pi; -> calc."
+ },
+ "058041_2024_Q8": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "(c) x^2-x-33=0 via formula sqrt133=11.53->x=-5.27,6.27; non-perfect discriminant -> calc."
+ },
+ "058041_2024_Q9": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "BORDERLINE: functions 13,-20,x=19/8=2.375,hh=1/3,3^8=6561; all clean."
+ },
+ "0580_2_SP_2025_Q1": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "2025 specimen Paper 2 - official non-calculator designation."
+ },
+ "0580_2_SP_2025_Q2": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "2025 specimen Paper 2 - official non-calculator designation."
+ },
+ "0580_2_SP_2025_Q3": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "2025 specimen Paper 2 - official non-calculator designation."
+ },
+ "0580_2_SP_2025_Q4": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "2025 specimen Paper 2 - official non-calculator designation."
+ },
+ "0580_2_SP_2025_Q5": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "2025 specimen Paper 2 - official non-calculator designation."
+ },
+ "0580_2_SP_2025_Q6": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "2025 specimen Paper 2 - official non-calculator designation."
+ },
+ "0580_2_SP_2025_Q7": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "2025 specimen Paper 2 - official non-calculator designation."
+ },
+ "0580_2_SP_2025_Q8": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "2025 specimen Paper 2 - official non-calculator designation."
+ },
+ "0580_2_SP_2025_Q9": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "2025 specimen Paper 2 - official non-calculator designation."
+ },
+ "0580_2_SP_2025_Q10": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "2025 specimen Paper 2 - official non-calculator designation."
+ },
+ "0580_2_SP_2025_Q11": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "2025 specimen Paper 2 - official non-calculator designation."
+ },
+ "0580_2_SP_2025_Q12": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "2025 specimen Paper 2 - official non-calculator designation."
+ },
+ "0580_2_SP_2025_Q13": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "2025 specimen Paper 2 - official non-calculator designation."
+ },
+ "0580_2_SP_2025_Q14": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "2025 specimen Paper 2 - official non-calculator designation."
+ },
+ "0580_2_SP_2025_Q15": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "2025 specimen Paper 2 - official non-calculator designation."
+ },
+ "0580_2_SP_2025_Q16": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "2025 specimen Paper 2 - official non-calculator designation."
+ },
+ "0580_2_SP_2025_Q17": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "2025 specimen Paper 2 - official non-calculator designation."
+ },
+ "0580_2_SP_2025_Q18": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "2025 specimen Paper 2 - official non-calculator designation."
+ },
+ "0580_2_SP_2025_Q19": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "2025 specimen Paper 2 - official non-calculator designation."
+ },
+ "0580_2_SP_2025_Q20": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "2025 specimen Paper 2 - official non-calculator designation."
+ },
+ "0580_2_SP_2025_Q21": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "2025 specimen Paper 2 - official non-calculator designation."
+ },
+ "0580_2_SP_2025_Q22": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "2025 specimen Paper 2 - official non-calculator designation."
+ },
+ "0580_2_SP_2025_Q23": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "2025 specimen Paper 2 - official non-calculator designation."
+ },
+ "0580_2_SP_2025_Q24": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "2025 specimen Paper 2 - official non-calculator designation."
+ },
+ "0580_2_SP_2025_Q25": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "2025 specimen Paper 2 - official non-calculator designation."
+ },
+ "0580_2_SP_2025_Q26": {
+  "calculatorStatus": "non_calc_safe",
+  "classificationReason": "2025 specimen Paper 2 - official non-calculator designation."
+ },
+ "0580_4_SP_2025_Q1": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "2025 specimen Paper 4 - official calculator designation."
+ },
+ "0580_4_SP_2025_Q2": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "2025 specimen Paper 4 - official calculator designation."
+ },
+ "0580_4_SP_2025_Q3": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "2025 specimen Paper 4 - official calculator designation."
+ },
+ "0580_4_SP_2025_Q4": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "2025 specimen Paper 4 - official calculator designation."
+ },
+ "0580_4_SP_2025_Q5": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "2025 specimen Paper 4 - official calculator designation."
+ },
+ "0580_4_SP_2025_Q6": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "2025 specimen Paper 4 - official calculator designation."
+ },
+ "0580_4_SP_2025_Q7": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "2025 specimen Paper 4 - official calculator designation."
+ },
+ "0580_4_SP_2025_Q8": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "2025 specimen Paper 4 - official calculator designation."
+ },
+ "0580_4_SP_2025_Q9": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "2025 specimen Paper 4 - official calculator designation."
+ },
+ "0580_4_SP_2025_Q10": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "2025 specimen Paper 4 - official calculator designation."
+ },
+ "0580_4_SP_2025_Q11": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "2025 specimen Paper 4 - official calculator designation."
+ },
+ "0580_4_SP_2025_Q12": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "2025 specimen Paper 4 - official calculator designation."
+ },
+ "0580_4_SP_2025_Q13": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "2025 specimen Paper 4 - official calculator designation."
+ },
+ "0580_4_SP_2025_Q14": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "2025 specimen Paper 4 - official calculator designation."
+ },
+ "0580_4_SP_2025_Q15": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "2025 specimen Paper 4 - official calculator designation."
+ },
+ "0580_4_SP_2025_Q16": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "2025 specimen Paper 4 - official calculator designation."
+ },
+ "0580_4_SP_2025_Q17": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "2025 specimen Paper 4 - official calculator designation."
+ },
+ "0580_4_SP_2025_Q18": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "2025 specimen Paper 4 - official calculator designation."
+ },
+ "0580_4_SP_2025_Q19": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "2025 specimen Paper 4 - official calculator designation."
+ },
+ "0580_4_SP_2025_Q20": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "2025 specimen Paper 4 - official calculator designation."
+ },
+ "0580_4_SP_2025_Q21": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "2025 specimen Paper 4 - official calculator designation."
+ },
+ "0580_4_SP_2025_Q22": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "2025 specimen Paper 4 - official calculator designation."
+ },
+ "0580_4_SP_2025_Q23": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "2025 specimen Paper 4 - official calculator designation."
+ },
+ "0580_4_SP_2025_Q24": {
+  "calculatorStatus": "calc_required",
+  "classificationReason": "2025 specimen Paper 4 - official calculator designation."
+ }
+}
