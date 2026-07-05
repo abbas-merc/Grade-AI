@@ -12,7 +12,8 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.gradeai.app"
+      "bundleIdentifier": "com.gradeai.app",
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
