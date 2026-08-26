@@ -51,6 +51,19 @@ service cloud.firestore {
       match /generated_papers/{paperId} {
         allow read, create, update, delete: if isOwner(uid);
       }
+
+      // Per-user daily usage counters (grading quota). Written ONLY by the
+      // backend Admin SDK (see usage_limits.py) and never exposed to the client,
+      // so a teacher can neither read nor tamper with their own quota. Explicit
+      // deny for clarity even though the default-deny below would also cover it.
+      match /usage/{day} {
+        allow read, write: if false;
+      }
+    }
+
+    // ── Backend-only global usage counter (daily spend kill-switch) ─────────
+    match /usage_global/{day} {
+      allow read, write: if false;
     }
 
     // ── Backend-only collections ────────────────────────────────────────────

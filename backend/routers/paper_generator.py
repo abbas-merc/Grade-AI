@@ -10,11 +10,24 @@ Endpoints (mounted under /api by main.py):
       Render a generate-paper response to a question-paper PDF (file download).
   POST /api/generate-paper/download-mark-scheme
       Render a generate-paper response to a mark-scheme PDF (file download).
+  POST /api/generate-paper/partlevel
+      Topic-safe generation over the part-level bank.
+  POST /api/generate-paper/partlevel/download-question-paper
+  POST /api/generate-paper/partlevel/download-mark-scheme
+      The same PDFs for a part-level (possibly assembled) paper.
+  GET  /api/generate-paper/typesetting-status
+      Whether the LaTeX engine and the school's font are present on this deploy.
 
 Diagram questions (hasImage == true) are now included: each carries an
 `imageUrl` ("/diagrams/<id>.png") pointing at the figure extracted from the
-source paper. The PDF generator embeds it inline and the app renders it in the
-preview card.
+source paper. The app renders it in the preview card.
+
+PDF rendering is XeLaTeX typesetting (utils/latex): real maths notation, ruled
+answer space sized from the mark allocation, and the school's own font. The
+previous reportlab renderer — which pasted a screenshot of each question — is
+still wired up as an instant rollback via GA_PDF_ENGINE=images or ?engine=images.
+Both return the identical response shape (raw PDF bytes + a Content-Disposition
+attachment header), so the app's download flow is unchanged either way.
 """
 from __future__ import annotations
 
@@ -23,12 +36,15 @@ import uuid
 from itertools import zip_longest
 from typing import Literal
 
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, HTTPException, Response
 from firebase_admin import firestore
 from pydantic import BaseModel, Field
 
 from auth import get_current_uid
 from firestore_service import _get_client
+from partlevel_selection import expand_allowed, select_paper
+from utils.latex import service as latex_service
+from utils.latex.service import PaperBuildError
 from utils.pdf_generator import (
     generate_mark_scheme_pdf,
     generate_question_paper_pdf,
@@ -37,6 +53,42 @@ from utils.pdf_generator import (
 router = APIRouter(tags=["paper-generator"])
 
 _QUESTIONS_COLLECTION = "questions"
+
+# --------------------------------------------------------------------------- #
+# Part-level topic taxonomy (Stage 5 filter rewrite)
+# --------------------------------------------------------------------------- #
+# The app's topic chips are the old broad buckets; each maps to one or more
+# official 0580 syllabus sections. A teacher who selects "geometry" is taught to
+# mean sections 4 (Geometry) + 5 (Mensuration); the part-level filter then admits
+# a question only if EVERY sub-part's syllabus code sits in the allowed sections.
+_TOPIC_SECTIONS: dict[str, set[int]] = {
+    "number": {1},
+    "algebra": {2, 3},
+    "geometry": {4, 5},
+    "trigonometry": {6},
+    "vectors": {7},
+    "probability": {8},
+    "statistics": {9},
+    "calculus": {2, 3},  # legacy bucket; 0580 has no calculus section
+}
+
+import json as _json  # noqa: E402
+import os as _os  # noqa: E402
+
+_SYLLABUS_PATH = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
+                               "scripts", "syllabus_codes.json")
+try:
+    _FLAT_CODES = _json.load(open(_SYLLABUS_PATH, encoding="utf-8"))["flat_codes"]
+except Exception:  # taxonomy file missing -> part-level endpoint degrades gracefully
+    _FLAT_CODES = []
+
+
+def _allowed_codes_from_topics(topics: list[str]) -> set[str]:
+    """Broad topic allow-list -> the set of syllabus codes it permits."""
+    sections: set[int] = set()
+    for t in topics:
+        sections |= _TOPIC_SECTIONS.get((t or "").lower(), set())
+    return {c["code"] for c in _FLAT_CODES if c["section"] in sections}
 # A generated paper must contain at least this many and at most this many
 # questions. The selector never exceeds the requested total marks.
 _MIN_QUESTIONS = 3
@@ -321,29 +373,217 @@ def generate_paper_pool(
     return PoolResponse(topics=sorted(topics), questions=questions)
 
 
+# --------------------------------------------------------------------------- #
+# PDF rendering
+# --------------------------------------------------------------------------- #
+# Two engines produce the downloadable PDFs:
+#   "latex"  — XeLaTeX typesetting (utils/latex): real maths notation, real
+#              answer space, the school's own font. This is the default.
+#   "images" — the original reportlab renderer, which pastes the cropped
+#              question screenshot. Kept working as an instant rollback: set
+#              GA_PDF_ENGINE=images, or pass ?engine=images on the request.
+# The response shape is unchanged either way (raw PDF bytes with a
+# Content-Disposition attachment header), so nothing downstream has to change.
+_DEFAULT_ENGINE = (_os.getenv("GA_PDF_ENGINE") or "latex").strip().lower()
+
+
+def _engine_for(requested: str | None) -> str:
+    choice = (requested or _DEFAULT_ENGINE).strip().lower()
+    return "images" if choice == "images" else "latex"
+
+
+def _pdf_response(pdf: bytes, filename: str, headers: dict | None = None) -> Response:
+    merged = {"Content-Disposition": f'attachment; filename="{filename}"'}
+    merged.update(headers or {})
+    return Response(content=pdf, media_type="application/pdf", headers=merged)
+
+
+def _render_latex(build, paper: GeneratePaperResponse, filename: str) -> Response:
+    """Run a LaTeX build, mapping any failure to a specific HTTP error.
+
+    A malformed LaTeX fragment must fail *this paper* with a message naming the
+    offending sub-part — never crash the worker and never return a half-rendered
+    file (Part 3.1).
+    """
+    try:
+        built = build(_as_dict(paper))
+    except PaperBuildError as exc:
+        detail = exc.message
+        if exc.part:
+            detail = f"{exc.message} (sub-part: {exc.part})"
+        raise HTTPException(status_code=exc.status, detail=detail) from exc
+    return _pdf_response(built.pdf, filename, {
+        "X-GradeAI-Paper-Engine": "latex",
+        "X-GradeAI-Paper-Font": f"{built.font_family} ({built.font_mode})",
+        "X-GradeAI-Latex-Fallbacks": str(len(built.fallbacks)),
+        "X-GradeAI-Compile-Seconds": f"{built.seconds:.1f}",
+    })
+
+
 @router.post("/generate-paper/download-question-paper")
 def download_question_paper(
     paper: GeneratePaperResponse,
+    engine: str | None = None,
     uid: str = Depends(get_current_uid),
 ):
     """Render the supplied paper to a question-paper PDF file download."""
-    pdf = generate_question_paper_pdf(_as_dict(paper))
-    return Response(
-        content=pdf,
-        media_type="application/pdf",
-        headers={"Content-Disposition": 'attachment; filename="custom_math_paper.pdf"'},
-    )
+    if _engine_for(engine) == "images":
+        return _pdf_response(generate_question_paper_pdf(_as_dict(paper)),
+                             "custom_math_paper.pdf",
+                             {"X-GradeAI-Paper-Engine": "images"})
+    return _render_latex(latex_service.question_paper, paper, "custom_math_paper.pdf")
 
 
 @router.post("/generate-paper/download-mark-scheme")
 def download_mark_scheme(
     paper: GeneratePaperResponse,
+    engine: str | None = None,
     uid: str = Depends(get_current_uid),
 ):
     """Render the supplied paper to a mark-scheme PDF file download."""
-    pdf = generate_mark_scheme_pdf(_as_dict(paper))
-    return Response(
-        content=pdf,
-        media_type="application/pdf",
-        headers={"Content-Disposition": 'attachment; filename="custom_math_mark_scheme.pdf"'},
-    )
+    if _engine_for(engine) == "images":
+        return _pdf_response(generate_mark_scheme_pdf(_as_dict(paper)),
+                             "custom_math_mark_scheme.pdf",
+                             {"X-GradeAI-Paper-Engine": "images"})
+    return _render_latex(latex_service.mark_scheme, paper, "custom_math_mark_scheme.pdf")
+
+
+@router.get("/generate-paper/typesetting-status")
+def typesetting_status(uid: str = Depends(get_current_uid)):
+    """Whether the LaTeX engine and the school's font are actually available.
+
+    Lets the app (or an operator) tell "the engine is missing on this deploy"
+    apart from "this particular paper failed to compile" without reading logs.
+    """
+    return {"defaultEngine": _DEFAULT_ENGINE, **latex_service.status()}
+
+
+# --------------------------------------------------------------------------- #
+# Part-level generator (Stage 5 filter + Stage 6 substitution) — schemaVersion 2
+# --------------------------------------------------------------------------- #
+def _fetch_partlevel_pool(subject: str) -> list[dict]:
+    """Every schemaVersion-2 (part-level) question for a subject. Empty until the
+    part-level bank is seeded (scripts/seed_partlevel_bank.py)."""
+    db = _get_client()
+    pool = []
+    query = db.collection(_QUESTIONS_COLLECTION).where(
+        filter=firestore.FieldFilter("subject", "==", subject))
+    for doc in query.stream():
+        d = doc.to_dict() or {}
+        if d.get("schemaVersion") == 2 and d.get("subParts"):
+            pool.append(d)
+    return pool
+
+
+class PartLevelSubPart(BaseModel):
+    partId: str
+    label: str
+    marks: int
+    syllabusCodes: list[str]
+    imageUrl: str = ""
+    substituted: bool = False
+
+
+class PartLevelQuestionOut(BaseModel):
+    assignedNumber: int
+    originalPaperCode: str
+    marks: int
+    syllabusCodes: list[str]
+    assembled: bool = False
+    subParts: list[PartLevelSubPart]
+
+
+class PartLevelPaperResponse(BaseModel):
+    paperId: str
+    subject: str
+    targetMarks: int
+    totalMarks: int
+    numQuestions: int
+    questions: list[PartLevelQuestionOut]
+    warnings: list[str]
+    log: dict
+
+
+@router.post("/generate-paper/partlevel", response_model=PartLevelPaperResponse)
+def generate_paper_partlevel(
+    req: GeneratePaperRequest,
+    uid: str = Depends(get_current_uid),
+):
+    """Topic-safe paper generation. Unlike /generate-paper (whole-question, single
+    broad tag), this admits a question only if EVERY sub-part's syllabus code is
+    within the teacher's selected topics; partially-matching questions have their
+    out-of-topic sub-parts safely substituted or the whole question is excluded
+    (see partlevel_selection.py). Requires the part-level bank to be seeded."""
+    bank = _fetch_partlevel_pool(req.subject)
+    if not bank:
+        return PartLevelPaperResponse(
+            paperId=str(uuid.uuid4()), subject=req.subject, targetMarks=req.totalMarks,
+            totalMarks=0, numQuestions=0, questions=[], log={},
+            warnings=["Part-level bank not seeded yet. Run scripts/seed_partlevel_bank.py."])
+
+    allowed = _allowed_codes_from_topics(req.topics)
+    result = select_paper(bank, allowed, req.totalMarks,
+                          paper_type=req.paperType, difficulty=req.difficulty,
+                          shuffle=random.shuffle)
+
+    questions: list[PartLevelQuestionOut] = []
+    for number, q in enumerate(result["questions"], start=1):
+        subs = []
+        for sp in q.get("subParts", []):
+            subs.append(PartLevelSubPart(
+                partId=sp.get("partId", ""), label=sp.get("label", ""),
+                marks=int(sp.get("marks", 0) or 0),
+                syllabusCodes=sp.get("syllabusCodes", []) or [],
+                imageUrl=(sp.get("imageRefs") or [""])[0] and f"/question_parts/{sp['partId']}.png",
+                substituted=bool(sp.get("_sourceQuestion") and sp.get("_sourceQuestion") != q.get("id")),
+            ))
+        questions.append(PartLevelQuestionOut(
+            assignedNumber=number, originalPaperCode=q.get("paperCode", "") or "",
+            marks=int(q.get("marks", 0) or 0),
+            syllabusCodes=q.get("syllabusCodes", []) or [],
+            assembled=bool(q.get("assembled")), subParts=subs))
+
+    return PartLevelPaperResponse(
+        paperId=str(uuid.uuid4()), subject=req.subject, targetMarks=req.totalMarks,
+        totalMarks=result["totalMarks"], numQuestions=result["numQuestions"],
+        questions=questions, warnings=result["warnings"], log=result["log"])
+
+
+@router.post("/generate-paper/partlevel/download-question-paper")
+def download_partlevel_question_paper(
+    paper: PartLevelPaperResponse,
+    uid: str = Depends(get_current_uid),
+):
+    """Typeset a topic-safe (part-level) paper to a question-paper PDF.
+
+    Only the LaTeX engine can render this shape: a part-level paper may contain
+    donor sub-parts spliced in from other questions, so there is no single
+    whole-question screenshot that represents it.
+    """
+    try:
+        built = latex_service.question_paper(_as_dict(paper), partlevel=True)
+    except PaperBuildError as exc:
+        detail = f"{exc.message} (sub-part: {exc.part})" if exc.part else exc.message
+        raise HTTPException(status_code=exc.status, detail=detail) from exc
+    return _pdf_response(built.pdf, "custom_math_paper.pdf", {
+        "X-GradeAI-Paper-Engine": "latex",
+        "X-GradeAI-Paper-Font": f"{built.font_family} ({built.font_mode})",
+        "X-GradeAI-Latex-Fallbacks": str(len(built.fallbacks)),
+    })
+
+
+@router.post("/generate-paper/partlevel/download-mark-scheme")
+def download_partlevel_mark_scheme(
+    paper: PartLevelPaperResponse,
+    uid: str = Depends(get_current_uid),
+):
+    """Typeset the mark scheme for a topic-safe (part-level) paper."""
+    try:
+        built = latex_service.mark_scheme(_as_dict(paper), partlevel=True)
+    except PaperBuildError as exc:
+        detail = f"{exc.message} (sub-part: {exc.part})" if exc.part else exc.message
+        raise HTTPException(status_code=exc.status, detail=detail) from exc
+    return _pdf_response(built.pdf, "custom_math_mark_scheme.pdf", {
+        "X-GradeAI-Paper-Engine": "latex",
+        "X-GradeAI-Latex-Fallbacks": str(len(built.fallbacks)),
+    })

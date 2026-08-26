@@ -22,6 +22,14 @@ from PIL import Image, ImageEnhance, ImageFilter
 # Quality for the re-encoded JPEG. Must stay >= 95 (high quality).
 JPEG_QUALITY = 95
 
+# Decompression-bomb guard: a small crafted file can claim enormous pixel
+# dimensions and blow up memory when decoded. Cap the pixel count Pillow will
+# accept; a genuine phone photo (even 50 MP) is far below this. Pillow raises
+# Image.DecompressionBombError past the cap, which enhance_image_base64 catches
+# and turns into "return the original bytes" (grading is never blocked, and the
+# oversized image simply isn't decoded server-side).
+Image.MAX_IMAGE_PIXELS = 60_000_000  # ~60 MP
+
 
 def enhance_image_base64(image_base64: str) -> str:
     """

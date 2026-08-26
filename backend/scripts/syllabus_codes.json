@@ -1,0 +1,1420 @@
+{
+  "syllabus": "Cambridge IGCSE Mathematics 0580",
+  "version": "Version 3 — for exams in 2025, 2026 and 2027",
+  "source_pdf": "docs/igcse_0580_syllabus_2025-2027.pdf",
+  "source_url": "https://www.cambridgeinternational.org/Images/662466-2025-2027-syllabus.pdf",
+  "note": "Canonical topic taxonomy. All pipeline tags must reference these exact codes.",
+  "sections": [
+    {
+      "number": 1,
+      "name": "Number",
+      "subsections": [
+        {
+          "subsection": "1.1",
+          "name": "Types of number",
+          "core_code": "C1.1",
+          "extended_code": "E1.1",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Types of number\nIdentify and use:\n•\nnatural numbers\n•\nintegers (positive, zero and negative)\n•\nprime numbers\n•\nsquare numbers\n•\ncube numbers\n•\ncommon factors\n•\ncommon multiples\n•\nrational and irrational numbers\n•\nreciprocals.\nExample tasks include:\n•\nconvert between numbers and words, e.g.\nsix billion is 6 000 000 000\n10 007 is ten thousand and seven\n•\nexpress 72 as a product of its prime factors\n•\nfind the highest common factor (HCF) of two\nnumbers\n•\nfind the lowest common multiple (LCM) of two\nnumbers."
+        },
+        {
+          "subsection": "1.2",
+          "name": "Sets",
+          "core_code": "C1.2",
+          "extended_code": "E1.2",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Sets\nUnderstand and use set language, notation and\nVenn diagrams to describe sets and represent\nrelationships between sets.\nVenn diagrams are limited to two or three sets.\nThe following set notation will be used:\n•\nn(A)\nNumber of elements in set A\n•\n∈\n“… is an element of …”\n•\n∉\n“… is not an element of …”\n•\nA′\nComplement of set A\n•\n∅\nThe empty set\n•\nUniversal set\n•\nA ⊆ B \t A is a subset of B\n•\nA ⊈ B \t A is not a subset of B\n•\nA ∪ B \t Union of A and B\n•\nA ∩ B \t Intersection of A and B.\nExample definition of sets:\nA = {x: x is a natural number}\nB = {(x, y): y = mx + c}\nC = {x: a ⩽ x ⩽ b}\nD = {a, b, c, …}."
+        },
+        {
+          "subsection": "1.3",
+          "name": "Powers and roots",
+          "core_code": "C1.3",
+          "extended_code": "E1.3",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Powers and roots\nCalculate with the following:\n•\nsquares\n•\nsquare roots\n•\ncubes\n•\ncube roots\n•\nother powers and roots of numbers.\nIncludes recall of squares and their corresponding\nroots from 1 to 15, and recall of cubes and their\ncorresponding roots of 1, 2, 3, 4, 5 and 10, e.g.:\n•\nWrite down the value of 169  .\n•\nWork out 5\n#\n.\nCambridge IGCSE Mathematics 0580 syllabus for 2025, 2026 and 2027.  Subject content\nwww.cambridgeinternational.org/igcse\nNumber (continued)"
+        },
+        {
+          "subsection": "1.4",
+          "name": "Fractions, decimals and percentages",
+          "core_code": "C1.4",
+          "extended_code": "E1.4",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Fractions, decimals and percentages\n1  \u0007Use the language and notation of the following in\nappropriate contexts:\n•\nproper fractions\n•\nimproper fractions\n•\nmixed numbers\n•\ndecimals\n•\npercentages.\n2  \u0007Recognise equivalence and convert between\nthese forms.\nCandidates are expected to be able to write\nfractions in their simplest form.\nRecurring decimal notation is required, e.g.\n•\n.\n.\n0 17\n0 1777f\n=\no\n.\n.\n0 123\n0 1232323f\n=\no o\n•\n.\n.\n0 123\n0 123123f\n=\nIncludes converting between recurring decimals\nand fractions and vice versa,\ne.g. write .0 17o  as a fraction."
+        },
+        {
+          "subsection": "1.5",
+          "name": "Ordering",
+          "core_code": "C1.5",
+          "extended_code": "E1.5",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Ordering\nOrder quantities by magnitude and demonstrate\nfamiliarity with the symbols =, ≠, >, < , ⩾ and ⩽."
+        },
+        {
+          "subsection": "1.6",
+          "name": "The four operations",
+          "core_code": "C1.6",
+          "extended_code": "E1.6",
+          "tier": "both",
+          "extended_only": false,
+          "content": "The four operations\nUse the four operations for calculations with\nintegers, fractions and decimals, including correct\nordering of operations and use of brackets.\nIncludes:\n•\nnegative numbers\n•\nimproper fractions\n•\nmixed numbers\n•\npractical situations, e.g. temperature changes."
+        },
+        {
+          "subsection": "1.7",
+          "name": "Indices I",
+          "core_code": "C1.7",
+          "extended_code": "E1.7",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Indices I\n1  \u0007Understand and use indices (positive, zero,\nnegative, and fractional).\n2  Understand and use the rules of indices.\nExamples include:\n•\n=\n•\n=\n•\nfind the value of 7 –2, 81 2\n, 8\n-  .\ne.g. find the value of 2–3 × 24, (23)2, 23 ÷ 24."
+        },
+        {
+          "subsection": "1.8",
+          "name": "Standard form",
+          "core_code": "C1.8",
+          "extended_code": "E1.8",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Standard form\n1  \u0007Use the standard form A × 10n where n is a\npositive or negative integer and 1 ⩽ A < 10.\n2  Convert numbers into and out of standard form.\n3  Calculate with values in standard form.\nCambridge IGCSE Mathematics 0580 syllabus for 2025, 2026 and 2027.  Subject content\nwww.cambridgeinternational.org/igcse\nNumber (continued)"
+        },
+        {
+          "subsection": "1.9",
+          "name": "Estimation",
+          "core_code": "C1.9",
+          "extended_code": "E1.9",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Estimation\n1  Round values to a specified degree of accuracy.\n2  \u0007Make estimates for calculations involving\nnumbers, quantities and measurements.\n3  \u0007Round answers to a reasonable degree of\naccuracy in the context of a given problem.\nIncludes decimal places and significant figures.\ne.g. write 5764 correct to the nearest thousand.\ne.g. by writing each number correct to 1 significant\nfigure, estimate the value of\n.\n.\n.\n9 79\n0 765\n41 3\n#\n.\nE1.10\t Limits of accuracy\n1  \u0007Give upper and lower bounds for data rounded\nto a specified accuracy.\n2  \u0007Find upper and lower bounds of the results of\ncalculations which have used data rounded to a\nspecified accuracy.\ne.g. write down the upper bound of a length\nmeasured correct to the nearest metre.\nExample calculations include:\n•\ncalculate the upper bound of the perimeter\nor the area of a rectangle given dimensions\nmeasured to the nearest centimetre\n•\nfind the lower bound of the speed given\nrounded values of distance and time.\nE1.11\t Ratio and proportion\nUnderstand and use ratio and proportion to:\n•\ngive ratios in their simplest form\n•\ndivide a quantity in a given ratio\n•\nuse proportional reasoning and ratios in\ncontext.\ne.g. 20 : 30 : 40 in its simplest form is 2 : 3 : 4.\ne.g. adapt recipes; use map scales; determine best\nvalue.\nCambridge IGCSE Mathematics 0580 syllabus for 2025, 2026 and 2027.  Subject content\nwww.cambridgeinternational.org/igcse\nNumber (continued)\nE1.12\t Rates\n1  Use common measures of rate.\n2  Apply other measures of rate.\n3  Solve problems involving average speed.\ne.g. calculate with:\n•\nhourly rates of pay\n•\nexchange rates between currencies\n•\nflow rates\n•\nfuel consumption.\ne.g. calculate with:\n•\npressure\n•\ndensity\n•\npopulation density.\nRequired formulas will be given in the question.\nKnowledge of speed/distance/time formula is\nrequired.\ne.g. A cyclist travels 45 km in 3 hours 45 minutes.\nWhat is their average speed?\nNotation used will be, e.g. m/s (metres per second),\ng/cm3 (grams per cubic centimetre).\nE1.13\t Percentages\n1  Calculate a given percentage of a quantity.\n2  Express one quantity as a percentage of another.\n3  Calculate percentage increase or decrease.\n4  Calculate with simple and compound interest.\n5  Calculate using reverse percentages.\nProblems may include repeated percentage\nchange.\nFormulas are not given.\ne.g. find the cost price given the selling price and\nthe percentage profit.\nPercentage calculations may include:\n•\ndeposit\n•\ndiscount\n•\nprofit and loss (as an amount or a percentage)\n•\nearnings\n•\npercentages over 100%.\nE1.14\t Using a calculator\n1  Use a calculator efficiently.\n2  Enter values appropriately on a calculator.\n3  Interpret the calculator display appropriately.\ne.g. know not to round values within a calculation\nand to only round the final answer.\ne.g. enter 2 hours 30 minutes as 2.5 hours or\n2° 30’ 0’’.\ne.g. in money 4.8 means $4.80; in time 3.25 means\n3 hours 15 minutes.\nCambridge IGCSE Mathematics 0580 syllabus for 2025, 2026 and 2027.  Subject content\nwww.cambridgeinternational.org/igcse\nNumber (continued)\nE1.15\t Time\n1  \u0007Calculate with time: seconds (s), minutes (min),\nhours (h), days, weeks, months, years, including\nthe relationship between units.\n2  \u0007Calculate times in terms of the 24-hour and\n12-hour clock.\n3  Read clocks and timetables.\n1 year = 365 days.\nIn the 24-hour clock, for example, 3.15 a.m. will be\ndenoted by 03 15 and 3.15 p.m. by 15 15.\nIncludes problems involving time zones, local times\nand time differences.\nE1.16\t Money\n1  Calculate with money.\n2  Convert from one currency to another.\nE1.17\t Exponential growth and decay\nUse exponential growth and decay.\ne.g. depreciation, population change.\nKnowledge of e is not required.\nE1.18\t Surds\n1  \u0007Understand and use surds, including simplifying\nexpressions.\n2  Rationalise the denominator.\nExamples include:\n•\n=\n−\n=\n.\nExamples include:\n•\n=\n−+\n=\n+\n.\nCambridge IGCSE Mathematics 0580 syllabus for 2025, 2026 and 2027.  Subject content\nwww.cambridgeinternational.org/igcse"
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "name": "Algebra and graphs",
+      "subsections": [
+        {
+          "subsection": "2.1",
+          "name": "Introduction to algebra",
+          "core_code": "C2.1",
+          "extended_code": "E2.1",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Introduction to algebra\n1  \u0007Know that letters can be used to represent\ngeneralised numbers.\n2  \u0007Substitute numbers into expressions and\nformulas."
+        },
+        {
+          "subsection": "2.2",
+          "name": "Algebraic manipulation",
+          "core_code": "C2.2",
+          "extended_code": "E2.2",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Algebraic manipulation\n1  Simplify expressions by collecting like terms.\n2  Expand products of algebraic expressions.\n3  Factorise by extracting common factors.\n4  Factorise expressions of the form:\n•\nax + bx + kay + kby\n•\na2x2 − b2y2\n•\na2 + 2ab + b2\n•\nax2 + bx + c\n•\nax3 + bx2 + cx.\n5  \u0007Complete the square for expressions in the form\nax2 + bx + c.\nSimplify means give the answer in its simplest form,\ne.g. 2a2 + 3ab – 1 + 5a2 – 9ab + 4 = 7a2 – 6ab + 3.\ne.g. expand 3x(2x – 4y), (3x + y)(x – 4y).\nIncludes products of more than two brackets,\ne.g. expand (x – 2)(x + 3)(2x + 1).\nFactorise means factorise fully,\ne.g. 9x2 + 15xy = 3x(3x + 5y)."
+        },
+        {
+          "subsection": "2.3",
+          "name": "Algebraic fractions",
+          "core_code": null,
+          "extended_code": "E2.3",
+          "tier": "extended_only",
+          "extended_only": true,
+          "content": "Algebraic fractions\n1  Manipulate algebraic fractions.\n2  Factorise and simplify rational expressions.\nExamples include:\n•\nx\n3 + x – 4\n•\n2x\n3  – 3(x –5)\n•\n3a\n4  × 9a\n•\n3a\n4  ÷ 9a\n•\nx – 2 + x + 1\nx – 3 .\ne.g.\nx2 – 2x\nx2 – 5x + 6\n.\nCambridge IGCSE Mathematics 0580 syllabus for 2025, 2026 and 2027.  Subject content\nwww.cambridgeinternational.org/igcse\nAlgebra and graphs (continued)"
+        },
+        {
+          "subsection": "2.4",
+          "name": "Indices II",
+          "core_code": "C2.4",
+          "extended_code": "E2.4",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Indices II\n1  \u0007Understand and use indices (positive, zero,\nnegative and fractional).\n2  \u0007Understand and use the rules of indices.\ne.g. solve:\n•\n32x = 2\n•\n5x + 1 = 25x.\ne.g. simplify:\n•\nx\nx\n#\n−\nx\nx\n1 '\n−\n•\nx\n2 5 3\nJ\nL\nKK\nN\nP\nOO  .\nKnowledge of logarithms is not required."
+        },
+        {
+          "subsection": "2.5",
+          "name": "Equations",
+          "core_code": "C2.5",
+          "extended_code": "E2.5",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Equations\n1  Construct expressions, equations and formulas.\n2  \u0007Solve linear equations in one unknown.\n3  \u0007Solve fractional equations with numerical and\nlinear algebraic denominators.\n4  \u0007Solve simultaneous linear equations in two\nunknowns.\n5  \u0007Solve simultaneous equations, involving one\nlinear and one non-linear.\n6  \u0007Solve quadratic equations by factorisation,\ncompleting the square and by use of the\nquadratic formula.\n7  \u0007Change the subject of formulas.\ne.g. write an expression for the product of two\nconsecutive even numbers.\nIncludes constructing simultaneous equations.\nExamples include:\n•\n3x + 4 = 10\n•\n5 – 2x = 3(x + 7).\nExamples include:\n•\nx\n2x + 1 = 4\n•\nx + 2 +\n2x – 1 = 1\n•\nx\nx + 2 =\nx – 6 .\nWith powers no higher than two.\nIncludes writing a quadratic expression in\ncompleted square form.\nCandidates may be expected to give solutions in\nsurd form.\nThe quadratic formula is given in the List of\nformulas.\ne.g. change the subject of a formula where:\n•\nthe subject appears twice\n•\nthere is a power or root of the subject.\nCambridge IGCSE Mathematics 0580 syllabus for 2025, 2026 and 2027.  Subject content\nwww.cambridgeinternational.org/igcse\nAlgebra and graphs (continued)"
+        },
+        {
+          "subsection": "2.6",
+          "name": "Inequalities",
+          "core_code": "C2.6",
+          "extended_code": "E2.6",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Inequalities\n1  \u0007Represent and interpret inequalities, including on\na number line.\n2  Construct, solve and interpret linear inequalities.\n3  \u0007Represent and interpret linear inequalities in two\nvariables graphically.\n4  List inequalities that define a given region.\nWhen representing and interpreting inequalities on\na number line:\n•\nopen circles should be used to represent strict\ninequalities (<, >)\n•\nclosed circles should be used to represent\ninclusive inequalities (⩽, ⩾).\ne.g. – 3 ⩽ x < 1\n– 3 – 2 – 1\nx\nExamples include:\n•\n3x < 2x + 4\n•\n–3 ⩽ 3x – 2 < 7 .\nThe following conventions should be used:\n•\nbroken lines should be used to represent strict\ninequalities (<, >)\n•\nsolid lines should be used to represent inclusive\ninequalities (⩽, ⩾)\n•\nshading should be used to represent unwanted\nregions (unless otherwise directed in the\nquestion).\ne.g.\nx\nx\ny\ny\nx < 1\ny ⩾ 1\nLinear programming problems are not included."
+        },
+        {
+          "subsection": "2.7",
+          "name": "Sequences",
+          "core_code": "C2.7",
+          "extended_code": "E2.7",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Sequences\n1  Continue a given number sequence or pattern.\n2  \u0007Recognise patterns in sequences, including the\nterm-to-term rule, and relationships between\ndifferent sequences.\n3  Find and use the nth term of sequences.\nSubscript notation may be used, e.g. Tn is the nth\nterm of sequence T.\nIncludes linear, quadratic, cubic and exponential\nsequences and simple combinations of these.\nCambridge IGCSE Mathematics 0580 syllabus for 2025, 2026 and 2027.  Subject content\nwww.cambridgeinternational.org/igcse\nAlgebra and graphs (continued)"
+        },
+        {
+          "subsection": "2.8",
+          "name": "Proportion",
+          "core_code": null,
+          "extended_code": "E2.8",
+          "tier": "extended_only",
+          "extended_only": true,
+          "content": "Proportion\nExpress direct and inverse proportion in algebraic\nterms and use this form of expression to find\nunknown quantities.\nIncludes linear, square, square root, cube and cube\nroot proportion.\nKnowledge of proportional symbol (∝) is required."
+        },
+        {
+          "subsection": "2.9",
+          "name": "Graphs in practical situations",
+          "core_code": "C2.9",
+          "extended_code": "E2.9",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Graphs in practical situations\n1  \u0007Use and interpret graphs in practical situations\nincluding travel graphs and conversion graphs.\n2  \u0007Draw graphs from given data.\n3  \u0007Apply the idea of rate of change to simple\nkinematics involving distance–time and\nspeed–time graphs, acceleration and\ndeceleration.\n4  \u0007Calculate distance travelled as area under a\nspeed–time graph.\nIncludes estimation and interpretation of the\ngradient of a tangent at a point.\nAreas will involve linear sections of the graph only.\nE2.10\t Graphs of functions\n1  \u0007Construct tables of values, and draw, recognise\nand interpret graphs for functions of the following\nforms:\n•\naxn (includes sums of no more than three of\nthese)\n•\nabx + c\n\u0007where n = –2, –1,\n−, 0, 2\n1  , 1, 2, 3; a and c are\nrational numbers; and b is a positive integer.\n2  \u0007Solve associated equations graphically, including\nfinding and interpreting roots by graphical\nmethods.\n3  \u0007Draw and interpret graphs representing\nexponential growth and decay problems.\nExamples include:\n•\ny = x3 + x – 4\n•\ny = 2x + 3\nx2\n•\ny = 4\n1  × 2x.\ne.g. finding the intersection of a line and a curve.\nCambridge IGCSE Mathematics 0580 syllabus for 2025, 2026 and 2027.  Subject content\nwww.cambridgeinternational.org/igcse\nAlgebra and graphs (continued)\nE2.11\t Sketching curves\nRecognise, sketch and interpret graphs of the\nfollowing functions:\n(a)\t linear\n(b)\t quadratic\n(c)\t cubic\n(d)\t reciprocal\n(e)\t exponential.\nFunctions will be equivalent to:\n•\nax + by = c\n•\ny = ax2 + bx + c\n•\ny = ax3 + b\n•\ny = ax3 + bx2 + cx\n•\ny\nx\na\nb\n=\n+\ny = arx + b\nwhere a, b and c are rational numbers and r is a\nrational, positive number.\nKnowledge of turning points, roots and symmetry is\nrequired.\nKnowledge of vertical and horizontal asymptotes is\nrequired.\nFinding turning points of quadratics by completing\nthe square is required.\nE2.12\t Differentiation\n1  \u0007Estimate gradients of curves by drawing\ntangents.\n2  \u0007Use the derivatives of functions of the form axn,\nwhere a is a rational constant and n is a positive\ninteger or zero, and simple sums of not more\nthan three of these.\n3  \u0007Apply differentiation to gradients and stationary\npoints (turning points).\n4  \u0007Discriminate between maxima and minima by\nany method.\nd\nd\nx\ny notation will be expected.\nMaximum and minimum points may be identified by:\n•\nan accurate sketch\n•\nuse of the second differential\n•\ninspecting the gradient either side of a turning\npoint.\nCandidates are not expected to identify points of\ninflection.\nCambridge IGCSE Mathematics 0580 syllabus for 2025, 2026 and 2027.  Subject content\nwww.cambridgeinternational.org/igcse\nAlgebra and graphs (continued)\nE2.13\t Functions\n1  \u0007Understand functions, domain and range and\nuse function notation.\n2  \u0007Understand and find inverse functions f –1(x).\n3  \u0007Form composite functions as defined by\ngf(x) = g(f(x)).\nExamples include:\n•\nf (x) = 3x – 5\n•\ng(x) = 3(x + 4)\n•\nh(x) = 2x2 + 3.\ne.g. f(x) =\nx + 2  and g(x) = (3x + 5)2. Find fg(x).\nGive your answer as a fraction in its simplest form.\nCandidates are not expected to find the domains\nand ranges of composite functions.\nThis topic may include mapping diagrams.\nCambridge IGCSE Mathematics 0580 syllabus for 2025, 2026 and 2027.  Subject content\nwww.cambridgeinternational.org/igcse"
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "name": "Coordinate geometry",
+      "subsections": [
+        {
+          "subsection": "3.1",
+          "name": "Coordinates",
+          "core_code": "C3.1",
+          "extended_code": "E3.1",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Coordinates\nUse and interpret Cartesian coordinates in two\ndimensions."
+        },
+        {
+          "subsection": "3.2",
+          "name": "Drawing linear graphs",
+          "core_code": "C3.2",
+          "extended_code": "E3.2",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Drawing linear graphs\nDraw straight-line graphs for linear equations.\nExamples include:\n•\ny = –2x + 5\n•\ny = 7 – 4x\n•\n3x + 2y = 5."
+        },
+        {
+          "subsection": "3.3",
+          "name": "Gradient of linear graphs",
+          "core_code": "C3.3",
+          "extended_code": "E3.3",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Gradient of linear graphs\n1  Find the gradient of a straight line.\n2  \u0007Calculate the gradient of a straight line from the\ncoordinates of two points on it."
+        },
+        {
+          "subsection": "3.4",
+          "name": "Length and midpoint",
+          "core_code": null,
+          "extended_code": "E3.4",
+          "tier": "extended_only",
+          "extended_only": true,
+          "content": "Length and midpoint\n1  Calculate the length of a line segment.\n2  \u0007Find the coordinates of the midpoint of a line\nsegment."
+        },
+        {
+          "subsection": "3.5",
+          "name": "Equations of linear graphs",
+          "core_code": "C3.5",
+          "extended_code": "E3.5",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Equations of linear graphs\nInterpret and obtain the equation of a straight-line\ngraph.\nQuestions may:\n•\nuse and request lines in different forms, e.g.\nax + by = c\ny = mx + c\nx = k\n•\ninvolve finding the equation when the graph is\ngiven\n•\nask for the gradient or y-intercept of a graph\nfrom an equation, e.g. find the gradient and\ny-intercept of the graph with equation\n5x + 4y = 8.\nCandidates are expected to give equations of a line\nin a fully simplified form.\nCambridge IGCSE Mathematics 0580 syllabus for 2025, 2026 and 2027.  Subject content\nwww.cambridgeinternational.org/igcse\nCoordinate geometry (continued)"
+        },
+        {
+          "subsection": "3.6",
+          "name": "Parallel lines",
+          "core_code": "C3.6",
+          "extended_code": "E3.6",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Parallel lines\nFind the gradient and equation of a straight line\nparallel to a given line.\ne.g. find the equation of the line parallel to\ny = 4x – 1 that passes through (1, –3)."
+        },
+        {
+          "subsection": "3.7",
+          "name": "Perpendicular lines",
+          "core_code": null,
+          "extended_code": "E3.7",
+          "tier": "extended_only",
+          "extended_only": true,
+          "content": "Perpendicular lines\nFind the gradient and equation of a straight line\nperpendicular to a given line.\nExamples include:\n•\nfind the gradient of a line perpendicular to\n2y = 3x + 1\n•\nfind the equation of the perpendicular bisector\nof the line joining the points (–3, 8) and (9, –2).\nCambridge IGCSE Mathematics 0580 syllabus for 2025, 2026 and 2027.  Subject content\nwww.cambridgeinternational.org/igcse"
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "name": "Geometry",
+      "subsections": [
+        {
+          "subsection": "4.1",
+          "name": "Geometrical terms",
+          "core_code": "C4.1",
+          "extended_code": "E4.1",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Geometrical terms\n1  \u0007Use and interpret the following geometrical\nterms:\n•\npoint\n•\nvertex\n•\nline\n•\nplane\n•\nparallel\n•\nperpendicular\n•\nperpendicular bisector\n•\nbearing\n•\nright angle\n•\nacute, obtuse and reflex angles\n•\ninterior and exterior angles\n•\nsimilar\n•\ncongruent\n•\nscale factor.\n2  Use and interpret the vocabulary of:\n•\ntriangles\n•\nspecial quadrilaterals\n•\npolygons\n•\nnets\n•\nsolids.\nCandidates are not expected to show that two\nshapes are congruent.\nIncludes the following terms.\nTriangles:\n•\nequilateral\n•\nisosceles\n•\nscalene\n•\nright-angled.\nQuadrilaterals:\n•\nsquare\n•\nrectangle\n•\nkite\n•\nrhombus\n•\nparallelogram\n•\ntrapezium.\ncontinued\nCambridge IGCSE Mathematics 0580 syllabus for 2025, 2026 and 2027.  Subject content\nwww.cambridgeinternational.org/igcse\nGeometry (continued)\nGeometrical terms (continued)\n3  Use and interpret the vocabulary of a circle.\nPolygons:\n•\nregular and irregular polygons\n•\npentagon\n•\nhexagon\n•\noctagon\n•\ndecagon.\nSolids:\n•\ncube\n•\ncuboid\n•\nprism\n•\ncylinder\n•\npyramid\n•\ncone\n•\nsphere\n•\nhemisphere\n•\nfrustum\n•\nface\n•\nsurface\n•\nedge.\nIncludes the following terms:\n•\ncentre\n•\nradius (plural radii)\n•\ndiameter\n•\ncircumference\n•\nsemicircle\n•\nchord\n•\ntangent\n•\nmajor and minor arc\n•\nsector\n•\nsegment.\nCambridge IGCSE Mathematics 0580 syllabus for 2025, 2026 and 2027.  Subject content\nwww.cambridgeinternational.org/igcse\nGeometry (continued)"
+        },
+        {
+          "subsection": "4.2",
+          "name": "Geometrical constructions",
+          "core_code": "C4.2",
+          "extended_code": "E4.2",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Geometrical constructions\n1  Measure and draw lines and angles.\n2  \u0007Construct a triangle, given the lengths of all\nsides, using a ruler and pair of compasses only.\n3  Draw, use and interpret nets.\nA ruler should be used for all straight edges.\nConstructions of perpendicular bisectors and angle\nbisectors are not required.\ne.g. construct a rhombus by drawing two triangles.\nConstruction arcs must be shown.\nExamples include:\n•\ndraw nets of cubes, cuboids, prisms and\npyramids\n•\nuse measurements from nets to calculate\nvolumes and surface areas."
+        },
+        {
+          "subsection": "4.3",
+          "name": "Scale drawings",
+          "core_code": "C4.3",
+          "extended_code": "E4.3",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Scale drawings\n1  Draw and interpret scale drawings.\n2  Use and interpret three-figure bearings.\nA ruler must be used for all straight edges.\nBearings are measured clockwise from north\n(000° to 360°).\ne.g. find the bearing of A from B if the bearing of B\nfrom A is 025°.\nIncludes an understanding of the terms north, east,\nsouth and west.\ne.g. point D is due east of point C."
+        },
+        {
+          "subsection": "4.4",
+          "name": "Similarity",
+          "core_code": "C4.4",
+          "extended_code": "E4.4",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Similarity\n1  Calculate lengths of similar shapes.\n2  \u0007Use the relationships between lengths and areas\nof similar shapes and lengths, surface areas and\nvolumes of similar solids.\n3  \u0007Solve problems and give simple explanations\ninvolving similarity.\nIncludes use of scale factor, e.g.\nB\nA\nB\nA\nVolume of\nVolume of\nLength of\nLength of\n=\n`\n`\nj\nj\n.\nIncludes showing that two triangles are similar\nusing geometric reasons."
+        },
+        {
+          "subsection": "4.5",
+          "name": "Symmetry",
+          "core_code": "C4.5",
+          "extended_code": "E4.5",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Symmetry\n1  \u0007Recognise line symmetry and order of rotational\nsymmetry in two dimensions.\n2  \u0007Recognise symmetry properties of prisms,\ncylinders, pyramids and cones.\nIncludes properties of triangles, quadrilaterals and\npolygons directly related to their symmetries.\ne.g. identify planes and axes of symmetry.\nCambridge IGCSE Mathematics 0580 syllabus for 2025, 2026 and 2027.  Subject content\nwww.cambridgeinternational.org/igcse\nGeometry (continued)"
+        },
+        {
+          "subsection": "4.6",
+          "name": "Angles",
+          "core_code": "C4.6",
+          "extended_code": "E4.6",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Angles\n1  \u0007Calculate unknown angles and give simple\nexplanations using the following geometrical\nproperties:\n•\t sum of angles at a point = 360°\n•\t sum of angles at a point on a straight line = 180°\n•\t vertically opposite angles are equal\n•\t angle sum of a triangle = 180° and angle sum\nof a quadrilateral = 360°.\n2  \u0007Calculate unknown angles and give geometric\nexplanations for angles formed within parallel lines:\n•\t corresponding angles are equal\n•\t alternate angles are equal\n•\t co-interior angles sum to 180° (supplementary).\n3  \u0007Know and use angle properties of regular and\nirregular polygons.\nKnowledge of 3-letter notation for angles is\nrequired, e.g. angle ABC. Candidates are expected\nto use the correct geometrical terminology when\ngiving reasons for answers.\nIncludes exterior and interior angles, and angle\nsum."
+        },
+        {
+          "subsection": "4.7",
+          "name": "Circle theorems I",
+          "core_code": "C4.7",
+          "extended_code": "E4.7",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Circle theorems I\nCalculate unknown angles and give explanations\nusing the following geometrical properties of circles:\n•\nangle in a semicircle = 90°\n•\nangle between tangent and radius = 90°\n•\nangle at the centre is twice the angle at the\ncircumference\n•\nangles in the same segment are equal\n•\nopposite angles of a cyclic quadrilateral sum to\n180° (supplementary)\n•\nalternate segment theorem.\nCandidates are expected to use the geometrical\nproperties listed in the syllabus when giving\nreasons for answers."
+        },
+        {
+          "subsection": "4.8",
+          "name": "Circle theorems II",
+          "core_code": null,
+          "extended_code": "E4.8",
+          "tier": "extended_only",
+          "extended_only": true,
+          "content": "Circle theorems II\nUse the following symmetry properties of circles:\n•\nequal chords are equidistant from the centre\n•\nthe perpendicular bisector of a chord passes\nthrough the centre\n•\ntangents from an external point are equal in\nlength.\nCandidates are expected to use the geometrical\nproperties listed in the syllabus when giving\nreasons for answers.\nCambridge IGCSE Mathematics 0580 syllabus for 2025, 2026 and 2027.  Subject content\nwww.cambridgeinternational.org/igcse"
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "name": "Mensuration",
+      "subsections": [
+        {
+          "subsection": "5.1",
+          "name": "Units of measure",
+          "core_code": "C5.1",
+          "extended_code": "E5.1",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Units of measure\nUse metric units of mass, length, area, volume\nand capacity in practical situations and convert\nquantities into larger or smaller units.\nUnits include:\n•\nmm, cm, m, km\n•\nmm2, cm2, m2, km2\n•\nmm3, cm3, m3\n•\nml, l\n•\ng, kg.\nConversion between units includes:\n•\nbetween different units of area, e.g. cm2 ↔ m2\n•\nbetween units of volume and capacity,\ne.g. m3 ↔ litres."
+        },
+        {
+          "subsection": "5.2",
+          "name": "Area and perimeter",
+          "core_code": "C5.2",
+          "extended_code": "E5.2",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Area and perimeter\nCarry out calculations involving the perimeter and\narea of a rectangle, triangle, parallelogram and\ntrapezium.\nExcept for the area of a triangle, formulas are not\ngiven."
+        },
+        {
+          "subsection": "5.3",
+          "name": "Circles, arcs and sectors",
+          "core_code": "C5.3",
+          "extended_code": "E5.3",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Circles, arcs and sectors\n1  \u0007Carry out calculations involving the\ncircumference and area of a circle.\n2  \u0007Carry out calculations involving arc length and\nsector area as fractions of the circumference and\narea of a circle.\nAnswers may be asked for in terms of π.\nFormulas are given in the List of formulas.\nIncludes minor and major sectors."
+        },
+        {
+          "subsection": "5.4",
+          "name": "Surface area and volume",
+          "core_code": "C5.4",
+          "extended_code": "E5.4",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Surface area and volume\nCarry out calculations and solve problems involving\nthe surface area and volume of a:\n•\ncuboid\n•\nprism\n•\ncylinder\n•\nsphere\n•\npyramid\n•\ncone.\nAnswers may be asked for in terms of π.\nThe following formulas are given in the List of\nformulas:\n•\ncurved surface area of a cylinder\n•\ncurved surface area of a cone\n•\nsurface area of a sphere\n•\nvolume of a prism\n•\nvolume of a pyramid\n•\nvolume of a cylinder\n•\nvolume of a cone\n•\nvolume of a sphere.\nThe term prism refers to any solid with a uniform\ncross-section, e.g. a cylindrical sector.\nCambridge IGCSE Mathematics 0580 syllabus for 2025, 2026 and 2027.  Subject content\nwww.cambridgeinternational.org/igcse\nMensuration (continued)"
+        },
+        {
+          "subsection": "5.5",
+          "name": "Compound shapes and parts of shapes",
+          "core_code": "C5.5",
+          "extended_code": "E5.5",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Compound shapes and parts of shapes\n1  \u0007Carry out calculations and solve problems\ninvolving perimeters and areas of:\n•\ncompound shapes\n•\nparts of shapes.\n2  \u0007Carry out calculations and solve problems\ninvolving surface areas and volumes of:\n•\ncompound solids\n•\nparts of solids.\nAnswers may be asked for in terms of π.\ne.g. find the surface area and volume of a frustum.\nCambridge IGCSE Mathematics 0580 syllabus for 2025, 2026 and 2027.  Subject content\nwww.cambridgeinternational.org/igcse"
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "name": "Trigonometry",
+      "subsections": [
+        {
+          "subsection": "6.1",
+          "name": "Pythagoras’ theorem",
+          "core_code": "C6.1",
+          "extended_code": "E6.1",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Pythagoras’ theorem\nKnow and use Pythagoras’ theorem."
+        },
+        {
+          "subsection": "6.2",
+          "name": "Right-angled triangles",
+          "core_code": "C6.2",
+          "extended_code": "E6.2",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Right-angled triangles\n1  \u0007Know and use the sine, cosine and tangent\nratios for acute angles in calculations involving\nsides and angles of a right-angled triangle.\n2  \u0007Solve problems in two dimensions using\nPythagoras’ theorem and trigonometry.\n3  \u0007Know that the perpendicular distance from a\npoint to a line is the shortest distance to the line.\n4  \u0007Carry out calculations involving angles of\nelevation and depression.\nAngles will be given in degrees and answers should\nbe written in degrees, with decimals correct to one\ndecimal place.\nKnowledge of bearings may be required."
+        },
+        {
+          "subsection": "6.3",
+          "name": "Exact trigonometric values",
+          "core_code": null,
+          "extended_code": "E6.3",
+          "tier": "extended_only",
+          "extended_only": true,
+          "content": "Exact trigonometric values\nKnow the exact values of:\n1  sin x and cos x for x = 0°, 30°, 45°, 60° and 90°.\n2  tan x for x = 0°, 30°, 45° and 60°."
+        },
+        {
+          "subsection": "6.4",
+          "name": "Trigonometric functions",
+          "core_code": null,
+          "extended_code": "E6.4",
+          "tier": "extended_only",
+          "extended_only": true,
+          "content": "Trigonometric functions\n1  \u0007Recognise, sketch and interpret the following\ngraphs for 0° ⩽ x ⩽ 360°:\n•\ny = sin x\n•\ny = cos x\n•\ny = tan x.\n2  \u0007Solve trigonometric equations involving sin x,\ncos x or tan x, for 0° ⩽ x ⩽ 360°.\ne.g. solve:\n•\nsin x = 2\n3  for 0° ⩽ x ⩽ 360°\n•\n2 cos x + 1 = 0 for 0° ⩽ x ⩽ 360°.\nCambridge IGCSE Mathematics 0580 syllabus for 2025, 2026 and 2027.  Subject content\nwww.cambridgeinternational.org/igcse\nTrigonometry (continued)"
+        },
+        {
+          "subsection": "6.5",
+          "name": "Non-right-angled triangles",
+          "core_code": null,
+          "extended_code": "E6.5",
+          "tier": "extended_only",
+          "extended_only": true,
+          "content": "Non-right-angled triangles\n1  \u0007Use the sine and cosine rules in calculations\ninvolving lengths and angles for any triangle.\n2  \u0007Use the formula\narea of triangle = 2\n1 ab sin C.\nIncludes problems involving obtuse angles and the\nambiguous case.\nThe sine and cosine rules and the formula for area\nof a triangle are given in the List of formulas."
+        },
+        {
+          "subsection": "6.6",
+          "name": "\u0007Pythagoras’ theorem and trigonometry",
+          "core_code": null,
+          "extended_code": "E6.6",
+          "tier": "extended_only",
+          "extended_only": true,
+          "content": "\u0007Pythagoras’ theorem and trigonometry\nin 3D\nCarry out calculations and solve problems in\nthree dimensions using Pythagoras’ theorem\nand trigonometry, including calculating the angle\nbetween a line and a plane.\nCambridge IGCSE Mathematics 0580 syllabus for 2025, 2026 and 2027.  Subject content\nwww.cambridgeinternational.org/igcse"
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "name": "Transformations and vectors",
+      "subsections": [
+        {
+          "subsection": "7.1",
+          "name": "Transformations",
+          "core_code": "C7.1",
+          "extended_code": "E7.1",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Transformations\nRecognise, describe and draw the following\ntransformations:\n1  Reflection of a shape in a straight line.\n2  \u0007Rotation of a shape about a centre through\nmultiples of 90°.\n3  \u0007Enlargement of a shape from a centre by a scale\nfactor.\n4  Translation of a shape by a vector x\ny\nJ\nL\nKK\nN\nP\nOO.\nQuestions may involve combinations of\ntransformations. A ruler must be used for all straight\nedges.\nPositive, fractional and negative scale factors may\nbe used."
+        },
+        {
+          "subsection": "7.2",
+          "name": "Vectors in two dimensions",
+          "core_code": null,
+          "extended_code": "E7.2",
+          "tier": "extended_only",
+          "extended_only": true,
+          "content": "Vectors in two dimensions\n1  \u0007Describe a translation using a vector represented\nby x\ny\nJ\nL\nKK\nN\nP\nOO, AB or a.\n2  Add and subtract vectors.\n3  Multiply a vector by a scalar.\nVectors will be printed as AB or a."
+        },
+        {
+          "subsection": "7.3",
+          "name": "Magnitude of a vector",
+          "core_code": null,
+          "extended_code": "E7.3",
+          "tier": "extended_only",
+          "extended_only": true,
+          "content": "Magnitude of a vector\nCalculate the magnitude of a vector x\ny\nJ\nL\nKK\nN\nP\nOO as\nx\ny\n+\n.\nThe magnitudes of vectors will be denoted by\nmodulus signs, e.g.\n•\na  is the magnitude of a\n•\nAB  is the magnitude of AB."
+        },
+        {
+          "subsection": "7.4",
+          "name": "Vector geometry",
+          "core_code": null,
+          "extended_code": "E7.4",
+          "tier": "extended_only",
+          "extended_only": true,
+          "content": "Vector geometry\n1  Represent vectors by directed line segments.\n2  Use position vectors.\n3  \u0007Use the sum and difference of two or more\nvectors to express given vectors in terms of two\ncoplanar vectors.\n4  \u0007Use vectors to reason and to solve geometric\nproblems.\nExamples include:\n•\nshow that vectors are parallel\n•\nshow that 3 points are collinear\n•\nsolve vector problems involving ratio and\nsimilarity.\nCambridge IGCSE Mathematics 0580 syllabus for 2025, 2026 and 2027.  Subject content\nwww.cambridgeinternational.org/igcse"
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "name": "Probability",
+      "subsections": [
+        {
+          "subsection": "8.1",
+          "name": "Introduction to probability",
+          "core_code": "C8.1",
+          "extended_code": "E8.1",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Introduction to probability\n1  \u0007Understand and use the probability scale from\n0 to 1.\n2  Understand and use probability notation.\n3  Calculate the probability of a single event.\n4  \u0007Understand that the probability of an event\nnot occurring = 1 – the probability of the event\noccurring.\nP(A) is the probability of A\nP(A′) is the probability of not A\nProbabilities should be given as a fraction, decimal\nor percentage.\nProblems may require using information from\ntables, graphs or Venn diagrams.\ne.g. P(B) = 0.8, find P(B′)"
+        },
+        {
+          "subsection": "8.2",
+          "name": "Relative and expected frequencies",
+          "core_code": "C8.2",
+          "extended_code": "E8.2",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Relative and expected frequencies\n1  \u0007Understand relative frequency as an estimate of\nprobability.\n2  Calculate expected frequencies.\ne.g. use results of experiments with a spinner to\nestimate the probability of a given outcome.\ne.g. use probability to estimate an expected value\nfrom a population.\nIncludes understanding what is meant by fair, bias\nand random."
+        },
+        {
+          "subsection": "8.3",
+          "name": "Probability of combined events",
+          "core_code": "C8.3",
+          "extended_code": "E8.3",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Probability of combined events\nCalculate the probability of combined events using,\nwhere appropriate:\n•\nsample space diagrams\n•\nVenn diagrams\n•\ntree diagrams.\nCombined events could be with or without\nreplacement.\nThe notation P(A ∩ B) and P(A ∪ B) may be used\nin the context of Venn diagrams.\nOn tree diagrams outcomes will be written at the\nend of branches and probabilities by the side of the\nbranches."
+        },
+        {
+          "subsection": "8.4",
+          "name": "Conditional probability",
+          "core_code": null,
+          "extended_code": "E8.4",
+          "tier": "extended_only",
+          "extended_only": true,
+          "content": "Conditional probability\nCalculate conditional probability using Venn\ndiagrams, tree diagrams and tables.\nKnowledge of notation, P(A|B), and formulas\nrelating to conditional probability is not required.\nCambridge IGCSE Mathematics 0580 syllabus for 2025, 2026 and 2027.  Subject content\nwww.cambridgeinternational.org/igcse"
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "name": "Statistics",
+      "subsections": [
+        {
+          "subsection": "9.1",
+          "name": "Classifying statistical data",
+          "core_code": "C9.1",
+          "extended_code": "E9.1",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Classifying statistical data\nClassify and tabulate statistical data.\ne.g. tally tables, two-way tables."
+        },
+        {
+          "subsection": "9.2",
+          "name": "Interpreting statistical data",
+          "core_code": "C9.2",
+          "extended_code": "E9.2",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Interpreting statistical data\n1  \u0007Read, interpret and draw inferences from tables\nand statistical diagrams.\n2  \u0007Compare sets of data using tables, graphs and\nstatistical measures.\n3  \u0007Appreciate restrictions on drawing conclusions\nfrom given data.\ne.g. compare averages and measures of spread\nbetween two data sets."
+        },
+        {
+          "subsection": "9.3",
+          "name": "Averages and measures of spread",
+          "core_code": "C9.3",
+          "extended_code": "E9.3",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Averages and measures of spread\n1  \u0007Calculate the mean, median, mode, quartiles,\nrange and interquartile range for individual data\nand distinguish between the purposes for which\nthese are used.\n2  \u0007Calculate an estimate of the mean for grouped\ndiscrete or grouped continuous data.\n3  \u0007Identify the modal class from a grouped\nfrequency distribution."
+        },
+        {
+          "subsection": "9.4",
+          "name": "Statistical charts and diagrams",
+          "core_code": "C9.4",
+          "extended_code": "E9.4",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Statistical charts and diagrams\nDraw and interpret:\n(a) \t bar charts\n(b) \tpie charts\n(c) \t pictograms\n(d) \tstem-and-leaf diagrams\n(e) \t simple frequency distributions.\nIncludes composite (stacked) and dual (side-by-\nside) bar charts.\nStem-and-leaf diagrams should have ordered data\nwith a key.\nCambridge IGCSE Mathematics 0580 syllabus for 2025, 2026 and 2027.  Subject content\nwww.cambridgeinternational.org/igcse\nStatistics (continued)"
+        },
+        {
+          "subsection": "9.5",
+          "name": "Scatter diagrams",
+          "core_code": "C9.5",
+          "extended_code": "E9.5",
+          "tier": "both",
+          "extended_only": false,
+          "content": "Scatter diagrams\n1  Draw and interpret scatter diagrams.\n2  \u0007Understand what is meant by positive, negative\nand zero correlation.\n3  \u0007Draw by eye, interpret and use a straight line of\nbest fit.\nPlotted points should be clearly marked, for\nexample as small crosses (×).\nA line of best fit:\n•\nshould be a single ruled line drawn by\ninspection\n•\nshould extend across the full data set\n•\ndoes not need to coincide exactly with any of\nthe points but there should be a roughly even\ndistribution of points either side of the line over\nits entire length."
+        },
+        {
+          "subsection": "9.6",
+          "name": "Cumulative frequency diagrams",
+          "core_code": null,
+          "extended_code": "E9.6",
+          "tier": "extended_only",
+          "extended_only": true,
+          "content": "Cumulative frequency diagrams\n1  \u0007Draw and interpret cumulative frequency tables\nand diagrams.\n2  \u0007Estimate and interpret the median, percentiles,\nquartiles and interquartile range from cumulative\nfrequency diagrams.\nPlotted points on a cumulative frequency diagram\nshould be clearly marked, for example as small\ncrosses (×), and be joined with a smooth curve."
+        },
+        {
+          "subsection": "9.7",
+          "name": "Histograms",
+          "core_code": null,
+          "extended_code": "E9.7",
+          "tier": "extended_only",
+          "extended_only": true,
+          "content": "Histograms\n1  Draw and interpret histograms.\n2  Calculate with frequency density.\nOn histograms, the vertical axis is labelled\n‘Frequency density’.\nFrequency density is defined as\nfrequency density = frequency ÷ class width."
+        }
+      ]
+    }
+  ],
+  "flat_codes": [
+    {
+      "code": "C1.1",
+      "subsection": "1.1",
+      "section": 1,
+      "section_name": "Number",
+      "name": "Types of number",
+      "tier": "core"
+    },
+    {
+      "code": "E1.1",
+      "subsection": "1.1",
+      "section": 1,
+      "section_name": "Number",
+      "name": "Types of number",
+      "tier": "extended"
+    },
+    {
+      "code": "C1.2",
+      "subsection": "1.2",
+      "section": 1,
+      "section_name": "Number",
+      "name": "Sets",
+      "tier": "core"
+    },
+    {
+      "code": "E1.2",
+      "subsection": "1.2",
+      "section": 1,
+      "section_name": "Number",
+      "name": "Sets",
+      "tier": "extended"
+    },
+    {
+      "code": "C1.3",
+      "subsection": "1.3",
+      "section": 1,
+      "section_name": "Number",
+      "name": "Powers and roots",
+      "tier": "core"
+    },
+    {
+      "code": "E1.3",
+      "subsection": "1.3",
+      "section": 1,
+      "section_name": "Number",
+      "name": "Powers and roots",
+      "tier": "extended"
+    },
+    {
+      "code": "C1.4",
+      "subsection": "1.4",
+      "section": 1,
+      "section_name": "Number",
+      "name": "Fractions, decimals and percentages",
+      "tier": "core"
+    },
+    {
+      "code": "E1.4",
+      "subsection": "1.4",
+      "section": 1,
+      "section_name": "Number",
+      "name": "Fractions, decimals and percentages",
+      "tier": "extended"
+    },
+    {
+      "code": "C1.5",
+      "subsection": "1.5",
+      "section": 1,
+      "section_name": "Number",
+      "name": "Ordering",
+      "tier": "core"
+    },
+    {
+      "code": "E1.5",
+      "subsection": "1.5",
+      "section": 1,
+      "section_name": "Number",
+      "name": "Ordering",
+      "tier": "extended"
+    },
+    {
+      "code": "C1.6",
+      "subsection": "1.6",
+      "section": 1,
+      "section_name": "Number",
+      "name": "The four operations",
+      "tier": "core"
+    },
+    {
+      "code": "E1.6",
+      "subsection": "1.6",
+      "section": 1,
+      "section_name": "Number",
+      "name": "The four operations",
+      "tier": "extended"
+    },
+    {
+      "code": "C1.7",
+      "subsection": "1.7",
+      "section": 1,
+      "section_name": "Number",
+      "name": "Indices I",
+      "tier": "core"
+    },
+    {
+      "code": "E1.7",
+      "subsection": "1.7",
+      "section": 1,
+      "section_name": "Number",
+      "name": "Indices I",
+      "tier": "extended"
+    },
+    {
+      "code": "C1.8",
+      "subsection": "1.8",
+      "section": 1,
+      "section_name": "Number",
+      "name": "Standard form",
+      "tier": "core"
+    },
+    {
+      "code": "E1.8",
+      "subsection": "1.8",
+      "section": 1,
+      "section_name": "Number",
+      "name": "Standard form",
+      "tier": "extended"
+    },
+    {
+      "code": "C1.9",
+      "subsection": "1.9",
+      "section": 1,
+      "section_name": "Number",
+      "name": "Estimation",
+      "tier": "core"
+    },
+    {
+      "code": "E1.9",
+      "subsection": "1.9",
+      "section": 1,
+      "section_name": "Number",
+      "name": "Estimation",
+      "tier": "extended"
+    },
+    {
+      "code": "C2.1",
+      "subsection": "2.1",
+      "section": 2,
+      "section_name": "Algebra and graphs",
+      "name": "Introduction to algebra",
+      "tier": "core"
+    },
+    {
+      "code": "E2.1",
+      "subsection": "2.1",
+      "section": 2,
+      "section_name": "Algebra and graphs",
+      "name": "Introduction to algebra",
+      "tier": "extended"
+    },
+    {
+      "code": "C2.2",
+      "subsection": "2.2",
+      "section": 2,
+      "section_name": "Algebra and graphs",
+      "name": "Algebraic manipulation",
+      "tier": "core"
+    },
+    {
+      "code": "E2.2",
+      "subsection": "2.2",
+      "section": 2,
+      "section_name": "Algebra and graphs",
+      "name": "Algebraic manipulation",
+      "tier": "extended"
+    },
+    {
+      "code": "E2.3",
+      "subsection": "2.3",
+      "section": 2,
+      "section_name": "Algebra and graphs",
+      "name": "Algebraic fractions",
+      "tier": "extended"
+    },
+    {
+      "code": "C2.4",
+      "subsection": "2.4",
+      "section": 2,
+      "section_name": "Algebra and graphs",
+      "name": "Indices II",
+      "tier": "core"
+    },
+    {
+      "code": "E2.4",
+      "subsection": "2.4",
+      "section": 2,
+      "section_name": "Algebra and graphs",
+      "name": "Indices II",
+      "tier": "extended"
+    },
+    {
+      "code": "C2.5",
+      "subsection": "2.5",
+      "section": 2,
+      "section_name": "Algebra and graphs",
+      "name": "Equations",
+      "tier": "core"
+    },
+    {
+      "code": "E2.5",
+      "subsection": "2.5",
+      "section": 2,
+      "section_name": "Algebra and graphs",
+      "name": "Equations",
+      "tier": "extended"
+    },
+    {
+      "code": "C2.6",
+      "subsection": "2.6",
+      "section": 2,
+      "section_name": "Algebra and graphs",
+      "name": "Inequalities",
+      "tier": "core"
+    },
+    {
+      "code": "E2.6",
+      "subsection": "2.6",
+      "section": 2,
+      "section_name": "Algebra and graphs",
+      "name": "Inequalities",
+      "tier": "extended"
+    },
+    {
+      "code": "C2.7",
+      "subsection": "2.7",
+      "section": 2,
+      "section_name": "Algebra and graphs",
+      "name": "Sequences",
+      "tier": "core"
+    },
+    {
+      "code": "E2.7",
+      "subsection": "2.7",
+      "section": 2,
+      "section_name": "Algebra and graphs",
+      "name": "Sequences",
+      "tier": "extended"
+    },
+    {
+      "code": "E2.8",
+      "subsection": "2.8",
+      "section": 2,
+      "section_name": "Algebra and graphs",
+      "name": "Proportion",
+      "tier": "extended"
+    },
+    {
+      "code": "C2.9",
+      "subsection": "2.9",
+      "section": 2,
+      "section_name": "Algebra and graphs",
+      "name": "Graphs in practical situations",
+      "tier": "core"
+    },
+    {
+      "code": "E2.9",
+      "subsection": "2.9",
+      "section": 2,
+      "section_name": "Algebra and graphs",
+      "name": "Graphs in practical situations",
+      "tier": "extended"
+    },
+    {
+      "code": "C3.1",
+      "subsection": "3.1",
+      "section": 3,
+      "section_name": "Coordinate geometry",
+      "name": "Coordinates",
+      "tier": "core"
+    },
+    {
+      "code": "E3.1",
+      "subsection": "3.1",
+      "section": 3,
+      "section_name": "Coordinate geometry",
+      "name": "Coordinates",
+      "tier": "extended"
+    },
+    {
+      "code": "C3.2",
+      "subsection": "3.2",
+      "section": 3,
+      "section_name": "Coordinate geometry",
+      "name": "Drawing linear graphs",
+      "tier": "core"
+    },
+    {
+      "code": "E3.2",
+      "subsection": "3.2",
+      "section": 3,
+      "section_name": "Coordinate geometry",
+      "name": "Drawing linear graphs",
+      "tier": "extended"
+    },
+    {
+      "code": "C3.3",
+      "subsection": "3.3",
+      "section": 3,
+      "section_name": "Coordinate geometry",
+      "name": "Gradient of linear graphs",
+      "tier": "core"
+    },
+    {
+      "code": "E3.3",
+      "subsection": "3.3",
+      "section": 3,
+      "section_name": "Coordinate geometry",
+      "name": "Gradient of linear graphs",
+      "tier": "extended"
+    },
+    {
+      "code": "E3.4",
+      "subsection": "3.4",
+      "section": 3,
+      "section_name": "Coordinate geometry",
+      "name": "Length and midpoint",
+      "tier": "extended"
+    },
+    {
+      "code": "C3.5",
+      "subsection": "3.5",
+      "section": 3,
+      "section_name": "Coordinate geometry",
+      "name": "Equations of linear graphs",
+      "tier": "core"
+    },
+    {
+      "code": "E3.5",
+      "subsection": "3.5",
+      "section": 3,
+      "section_name": "Coordinate geometry",
+      "name": "Equations of linear graphs",
+      "tier": "extended"
+    },
+    {
+      "code": "C3.6",
+      "subsection": "3.6",
+      "section": 3,
+      "section_name": "Coordinate geometry",
+      "name": "Parallel lines",
+      "tier": "core"
+    },
+    {
+      "code": "E3.6",
+      "subsection": "3.6",
+      "section": 3,
+      "section_name": "Coordinate geometry",
+      "name": "Parallel lines",
+      "tier": "extended"
+    },
+    {
+      "code": "E3.7",
+      "subsection": "3.7",
+      "section": 3,
+      "section_name": "Coordinate geometry",
+      "name": "Perpendicular lines",
+      "tier": "extended"
+    },
+    {
+      "code": "C4.1",
+      "subsection": "4.1",
+      "section": 4,
+      "section_name": "Geometry",
+      "name": "Geometrical terms",
+      "tier": "core"
+    },
+    {
+      "code": "E4.1",
+      "subsection": "4.1",
+      "section": 4,
+      "section_name": "Geometry",
+      "name": "Geometrical terms",
+      "tier": "extended"
+    },
+    {
+      "code": "C4.2",
+      "subsection": "4.2",
+      "section": 4,
+      "section_name": "Geometry",
+      "name": "Geometrical constructions",
+      "tier": "core"
+    },
+    {
+      "code": "E4.2",
+      "subsection": "4.2",
+      "section": 4,
+      "section_name": "Geometry",
+      "name": "Geometrical constructions",
+      "tier": "extended"
+    },
+    {
+      "code": "C4.3",
+      "subsection": "4.3",
+      "section": 4,
+      "section_name": "Geometry",
+      "name": "Scale drawings",
+      "tier": "core"
+    },
+    {
+      "code": "E4.3",
+      "subsection": "4.3",
+      "section": 4,
+      "section_name": "Geometry",
+      "name": "Scale drawings",
+      "tier": "extended"
+    },
+    {
+      "code": "C4.4",
+      "subsection": "4.4",
+      "section": 4,
+      "section_name": "Geometry",
+      "name": "Similarity",
+      "tier": "core"
+    },
+    {
+      "code": "E4.4",
+      "subsection": "4.4",
+      "section": 4,
+      "section_name": "Geometry",
+      "name": "Similarity",
+      "tier": "extended"
+    },
+    {
+      "code": "C4.5",
+      "subsection": "4.5",
+      "section": 4,
+      "section_name": "Geometry",
+      "name": "Symmetry",
+      "tier": "core"
+    },
+    {
+      "code": "E4.5",
+      "subsection": "4.5",
+      "section": 4,
+      "section_name": "Geometry",
+      "name": "Symmetry",
+      "tier": "extended"
+    },
+    {
+      "code": "C4.6",
+      "subsection": "4.6",
+      "section": 4,
+      "section_name": "Geometry",
+      "name": "Angles",
+      "tier": "core"
+    },
+    {
+      "code": "E4.6",
+      "subsection": "4.6",
+      "section": 4,
+      "section_name": "Geometry",
+      "name": "Angles",
+      "tier": "extended"
+    },
+    {
+      "code": "C4.7",
+      "subsection": "4.7",
+      "section": 4,
+      "section_name": "Geometry",
+      "name": "Circle theorems I",
+      "tier": "core"
+    },
+    {
+      "code": "E4.7",
+      "subsection": "4.7",
+      "section": 4,
+      "section_name": "Geometry",
+      "name": "Circle theorems I",
+      "tier": "extended"
+    },
+    {
+      "code": "E4.8",
+      "subsection": "4.8",
+      "section": 4,
+      "section_name": "Geometry",
+      "name": "Circle theorems II",
+      "tier": "extended"
+    },
+    {
+      "code": "C5.1",
+      "subsection": "5.1",
+      "section": 5,
+      "section_name": "Mensuration",
+      "name": "Units of measure",
+      "tier": "core"
+    },
+    {
+      "code": "E5.1",
+      "subsection": "5.1",
+      "section": 5,
+      "section_name": "Mensuration",
+      "name": "Units of measure",
+      "tier": "extended"
+    },
+    {
+      "code": "C5.2",
+      "subsection": "5.2",
+      "section": 5,
+      "section_name": "Mensuration",
+      "name": "Area and perimeter",
+      "tier": "core"
+    },
+    {
+      "code": "E5.2",
+      "subsection": "5.2",
+      "section": 5,
+      "section_name": "Mensuration",
+      "name": "Area and perimeter",
+      "tier": "extended"
+    },
+    {
+      "code": "C5.3",
+      "subsection": "5.3",
+      "section": 5,
+      "section_name": "Mensuration",
+      "name": "Circles, arcs and sectors",
+      "tier": "core"
+    },
+    {
+      "code": "E5.3",
+      "subsection": "5.3",
+      "section": 5,
+      "section_name": "Mensuration",
+      "name": "Circles, arcs and sectors",
+      "tier": "extended"
+    },
+    {
+      "code": "C5.4",
+      "subsection": "5.4",
+      "section": 5,
+      "section_name": "Mensuration",
+      "name": "Surface area and volume",
+      "tier": "core"
+    },
+    {
+      "code": "E5.4",
+      "subsection": "5.4",
+      "section": 5,
+      "section_name": "Mensuration",
+      "name": "Surface area and volume",
+      "tier": "extended"
+    },
+    {
+      "code": "C5.5",
+      "subsection": "5.5",
+      "section": 5,
+      "section_name": "Mensuration",
+      "name": "Compound shapes and parts of shapes",
+      "tier": "core"
+    },
+    {
+      "code": "E5.5",
+      "subsection": "5.5",
+      "section": 5,
+      "section_name": "Mensuration",
+      "name": "Compound shapes and parts of shapes",
+      "tier": "extended"
+    },
+    {
+      "code": "C6.1",
+      "subsection": "6.1",
+      "section": 6,
+      "section_name": "Trigonometry",
+      "name": "Pythagoras’ theorem",
+      "tier": "core"
+    },
+    {
+      "code": "E6.1",
+      "subsection": "6.1",
+      "section": 6,
+      "section_name": "Trigonometry",
+      "name": "Pythagoras’ theorem",
+      "tier": "extended"
+    },
+    {
+      "code": "C6.2",
+      "subsection": "6.2",
+      "section": 6,
+      "section_name": "Trigonometry",
+      "name": "Right-angled triangles",
+      "tier": "core"
+    },
+    {
+      "code": "E6.2",
+      "subsection": "6.2",
+      "section": 6,
+      "section_name": "Trigonometry",
+      "name": "Right-angled triangles",
+      "tier": "extended"
+    },
+    {
+      "code": "E6.3",
+      "subsection": "6.3",
+      "section": 6,
+      "section_name": "Trigonometry",
+      "name": "Exact trigonometric values",
+      "tier": "extended"
+    },
+    {
+      "code": "E6.4",
+      "subsection": "6.4",
+      "section": 6,
+      "section_name": "Trigonometry",
+      "name": "Trigonometric functions",
+      "tier": "extended"
+    },
+    {
+      "code": "E6.5",
+      "subsection": "6.5",
+      "section": 6,
+      "section_name": "Trigonometry",
+      "name": "Non-right-angled triangles",
+      "tier": "extended"
+    },
+    {
+      "code": "E6.6",
+      "subsection": "6.6",
+      "section": 6,
+      "section_name": "Trigonometry",
+      "name": "\u0007Pythagoras’ theorem and trigonometry",
+      "tier": "extended"
+    },
+    {
+      "code": "C7.1",
+      "subsection": "7.1",
+      "section": 7,
+      "section_name": "Transformations and vectors",
+      "name": "Transformations",
+      "tier": "core"
+    },
+    {
+      "code": "E7.1",
+      "subsection": "7.1",
+      "section": 7,
+      "section_name": "Transformations and vectors",
+      "name": "Transformations",
+      "tier": "extended"
+    },
+    {
+      "code": "E7.2",
+      "subsection": "7.2",
+      "section": 7,
+      "section_name": "Transformations and vectors",
+      "name": "Vectors in two dimensions",
+      "tier": "extended"
+    },
+    {
+      "code": "E7.3",
+      "subsection": "7.3",
+      "section": 7,
+      "section_name": "Transformations and vectors",
+      "name": "Magnitude of a vector",
+      "tier": "extended"
+    },
+    {
+      "code": "E7.4",
+      "subsection": "7.4",
+      "section": 7,
+      "section_name": "Transformations and vectors",
+      "name": "Vector geometry",
+      "tier": "extended"
+    },
+    {
+      "code": "C8.1",
+      "subsection": "8.1",
+      "section": 8,
+      "section_name": "Probability",
+      "name": "Introduction to probability",
+      "tier": "core"
+    },
+    {
+      "code": "E8.1",
+      "subsection": "8.1",
+      "section": 8,
+      "section_name": "Probability",
+      "name": "Introduction to probability",
+      "tier": "extended"
+    },
+    {
+      "code": "C8.2",
+      "subsection": "8.2",
+      "section": 8,
+      "section_name": "Probability",
+      "name": "Relative and expected frequencies",
+      "tier": "core"
+    },
+    {
+      "code": "E8.2",
+      "subsection": "8.2",
+      "section": 8,
+      "section_name": "Probability",
+      "name": "Relative and expected frequencies",
+      "tier": "extended"
+    },
+    {
+      "code": "C8.3",
+      "subsection": "8.3",
+      "section": 8,
+      "section_name": "Probability",
+      "name": "Probability of combined events",
+      "tier": "core"
+    },
+    {
+      "code": "E8.3",
+      "subsection": "8.3",
+      "section": 8,
+      "section_name": "Probability",
+      "name": "Probability of combined events",
+      "tier": "extended"
+    },
+    {
+      "code": "E8.4",
+      "subsection": "8.4",
+      "section": 8,
+      "section_name": "Probability",
+      "name": "Conditional probability",
+      "tier": "extended"
+    },
+    {
+      "code": "C9.1",
+      "subsection": "9.1",
+      "section": 9,
+      "section_name": "Statistics",
+      "name": "Classifying statistical data",
+      "tier": "core"
+    },
+    {
+      "code": "E9.1",
+      "subsection": "9.1",
+      "section": 9,
+      "section_name": "Statistics",
+      "name": "Classifying statistical data",
+      "tier": "extended"
+    },
+    {
+      "code": "C9.2",
+      "subsection": "9.2",
+      "section": 9,
+      "section_name": "Statistics",
+      "name": "Interpreting statistical data",
+      "tier": "core"
+    },
+    {
+      "code": "E9.2",
+      "subsection": "9.2",
+      "section": 9,
+      "section_name": "Statistics",
+      "name": "Interpreting statistical data",
+      "tier": "extended"
+    },
+    {
+      "code": "C9.3",
+      "subsection": "9.3",
+      "section": 9,
+      "section_name": "Statistics",
+      "name": "Averages and measures of spread",
+      "tier": "core"
+    },
+    {
+      "code": "E9.3",
+      "subsection": "9.3",
+      "section": 9,
+      "section_name": "Statistics",
+      "name": "Averages and measures of spread",
+      "tier": "extended"
+    },
+    {
+      "code": "C9.4",
+      "subsection": "9.4",
+      "section": 9,
+      "section_name": "Statistics",
+      "name": "Statistical charts and diagrams",
+      "tier": "core"
+    },
+    {
+      "code": "E9.4",
+      "subsection": "9.4",
+      "section": 9,
+      "section_name": "Statistics",
+      "name": "Statistical charts and diagrams",
+      "tier": "extended"
+    },
+    {
+      "code": "C9.5",
+      "subsection": "9.5",
+      "section": 9,
+      "section_name": "Statistics",
+      "name": "Scatter diagrams",
+      "tier": "core"
+    },
+    {
+      "code": "E9.5",
+      "subsection": "9.5",
+      "section": 9,
+      "section_name": "Statistics",
+      "name": "Scatter diagrams",
+      "tier": "extended"
+    },
+    {
+      "code": "E9.6",
+      "subsection": "9.6",
+      "section": 9,
+      "section_name": "Statistics",
+      "name": "Cumulative frequency diagrams",
+      "tier": "extended"
+    },
+    {
+      "code": "E9.7",
+      "subsection": "9.7",
+      "section": 9,
+      "section_name": "Statistics",
+      "name": "Histograms",
+      "tier": "extended"
+    }
+  ]
+}

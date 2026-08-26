@@ -126,7 +126,8 @@
       "Bash(AUTH_REQUIRED=false \"./venv/Scripts/python.exe\" _diag.py)",
       "Bash(python -m py_compile pipeline.py)",
       "Bash(AUTH_REQUIRED=false \"./venv/Scripts/python.exe\" _diag2.py)",
-      "Bash(echo \"exit: $?\")"
+      "Bash(echo \"exit: $?\")",
+      "Bash(curl *)"
     ]
   }
 }

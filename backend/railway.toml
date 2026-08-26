@@ -1,12 +1,20 @@
 # Authoritative Railway config for the GradeAI backend.
 #
 # Railway reads this file from the service's Root Directory, which must be set to
-# `backend` (requirements.txt and main.py live here). The repo-root railway.toml
-# / Procfile are stale leftovers from an earlier repo-root layout and are ignored
-# when Root Directory = backend — they can be deleted once that is confirmed in
-# the Railway dashboard.
+# `backend` (requirements.txt, main.py and Dockerfile live here). The repo-root
+# railway.toml / Procfile are stale leftovers from an earlier repo-root layout and
+# are ignored when Root Directory = backend.
+#
+# The builder is now `dockerfile`, not nixpacks. The paper generator typesets with
+# a real XeLaTeX engine, and that engine has to be installed in the image along
+# with a pre-warmed resource cache (see backend/Dockerfile — ~75 MB in total).
+# nixpacks has no clean hook for that; the Dockerfile does it deterministically
+# and the cache layer is baked in, which matters because Railway's filesystem is
+# ephemeral and a cold container must not have to reach the network to render a
+# paper.
 [build]
-builder = "nixpacks"
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
 
 [deploy]
 startCommand = "uvicorn main:app --host 0.0.0.0 --port $PORT"

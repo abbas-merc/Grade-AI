@@ -1,0 +1,28 @@
+# Local dev artefacts that must never enter the image.
+venv/
+__pycache__/
+**/__pycache__/
+*.pyc
+.env
+*.log
+gradeai.db
+
+# Source PDFs are only read by the offline build scripts (question bank,
+# per-part figures); the running server never opens them.
+papers/
+
+# The engine is installed inside the image by scripts/install_tectonic.py, so a
+# host binary (wrong OS, 50 MB) must not be copied in.
+tools/
+
+# Intermediate crops. The published copies under static/ are what the server and
+# the typesetter read.
+scripts/question_parts/
+scripts/question_assets/
+scripts/question_figures/
+scripts/question_stems/
+scripts/question_snippets/
+scripts/pending_snippets/
+scripts/diagram_out/
+scripts/batch_review/
+scripts/question_bank_review/

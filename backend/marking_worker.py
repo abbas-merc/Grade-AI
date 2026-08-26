@@ -35,6 +35,12 @@ from firestore_service import (
     build_paper_name,
 )
 from pipeline import run_full_paper_grading
+from usage_limits import (
+    MAX_PAGES_PER_MARKING,
+    MAX_QUESTIONS_PER_MARKING,
+    QuotaExceeded,
+    enforce_daily_quota,
+)
 
 _EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send"
 _MARKINGS_COLLECTION = "markings"
@@ -87,6 +93,31 @@ def _read_pages(doc_ref) -> list[str]:
     return [b64 for _, b64 in pages]
 
 
+def _delete_pages(doc_ref) -> None:
+    """Delete the marking's `pages` subcollection once grading has reached a
+    terminal state. The page images (photographed student scripts — the most
+    sensitive data the app handles, and potentially a minor's work) are only ever
+    an INPUT to grading; the result is stored on the parent document and the app
+    never re-reads the originals. Removing them enforces data minimisation and
+    keeps retained student imagery to the grading window only. Best-effort."""
+    try:
+        db = _get_client()
+        deleted = 0
+        while True:
+            snaps = list(doc_ref.collection("pages").limit(400).stream())
+            if not snaps:
+                break
+            b = db.batch()
+            for snap in snaps:
+                b.delete(snap.reference)
+            b.commit()
+            deleted += len(snaps)
+        if deleted:
+            print(f"[worker] deleted {deleted} page image(s) for marking {doc_ref.id}")
+    except Exception as exc:  # noqa: BLE001 — retention cleanup must never fail a job
+        print(f"[worker] failed to delete pages for {doc_ref.id}: {exc}")
+
+
 def _claim(doc_ref) -> bool:
     """
     Atomically claim a queued document by flipping it to "processing".
@@ -134,16 +165,36 @@ def _send_completion_push(uid: str, paper_name: str, marking_id: str) -> None:
 # Job processing
 # ---------------------------------------------------------------------------
 
+def _fail_job(doc_ref, message: str) -> None:
+    """Flip a marking to "failed" with a teacher-friendly message and clear the
+    progress spinner. Used for validation/quota rejections (no scary traceback)."""
+    try:
+        doc_ref.update({
+            "status": "failed",
+            "error_message": message,
+            "progress_step": admin_firestore.DELETE_FIELD,
+        })
+    except Exception as exc:  # noqa: BLE001
+        print(f"[worker] failed to reject marking {doc_ref.id}: {exc}")
+
+
 def _process_doc(doc_ref) -> None:
     """Grade one claimed marking document. Runs on its own daemon thread."""
     db = None
+    claimed = False
     try:
         if not _claim(doc_ref):
             return  # Another worker/snapshot already took it.
+        claimed = True
 
         snap = doc_ref.get()
         data = snap.to_dict() or {}
-        uid = data.get("teacher_uid") or _uid_from_path(doc_ref.path)
+        # Derive the owning uid from the DOCUMENT PATH, which the Firestore rules
+        # guarantee only the owner can write under (teachers/{uid}/markings/...).
+        # We must NOT trust a client-supplied `teacher_uid` body field: a user can
+        # set it to anyone's uid in their own document, which would misattribute
+        # the push notification and the quota charge. Path is authoritative.
+        uid = _uid_from_path(doc_ref.path) or data.get("teacher_uid")
         paper_id = data.get("paper_id")
         paper_name = data.get("paper_name")
         # Custom Paper Generator jobs carry their paper + mark scheme inline
@@ -154,6 +205,41 @@ def _process_doc(doc_ref) -> None:
         # Step 1 — read the page images from the `pages` subcollection.
         doc_ref.update({"progress_step": _STEP_UPLOADING})
         page_images = _read_pages(doc_ref)
+
+        # --- Structural caps: bound the size of a single (paid) call before it
+        # runs. Page docs are client-written, so a booklet could carry an
+        # arbitrary number of pages, and an inline paper an arbitrary number of
+        # questions — either would inflate one Anthropic call's cost. Reject
+        # oversized jobs with a clear message instead of grading them. ---
+        if not page_images:
+            _fail_job(doc_ref, "No pages were found for this paper. Please retake and resubmit.")
+            return
+        if len(page_images) > MAX_PAGES_PER_MARKING:
+            _fail_job(
+                doc_ref,
+                f"This paper has {len(page_images)} pages; the limit is "
+                f"{MAX_PAGES_PER_MARKING}. Please split it into smaller submissions.",
+            )
+            return
+        if isinstance(inline_paper, dict):
+            q_count = len(inline_paper.get("questions", []) or [])
+            if q_count > MAX_QUESTIONS_PER_MARKING:
+                _fail_job(
+                    doc_ref,
+                    "This custom paper has too many questions to mark in one go. "
+                    "Please generate a shorter paper.",
+                )
+                return
+
+        # --- Cost guardrail: durable per-user + global daily quota. Enforced
+        # here (Admin SDK) because the job arrives via a direct Firestore write
+        # the security rules can't rate-limit. Exceeding it fails the job with a
+        # friendly message rather than making the paid call. ---
+        try:
+            enforce_daily_quota(uid, "markings")
+        except QuotaExceeded as exc:
+            _fail_job(doc_ref, exc.message)
+            return
 
         print(
             f"[worker] processing marking {doc_ref.id} "
@@ -208,6 +294,13 @@ def _process_doc(doc_ref) -> None:
     finally:
         if db is not None:
             db.close()
+        # Data minimisation: the student page images are only an input to
+        # grading. Once THIS worker's job has reached a terminal state (complete
+        # or failed), delete them so captured scripts aren't retained
+        # indefinitely. Guarded by `claimed` so we never delete pages out from
+        # under another worker that won the claim.
+        if claimed:
+            _delete_pages(doc_ref)
         with _claimed_lock:
             _claimed.discard(doc_ref.path)
 

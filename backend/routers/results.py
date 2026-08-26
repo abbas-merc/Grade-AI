@@ -44,6 +44,13 @@ class DownloadResultsRequest(BaseModel):
     graded_at: Optional[str] = None
 
 
+# A Firestore auto-ID is 20 URL-safe chars; we accept a little slack. Validating
+# the shape before using it as a document ID keeps client input from being
+# interpreted as a multi-segment Firestore path (slashes) and gives a clean 404
+# instead of an error on anything malformed.
+_ID_RE = re.compile(r"^[A-Za-z0-9_-]{1,128}$")
+
+
 def _sanitize_filename_part(text: str) -> str:
     """Make a filename-safe slug: non-alphanumerics collapse to single
     underscores, with leading/trailing underscores trimmed."""
@@ -58,6 +65,8 @@ def download_results_pdf(
 ):
     """Render a completed marking to a PDF and return it as a file download."""
     if req.result_id:
+        if not _ID_RE.match(req.result_id):
+            raise HTTPException(status_code=404, detail="Result not found.")
         # Ownership is enforced by the read path: scoped to the caller's uid.
         data = get_marking_for_user(uid, req.result_id)
         if data is None:

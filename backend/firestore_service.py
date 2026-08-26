@@ -146,9 +146,17 @@ def save_grading_result(uid: str, result: dict) -> str:
     return doc_ref.id
 
 
+# Hard ceiling on how many history documents a single /history call returns.
+# Bounds the response size (OWASP API4 — unrestricted resource consumption); the
+# app's History tab reads live from Firestore anyway, so this HTTP endpoint never
+# needs to page through thousands of rows.
+_HISTORY_LIMIT = 500
+
+
 def get_grading_history(uid: str) -> list:
     """
-    Fetch all grading results for a user, newest first.
+    Fetch a user's most recent grading results, newest first (capped at
+    _HISTORY_LIMIT).
 
     Each returned dict includes the Firestore document ID as 'marking_id'.
     """
@@ -161,7 +169,7 @@ def get_grading_history(uid: str) -> list:
 
     query = markings_ref.order_by(
         "created_at", direction=firestore.Query.DESCENDING
-    )
+    ).limit(_HISTORY_LIMIT)
 
     history: list[dict[str, Any]] = []
     for doc in query.stream():

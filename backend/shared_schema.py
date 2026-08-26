@@ -1,8 +1,14 @@
 # Shared Pydantic schemas used by all backend agents
 # DO NOT MODIFY without updating all agents
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from typing import List, Optional
+
+# Upper bound on an inbound base64 image string (~11 MB decoded). A single
+# handwritten page compresses to well under 1 MB; this only exists to stop a
+# malicious client exhausting server memory with a giant payload before any
+# processing happens. Enforced by Pydantic, so an oversized body is a clean 422.
+_MAX_IMAGE_B64_CHARS = 15_000_000
 
 
 class MarkBreakdownPoint(BaseModel):
@@ -27,6 +33,13 @@ class GradingResponse(BaseModel):
 class GradeRequest(BaseModel):
     question_id: int
     image_base64: str
+
+    @field_validator("image_base64")
+    @classmethod
+    def _cap_image_size(cls, v: str) -> str:
+        if len(v) > _MAX_IMAGE_B64_CHARS:
+            raise ValueError("Image is too large. Please retake the photo.")
+        return v
 
 
 class QuestionResponse(BaseModel):

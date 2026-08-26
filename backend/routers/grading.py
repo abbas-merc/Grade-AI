@@ -20,6 +20,7 @@ from database import SessionLocal
 from firestore_service import save_grading_result, get_grading_history
 from pipeline import run_grading_pipeline
 from shared_schema import GradeRequest, GradingResponse
+from usage_limits import QuotaExceeded, allow_burst, enforce_daily_quota
 
 router = APIRouter(tags=["grading"])
 
@@ -32,7 +33,21 @@ def grade_answer(
     """
     Accept a student's base64-encoded photo and question ID, run the
     AI grading pipeline, and return the full graded result.
+
+    Cost guardrails run BEFORE any paid Anthropic call: a per-instance burst
+    limiter, then a durable per-user + global daily quota. Either being exceeded
+    returns 429 and no API call is made.
     """
+    if not allow_burst(uid, "grades"):
+        raise HTTPException(
+            status_code=429,
+            detail="You're grading a bit too quickly. Please wait a moment and try again.",
+        )
+    try:
+        enforce_daily_quota(uid, "grades")
+    except QuotaExceeded as exc:
+        raise HTTPException(status_code=429, detail=exc.message)
+
     db = SessionLocal()
     try:
         result = run_grading_pipeline(

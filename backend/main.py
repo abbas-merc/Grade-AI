@@ -21,19 +21,43 @@ from database import Base, engine
 from routers import papers, questions, grading, paper_generator, results
 from marking_worker import start_marking_listener
 
+# Expose the interactive API docs (/docs, /redoc, /openapi.json) only outside
+# production, or when ENABLE_DOCS=true is set explicitly. In production they add
+# nothing for end users (native app) and only hand an attacker a full map of the
+# API surface, so default to off. "Production" == auth is required.
+_auth_required = os.getenv("AUTH_REQUIRED", "true").strip().lower() not in (
+    "false", "0", "no", "off",
+)
+_enable_docs = os.getenv("ENABLE_DOCS", "").strip().lower() in ("true", "1", "yes", "on")
+_docs_on = _enable_docs or not _auth_required
+
 app = FastAPI(
     title="GradeAI API",
     description="AI-powered IGCSE answer grading using Claude",
     version="0.1.0",
+    docs_url="/docs" if _docs_on else None,
+    redoc_url="/redoc" if _docs_on else None,
+    openapi_url="/openapi.json" if _docs_on else None,
 )
 
-# Allow all origins — required for Expo Go on a local network
+# CORS. The clients are native mobile apps that authenticate with a Firebase
+# Bearer token (never cookies), so credentialed cross-site requests are not a
+# thing we need — and `allow_credentials=True` alongside a "*" origin is an
+# invalid, contradictory combination browsers reject anyway. We therefore keep
+# credentials OFF, which makes a permissive origin list safe: a browser page on
+# another origin still cannot read a victim's data because it has no way to
+# obtain their Bearer token. CORS_ALLOW_ORIGINS (comma-separated) can pin this to
+# specific web origins if a web client is ever added.
+_cors_env = (os.getenv("CORS_ALLOW_ORIGINS") or "*").strip()
+_allowed_origins = ["*"] if _cors_env == "*" else [
+    o.strip() for o in _cors_env.split(",") if o.strip()
+]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=_allowed_origins,
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
 app.include_router(papers.router)
@@ -60,6 +84,15 @@ app.mount("/diagrams", StaticFiles(directory=_DIAGRAMS_DIR), name="diagrams")
 _SNIPPETS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "question_snippets")
 os.makedirs(_SNIPPETS_DIR, exist_ok=True)
 app.mount("/question_snippets", StaticFiles(directory=_SNIPPETS_DIR), name="question_snippets")
+
+# Serve the diagram-only crops the LaTeX typesetting pipeline anchors inside each
+# sub-part (and inside a question stem or a letter part's introduction). Produced
+# by scripts/build_part_figures.py, copied here by scripts/publish_latex_assets.py,
+# and read straight off disk by the typesetter. The stem *text* crops live only
+# under scripts/ — they are input to the offline extraction, never rendered.
+_FIGURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "question_figures")
+os.makedirs(_FIGURES_DIR, exist_ok=True)
+app.mount("/question_figures", StaticFiles(directory=_FIGURES_DIR), name="question_figures")
 
 
 @app.exception_handler(Exception)
