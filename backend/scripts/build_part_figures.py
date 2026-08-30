@@ -82,7 +82,9 @@ PAD_BOTTOM_PT = 8.0
 # also GROWN over text that belongs to the figure — see _grow_over_labels.
 LABEL_GAP_PT = 18.0       # how far outside the band a label may still sit
 LABEL_SIDE_PT = 45.0      # how far outside the drawing's x-span a label may sit
-LABEL_MAX_WORDS = 8       # more words than this is prose, unless all numeric
+LABEL_MAX_WORDS = 8       # more words than this is prose, unless mostly numeric
+# Fraction of a row's tokens that must be numbers for it to be a tick row.
+MIN_NUMERIC_FRACTION = 0.6
 # Body text and sub-part labels start at the left edge of the content column;
 # a centred figure's labels never do.
 PROSE_LEFT_PT = 24.0
@@ -97,6 +99,17 @@ _PROSE_WORDS = {"a", "an", "the", "is", "are", "of", "and", "with", "in", "on",
                 "it", "its", "has", "have", "shows", "show", "made", "when"}
 # A tick number: "0", "-2", "12.5", "10,5".
 _NUMERIC_TOKEN_RE = re.compile(r"[-‐-−]?\d+(?:[.,]\d+)?")
+# Below this in EITHER dimension a drawing is a line segment, not a shape.
+MIN_SHAPE_PT = 8.0
+# A segment shorter than this is a tick mark; too small to be part of the story.
+MIN_SEGMENT_PT = 10.0
+# How many segments make a figure. A bare pair of axes is two long strokes (its
+# arrowheads are below MIN_SEGMENT_PT and get dropped), so the count alone cannot
+# be the guard — see _is_line_art, which also demands both orientations.
+MIN_SEGMENTS_FOR_LINE_ART = 2
+# ...and the lattice has to cover real area in BOTH dimensions, or a stack of
+# horizontal rules would qualify.
+MIN_LINE_ART_PT = 40.0
 # Shorter than this is a rule or a stray box, not a diagram worth printing.
 MIN_BAND_PT = 24.0
 # Taller than this fraction of the page is page furniture, not a figure.
@@ -108,8 +121,17 @@ MIN_CONTENT_OVERLAP_PT = 20.0
 
 
 def _in_content_column(x0: float, x1: float) -> bool:
+    """Does this primitive sit in the body column rather than the page margin?
+
+    The overlap threshold exists to reject the page-edge bar and the margin
+    registration marks. But a VERTICAL line has zero width, so it can never
+    overlap by 20pt however solidly it sits in the middle of the page — which
+    silently discarded every vertical gridline and left a graph's grid looking
+    like a stack of horizontal rules. For a primitive narrower than the
+    threshold, containment is the right question instead of overlap.
+    """
     overlap = min(x1, CONTENT_X1) - max(x0, CONTENT_X0)
-    return overlap >= MIN_CONTENT_OVERLAP_PT
+    return overlap >= min(MIN_CONTENT_OVERLAP_PT, x1 - x0)
 
 
 def _primitives(page, y0: float, y1: float) -> list[tuple[float, float, float, float]]:
@@ -129,20 +151,55 @@ def _primitives(page, y0: float, y1: float) -> list[tuple[float, float, float, f
         if (bb[3] - bb[1]) > 20 and (bb[2] - bb[0]) > 40:
             spans.append((max(bb[1], y0), min(bb[3], y1), bb[0], bb[2]))
 
+    # Line art — a graph grid, a pair of axes, a number line, a construction line
+    # — is drawn as individual segments, and a segment's rect is zero-thickness in
+    # one dimension. Rejecting those outright (the old `width < 8 or height < 8`)
+    # deleted the whole figure: a blank grid for "On the grid, draw the graph of
+    # y = ..." is ~88 such segments and nothing else, so the question printed with
+    # nothing to draw on. They are collected separately and admitted only as a
+    # GROUP, because one stray segment is a rule or a tick, while a lattice of
+    # them is a figure.
+    segments: list[tuple[float, float, float, float]] = []
+
     for d in page.get_drawings():
         r = d["rect"]
         if r.y1 < y0 or r.y0 > y1:
             continue
-        if r.width < 8 or r.height < 8:
-            continue                                   # hairline / tick
         if not _in_content_column(r.x0, r.x1):
             continue                                   # margin furniture
         if r.height > MAX_BAND_FRACTION * page_h:
             continue                                   # page-edge bar
         if r.width > 0.98 * content_w and r.height < 6:
             continue                                   # full-width rule
+        if r.width < MIN_SHAPE_PT or r.height < MIN_SHAPE_PT:
+            if max(r.width, r.height) >= MIN_SEGMENT_PT:
+                segments.append((max(r.y0, y0), min(r.y1, y1), r.x0, r.x1))
+            continue                                   # hairline / tick
         spans.append((max(r.y0, y0), min(r.y1, y1), r.x0, r.x1))
+
+    if _is_line_art(segments):
+        spans.extend(segments)
     return spans
+
+
+def _is_line_art(segments: list[tuple[float, float, float, float]]) -> bool:
+    """Is this set of thin segments a figure rather than stray rules?
+
+    A grid or a set of axes spans a real area in BOTH directions and contains
+    strokes in both orientations. Answer rules and separators — the thing this
+    must never mistake for a figure — are all horizontal, however many of them
+    are stacked and however far apart, so requiring at least one vertical stroke
+    and one horizontal stroke separates the two cleanly where a count cannot.
+    """
+    if len(segments) < MIN_SEGMENTS_FOR_LINE_ART:
+        return False
+    width = max(s[3] for s in segments) - min(s[2] for s in segments)
+    height = max(s[1] for s in segments) - min(s[0] for s in segments)
+    if width < MIN_LINE_ART_PT or height < MIN_LINE_ART_PT:
+        return False
+    horizontal = any((s[3] - s[2]) > (s[1] - s[0]) for s in segments)
+    vertical = any((s[1] - s[0]) > (s[3] - s[2]) for s in segments)
+    return horizontal and vertical
 
 
 def _cluster(spans, page_h: float) -> list[tuple[float, float, float, float]]:
@@ -246,8 +303,16 @@ def _is_figure_label(text: str, lx0: float, lx1: float,
                                    # a figure label sharing its baseline
     if lx0 < bx0 - LABEL_SIDE_PT or lx1 > bx1 + LABEL_SIDE_PT:
         return False                                   # outside the figure
-    if all(_NUMERIC_TOKEN_RE.fullmatch(w) for w in words):
-        return True                                    # an axis tick row
+    # An axis tick row. Testing that EVERY token is numeric is too strict: the
+    # row PyMuPDF returns for an x-axis is "x 0 2 4 6 8 10 ... 26" — the axis
+    # name shares the baseline with its ticks — and at 15 tokens it then fell
+    # past the prose cutoff below and was dropped, cutting the crop through the
+    # middle of the digits. Predominantly numeric is the real signal; prose that
+    # merely mentions numbers ("The table shows 3 of the 4 rainforests") stays
+    # well under the fraction.
+    numeric = sum(1 for w in words if _NUMERIC_TOKEN_RE.fullmatch(w))
+    if numeric >= max(2, len(words) * MIN_NUMERIC_FRACTION):
+        return True
     if len(words) > LABEL_MAX_WORDS:
         return False
     # A caption is a sentence and reads like one; a label is a noun phrase.
