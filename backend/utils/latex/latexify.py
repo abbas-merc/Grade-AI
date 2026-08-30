@@ -175,6 +175,44 @@ _ENV_RE = re.compile(r"\\(begin|end)\s*\{([^}]*)\}")
 _CMD_RE = re.compile(r"\\[A-Za-z@]+")
 
 
+# A "\\" line break followed by a literal "[" — TeX would read the bracket as the
+# break's optional length. Whitespace and newlines between them are skipped by
+# TeX, so they must be matched here too.
+#
+# But "\\[6pt]" IS that optional length and is exactly what the model emits to
+# space a formula off the line above, so only a bracket whose content is NOT a
+# length may be protected. Getting this backwards turns every deliberate bit of
+# vertical spacing into a literal "[6pt]" printed on the page.
+_TEX_LENGTH = re.compile(
+    r"^\s*-?[\d.]*\s*(?:pt|mm|cm|in|ex|em|bp|pc|dd|cc|sp|"
+    r"\\baselineskip|\\smallskipamount|\\medskipamount|\\bigskipamount)\s*$")
+_BREAK_THEN_BRACKET = re.compile(r"\\\\\s*\[([^]\n]*)\]")
+# Undo the over-eager form of the protection above, so a store written by an
+# earlier version is repaired in place rather than left printing "[6pt]".
+_OVERPROTECTED = re.compile(r"\\\\\{\}\[([^]\n]*)\]")
+
+
+def _protect_brackets(text: str) -> tuple[str, int]:
+    """Insert {} between a line break and a following non-length bracket."""
+    def undo(match: re.Match) -> str:
+        inner = match.group(1)
+        return ("\\\\[" + inner + "]") if _TEX_LENGTH.match(inner) else match.group(0)
+
+    text = _OVERPROTECTED.sub(undo, text)
+
+    count = 0
+
+    def protect(match: re.Match) -> str:
+        nonlocal count
+        inner = match.group(1)
+        if _TEX_LENGTH.match(inner):
+            return match.group(0)
+        count += 1
+        return "\\\\{}[" + inner + "]"
+
+    return _BREAK_THEN_BRACKET.sub(protect, text), count
+
+
 def sanitize_fragment(latex: str) -> tuple[str, list[str]]:
     """Strip anything unsafe or structural from a fragment.
 
@@ -211,6 +249,16 @@ def sanitize_fragment(latex: str) -> tuple[str, list[str]]:
     # Collapse the blank lines an unwrapped environment leaves behind; a blank
     # line inside a question body would start a new paragraph mid-sentence.
     text = re.sub(r"\n{3,}", "\n\n", text).strip()
+
+    # Cambridge prints the formula a question supplies in square brackets, on its
+    # own line: "[The curved surface area, A, of a cone ... is A = pi r l.]".
+    # After a "\\" line break TeX skips whitespace and reads a following "[...]"
+    # as the break's optional vertical-space argument, so the sentence becomes a
+    # length and the compile dies with "Missing number, treated as zero". An
+    # empty group between them makes the bracket ordinary text again.
+    text, n = _protect_brackets(text)
+    if n:
+        notes.append("protected %d formula bracket(s) after a line break" % n)
     return text, notes
 
 

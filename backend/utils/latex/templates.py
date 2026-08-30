@@ -539,6 +539,10 @@ def mark_scheme_tex(paper: dict, build_dir: str,
 
     for q in paper.get("questions", []):
         number = q.get("number")
+        # Cambridge's own mark-scheme text for a question the LaTeX extraction has
+        # not covered. Printed once, on that question's first row, so an
+        # unconverted question still shows a real mark scheme instead of nothing.
+        raw_scheme = (q.get("rawMarkScheme") or "").strip()
         for sp in q.get("subParts") or []:
             # A group header ("(a)" above its own romans) is a layout device on
             # the question paper; it owns no marks and has no place in the scheme.
@@ -551,7 +555,9 @@ def mark_scheme_tex(paper: dict, build_dir: str,
             # parts; the scheme just calls that row by its question number.
             label = "" if raw_label.strip() == "(whole)" else escape_text(raw_label)
             qref = f"{number}{label}" if label else str(number)
-            answer = (sp.get("answerLatex") or sp.get("latex") or "").strip() or "--"
+            # Never fall back to the QUESTION text here: printed in the Answer
+            # column it reads as the answer, which is worse than an empty cell.
+            answer = (sp.get("answerLatex") or "").strip() or "--"
             marks = int(sp.get("marks", 0) or 0)
             points = sp.get("markPoints") or []
             if points:
@@ -562,6 +568,8 @@ def mark_scheme_tex(paper: dict, build_dir: str,
                 )
             else:
                 partial = (sp.get("partialLatex") or "").strip()
+            if not partial and raw_scheme:
+                partial, raw_scheme = raw_scheme, ""
             doc.anchor(str(sp.get("key") or sp.get("partId") or qref))
             doc.add(r"%s & %s & %d & %s \\ \hline" % (qref, answer, marks, partial or ""))
 

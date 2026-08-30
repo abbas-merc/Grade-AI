@@ -43,6 +43,7 @@ from pydantic import BaseModel, Field
 from auth import get_current_uid
 from firestore_service import _get_client
 from partlevel_selection import expand_allowed, select_paper
+from utils.latex import assemble as latex_assemble
 from utils.latex import service as latex_service
 from utils.latex.service import PaperBuildError
 from utils.pdf_generator import (
@@ -155,6 +156,25 @@ class GeneratePaperResponse(BaseModel):
 # --------------------------------------------------------------------------- #
 # Selection logic
 # --------------------------------------------------------------------------- #
+def _unrenderable() -> frozenset:
+    """Question ids to keep out of the selection pool.
+
+    A question whose sub-part needs a diagram the typesetter cannot resolve — the
+    blank grid a graph is drawn on, the axes a curve is sketched on, the line a
+    construction starts from — would typeset perfectly and be unanswerable,
+    because the thing the student is told to draw on is not on the page. The
+    screenshot renderer never had this problem (the crop contained the grid), so
+    the exclusion applies only while LaTeX is the engine.
+
+    Set GA_SKIP_UNRENDERABLE=0 to disable the filter and see the whole bank.
+    """
+    if _DEFAULT_ENGINE != "latex":
+        return frozenset()
+    if (_os.getenv("GA_SKIP_UNRENDERABLE") or "1").strip().lower() in ("0", "false", "no"):
+        return frozenset()
+    return latex_assemble.unrenderable_ids()
+
+
 def _fetch_pool(subject: str, topics: list[str], paper_type: str) -> list[dict]:
     """Return questions matching subject, the calculator mode, and (if given) topics.
 
@@ -172,6 +192,7 @@ def _fetch_pool(subject: str, topics: list[str], paper_type: str) -> list[dict]:
     """
     db = _get_client()
     topic_set = set(topics or [])
+    excluded = _unrenderable()
     pool: list[dict] = []
     query = db.collection(_QUESTIONS_COLLECTION).where(
         filter=firestore.FieldFilter("subject", "==", subject)
@@ -181,6 +202,8 @@ def _fetch_pool(subject: str, topics: list[str], paper_type: str) -> list[dict]:
         if paper_type == "P2" and data.get("calculatorStatus") != "non_calc_safe":
             continue
         if topic_set and data.get("topic") not in topic_set:
+            continue
+        if doc.id in excluded:
             continue
         pool.append(data)
     return pool
@@ -356,11 +379,16 @@ def generate_paper_pool(
     db = _get_client()
     questions: list[PoolQuestion] = []
     topics: set[str] = set()
+    # Same exclusion the generator applies, so the ceiling the teacher sees is
+    # the marks Generate can actually produce.
+    excluded = _unrenderable()
     query = db.collection(_QUESTIONS_COLLECTION).where(
         filter=firestore.FieldFilter("subject", "==", subject)
     )
     for doc in query.stream():
         d = doc.to_dict() or {}
+        if doc.id in excluded:
+            continue
         questions.append(PoolQuestion(
             paperType=d.get("paperType", "") or "",
             topic=d.get("topic", "") or "",

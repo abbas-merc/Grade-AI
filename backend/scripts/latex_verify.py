@@ -44,14 +44,26 @@ from utils.latex.latexify import validate_fragment  # noqa: E402
 PE = os.path.join(HERE, "part_extraction")
 REVIEW_PATH = os.path.join(PE, "latex_review.json")
 
-# A stem crop whose OCR text is shorter than this is page furniture (the question
-# number, a registration mark), not a scenario — those questions legitimately
-# have no stem, so an empty stemLatex is correct rather than missing.
-_MIN_MEANINGFUL_STEM_CHARS = 12
+# A stem is PROSE — "The table shows the areas, in km^2, of the four largest
+# rainforests in the world." Counting characters is not enough to recognise one:
+# the OCR of a graph's stem crop is a long run of axis ticks and point labels
+# ("5 y x 4 2 3 1 0 -2 -3 ... A B C") that clears any character threshold while
+# containing no sentence at all, and a diagram's is "NOT TO SCALE / 14 cm / 38".
+# Those questions legitimately have no written stem — the figure IS the stem —
+# so an empty stemLatex is correct there rather than missing.
+#
+# So require real words: several letter-runs, most of them not shouted furniture.
+_WORD_RE = re.compile(r"[A-Za-z]{3,}")
+_MIN_STEM_WORDS = 3
+_MIN_LOWERCASE_WORDS = 2
 
 
 def meaningful(text: str) -> bool:
-    return len(re.sub(r"[^A-Za-z0-9]", "", text or "")) >= _MIN_MEANINGFUL_STEM_CHARS
+    words = _WORD_RE.findall(text or "")
+    if len(words) < _MIN_STEM_WORDS:
+        return False
+    # "NOT TO SCALE", "AB", "P Q R" are labels; prose carries lower-case words.
+    return sum(1 for w in words if any(c.islower() for c in w)) >= _MIN_LOWERCASE_WORDS
 
 
 def review_flagged(review: dict | None = None) -> set[str]:

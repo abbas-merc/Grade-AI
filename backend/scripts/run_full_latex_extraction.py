@@ -63,7 +63,7 @@ sys.path.insert(0, HERE)
 load_dotenv(os.path.join(BACKEND, ".env"))
 
 from latex_extractor import MODEL, extract_question_latex  # noqa: E402
-from latex_verify import review_flagged, verify_question  # noqa: E402
+from latex_verify import review_flagged, unresolved_diagrams, verify_question  # noqa: E402
 from utils.latex import assemble, engine, templates  # noqa: E402
 from utils.latex.latexify import (  # noqa: E402
     ensure_math_wrapped, looks_like_plain_text, sanitize_fragment, validate_fragment,
@@ -74,6 +74,7 @@ BANK = os.path.join(PE, "part_level_questions.json")
 OUT = os.path.join(PE, "part_latex.json")
 REVIEW = os.path.join(PE, "latex_review.json")
 MANUAL = os.path.join(PE, "latex_manual_review.json")
+UNRENDERABLE = os.path.join(PE, "latex_unrenderable.json")
 LOG = os.path.join(PE, "_full_run.log")
 PARTS_IMG_DIR = os.path.join(HERE, "question_parts")
 STEMS_IMG_DIR = os.path.join(HERE, "question_stems")
@@ -459,6 +460,20 @@ def main() -> None:
             say("")
 
     # ----------------------------------------------------------------- final
+    # A --verify-only pass re-probes the WHOLE store into a fresh review, so a
+    # failure fixed since it was recorded stops being reported. (A normal run
+    # only probes the batches it extracted, and accumulates.)
+    if args.verify_only and store:
+        review = blank_review()
+        repaired = repair(store)
+        if repaired:
+            say(f"deterministic repair fixed {repaired} stored fragments")
+            save_json(OUT, store)
+        probe = probe_and_review(store, list(store), review)
+        say(f"re-probed {probe['fragments']} fragments, "
+            f"{len(probe['failures'])} compile failures")
+        save_json(REVIEW, review)
+
     assemble.reload_stores()
     fig_store = assemble.figure_store()
     flagged = review_flagged(review)
@@ -477,11 +492,23 @@ def main() -> None:
     save_json(OUT, store)
     save_json(REVIEW, review)
 
+    # The subset the paper generator must not select: a sub-part needs a diagram
+    # (a grid to draw on, axes to sketch on, a construction line) that no crop
+    # resolves for. Those typeset perfectly and are unanswerable, so they are
+    # kept out of the pool rather than printed. Everything else on the manual
+    # list is a quality note, not a reason to withhold the question.
+    unrenderable = sorted(
+        qid for qid in store
+        if qid in bank and unresolved_diagrams(bank[qid], store[qid], fig_store)
+    )
+    save_json(UNRENDERABLE, unrenderable)
+
     say("")
     say("-" * 72)
     say(f"questions in store        : {len(store)} / {len(bank)}")
     say(f"VERIFIED (shippable)      : {len(verified)}")
     say(f"needs manual review       : {len(manual)}")
+    say(f"withheld from the pool    : {len(unrenderable)} (diagram cannot be printed)")
     say(f"fragments compile-checked : {review['fragmentsChecked']}")
     say(f"compile failures          : {len(review['compileFailures'])}")
     say(f"low / medium confidence   : {len(review['lowConfidence'])} / {len(review['mediumConfidence'])}")

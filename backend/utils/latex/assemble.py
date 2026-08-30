@@ -55,6 +55,7 @@ _PE = os.path.join(_BACKEND, "scripts", "part_extraction")
 _LATEX_JSON = os.path.join(_PE, "part_latex.json")
 _FIGURES_JSON = os.path.join(_PE, "part_figures.json")
 _BANK_JSON = os.path.join(_PE, "part_level_questions.json")
+_UNRENDERABLE_JSON = os.path.join(_PE, "latex_unrenderable.json")
 # Figures are served from backend/static like every other question image, and
 # read straight off disk by the compiler.
 _STATIC_FIGURES = os.path.join(_BACKEND, "static", "question_figures")
@@ -87,11 +88,27 @@ def bank_by_id() -> dict:
     return {q["id"]: q for q in _load(_BANK_JSON, [])}
 
 
+@lru_cache(maxsize=1)
+def unrenderable_ids() -> frozenset:
+    """Questions the typesetter cannot print truthfully.
+
+    Written by ``scripts/run_full_latex_extraction.py``. These are questions with
+    a sub-part that carries a diagram — a blank grid to draw the graph on, a pair
+    of axes to sketch, a construction line — for which no crop resolves. The
+    LaTeX would compile and read correctly and the thing the student is told to
+    draw on would simply not be on the page, which is worse than a compile error
+    because nothing announces it. The paper generator drops them from the
+    selection pool rather than print a question that cannot be answered.
+    """
+    return frozenset(_load(_UNRENDERABLE_JSON, []))
+
+
 def reload_stores() -> None:
     """Drop the cached build artefacts (used by tests and the seed scripts)."""
     latex_store.cache_clear()
     figure_store.cache_clear()
     bank_by_id.cache_clear()
+    unrenderable_ids.cache_clear()
 
 
 # --------------------------------------------------------------------------- #
@@ -295,6 +312,11 @@ def from_generated_paper(paper_data: dict) -> dict:
     questions: list[dict] = []
     fallbacks: list[str] = []
     overrides = paper_data.get("latexByQuestion") or {}
+    # The generator's response carries Cambridge's own mark-scheme text for every
+    # question. It is only needed when the extraction did not cover the question,
+    # but it is the honest thing to print in that case.
+    raw_schemes = {int(m.get("questionNumber", 0) or 0): (m.get("markSchemeText") or "")
+                   for m in paper_data.get("markScheme") or []}
     for item in paper_data.get("questions", []):
         qid = (item.get("questionId")
                or question_id_from_image_url(item.get("questionImageUrl", "")))
@@ -303,6 +325,7 @@ def from_generated_paper(paper_data: dict) -> dict:
                                              latex_override=overrides.get(qid))
         if fell_back:
             fallbacks.append(qid or f"question {number}")
+            question["rawMarkScheme"] = latex_from_raw_text(raw_schemes.get(number, ""))
         # The generator's own mark total for this question is authoritative.
         if item.get("marks"):
             question["marks"] = int(item["marks"])

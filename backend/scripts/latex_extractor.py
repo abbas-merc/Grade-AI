@@ -222,7 +222,35 @@ def build_content(question: dict, image_for: dict[str, str],
                      + ((stem.get("text") or "")[:1800] or "[none]")),
         })
 
+    # A letter part can carry its own introduction that only its roman children
+    # depend on — "(a) The table shows the areas, in km^2, of the four largest
+    # rainforests", then (a)(i)...(a)(v). Each one is emitted immediately before
+    # its first child, so the model reads the question in the order Cambridge
+    # printed it. Without this the intro reaches the model nowhere at all and the
+    # scenario is silently missing from the paper.
+    by_letter = {(g.get("letter") or "").strip(): g for g in (groups or [])}
+    emitted: set[str] = set()
+
     for sp in question.get("subParts") or []:
+        path = sp.get("path") or []
+        letter = path[0] if path and path != ["_"] else ""
+        group = by_letter.get(letter)
+        if group and letter not in emitted:
+            emitted.add(letter)
+            content.append({
+                "type": "text",
+                "text": f"\n--- INTRODUCTION TO PART ({letter}) "
+                        f"(shared by every ({letter}) sub-part below) ---",
+            })
+            block = _encode_image(group["image"]) if group.get("image") else None
+            if block:
+                content.append(block)
+            content.append({
+                "type": "text",
+                "text": ("RAW TEXT (hint only, often mangled):\n"
+                         + ((group.get("text") or "")[:1800] or "[none]")),
+            })
+
         label = _label(sp)
         content.append({"type": "text",
                         "text": f"\n--- Sub-part {label} ({sp.get('marks', 0)} marks) ---"})
@@ -238,6 +266,22 @@ def build_content(question: dict, image_for: dict[str, str],
             "type": "text",
             "text": ("RAW PDF TEXT (hint only, often mangled):\n" + (raw[:1800] or "[none]") +
                      "\n\nRAW MARK SCHEME:\n" + (ms[:1200] or "[none]")),
+        })
+
+    # Safety net: a group whose letter matched no sub-part path would otherwise
+    # be dropped on the floor. Send it anyway rather than lose the text.
+    for letter, group in by_letter.items():
+        if letter in emitted:
+            continue
+        content.append({"type": "text",
+                        "text": f"\n--- INTRODUCTION TO PART ({letter}) ---"})
+        block = _encode_image(group["image"]) if group.get("image") else None
+        if block:
+            content.append(block)
+        content.append({
+            "type": "text",
+            "text": ("RAW TEXT (hint only, often mangled):\n"
+                     + ((group.get("text") or "")[:1800] or "[none]")),
         })
     return content
 
