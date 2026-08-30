@@ -154,7 +154,15 @@ def startup_event():
         print("[startup] marking-queue listener FAILED to start — continuing")
         traceback.print_exc()
 
-    print("GradeAI backend started — DB tables ready, marking queue listening.")
+    # Printed so a deploy log answers, on its own, the questions that otherwise
+    # need a debugging session: which commit is running, which port it bound, and
+    # whether anything failed to wire up.
+    print(
+        "GradeAI backend started"
+        f" | commit={(os.getenv('RAILWAY_GIT_COMMIT_SHA') or 'unknown')[:12]}"
+        f" | PORT={os.getenv('PORT') or '(unset, defaulted)'}"
+        f" | degraded={_DEGRADED or 'none'}"
+    )
 
 
 @app.get("/health")

@@ -17,7 +17,11 @@ builder = "dockerfile"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "uvicorn main:app --host 0.0.0.0 --port $PORT"
+# No startCommand. The Dockerfile's CMD is the single source of truth for how the
+# server starts. Defining it here as well meant two places had to agree about the
+# port, and this one expands "$PORT" unquoted: if the platform has not set it the
+# command becomes "... --port" with no argument, uvicorn exits immediately, and
+# the deploy fails its healthcheck with nothing in the application log to say why.
 healthcheckPath = "/health"
 # Total window Railway waits for the container to report healthy, NOT a per-probe
 # timeout. 30s was too tight: a cold container has to import firebase-admin,

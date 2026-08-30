@@ -43,9 +43,15 @@ print(s); sys.exit(0 if s['available'] else 1)"
 
 # LaTeX typesetting is the default; GA_PDF_ENGINE=images reverts to the previous
 # reportlab screenshot renderer without a redeploy.
+#
+# PORT is deliberately NOT set here. The platform assigns the port and routes its
+# healthcheck to it; baking PORT into the image shadows that value, so the server
+# can end up listening on 8000 while the healthcheck probes somewhere else — the
+# container is fine, the probe never succeeds, and the deploy is discarded with
+# "build OK, healthcheck failed" and nothing in the application log. The fallback
+# below keeps `docker run` working locally, where nothing sets PORT.
 ENV GA_PDF_ENGINE=latex \
-    PYTHONUNBUFFERED=1 \
-    PORT=8000
+    PYTHONUNBUFFERED=1
 
-EXPOSE 8000
-CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+EXPOSE 8080
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8080}"]
