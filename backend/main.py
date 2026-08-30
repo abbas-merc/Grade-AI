@@ -110,13 +110,32 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
 
 @app.on_event("startup")
 def startup_event():
-    """Create all DB tables on first run (idempotent)."""
-    import models  # noqa: F401 — ensure models are registered on Base before create_all
-    Base.metadata.create_all(bind=engine)
-    # Start the Firestore-driven grading queue listener on a daemon thread. It
-    # replaces FastAPI BackgroundTasks (which Railway kills for long jobs) and
-    # runs for the lifetime of the process without blocking the server.
-    start_marking_listener()
+    """Prepare the DB and start the marking queue — without ever blocking boot.
+
+    Neither of these is required to answer /health, and an exception raised here
+    aborts startup so the server never binds: Railway's healthcheck then fails,
+    it keeps the PREVIOUS container, and the deploy silently does nothing. That
+    is a bad trade for optional work, so each step is guarded and its failure is
+    logged and carried rather than taking the whole service down. A broken
+    marking queue is a degraded feature; a container that never boots is an
+    outage that also hides itself.
+    """
+    try:
+        import models  # noqa: F401 — register models on Base before create_all
+        Base.metadata.create_all(bind=engine)
+    except Exception:
+        print("[startup] DB table creation FAILED — continuing so /health can bind")
+        traceback.print_exc()
+
+    # Firestore-driven grading queue listener, on a daemon thread. It replaces
+    # FastAPI BackgroundTasks (which Railway kills for long jobs) and runs for
+    # the lifetime of the process without blocking the server.
+    try:
+        start_marking_listener()
+    except Exception:
+        print("[startup] marking-queue listener FAILED to start — continuing")
+        traceback.print_exc()
+
     print("GradeAI backend started — DB tables ready, marking queue listening.")
 
 
