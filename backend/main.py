@@ -60,11 +60,29 @@ app.add_middleware(
     allow_headers=["Authorization", "Content-Type"],
 )
 
-app.include_router(papers.router)
-app.include_router(questions.router)
-app.include_router(grading.router)
-app.include_router(paper_generator.router, prefix="/api")
-app.include_router(results.router, prefix="/api")
+# Each router is mounted defensively. An exception while wiring one of these
+# propagates out of module scope, uvicorn never binds, and the platform reports
+# only "healthcheck failed" — it keeps the previous container and the deploy
+# silently does nothing, which is how a missing module went unnoticed through two
+# releases. Degrading one feature is recoverable and visible; a service that
+# refuses to boot is neither. Failures are surfaced by /health, not swallowed.
+_DEGRADED: list[str] = []
+
+
+def _mount(router_module, name: str, **kwargs) -> None:
+    try:
+        app.include_router(router_module.router, **kwargs)
+    except Exception as exc:  # noqa: BLE001
+        _DEGRADED.append(f"{name}: {exc.__class__.__name__}: {exc}")
+        print(f"[startup] router {name!r} FAILED to mount — {exc!r}")
+        traceback.print_exc()
+
+
+_mount(papers, "papers")
+_mount(questions, "questions")
+_mount(grading, "grading")
+_mount(paper_generator, "paper_generator", prefix="/api")
+_mount(results, "results", prefix="/api")
 
 # Serve the extracted question diagrams (committed under static/question_diagrams)
 # at /diagrams/<questionId>.png. These back the `imageUrl` ("/diagrams/<id>.png")
@@ -144,8 +162,15 @@ def health():
     """Liveness check used by Railway and the mobile app. Includes a UTC
     timestamp and the deployed git SHA (set by Railway as
     RAILWAY_GIT_COMMIT_SHA) so we can confirm the expected commit is live."""
-    return {
+    body = {
         "status": "ok",
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "commit": (os.getenv("RAILWAY_GIT_COMMIT_SHA") or "unknown")[:12],
     }
+    # Anything that failed to wire up at import. Reported rather than hidden, and
+    # deliberately still a 200: the deploy should land and tell the truth about
+    # what is broken, not be rolled back into a version that says nothing.
+    if _DEGRADED:
+        body["status"] = "degraded"
+        body["degraded"] = _DEGRADED
+    return body
