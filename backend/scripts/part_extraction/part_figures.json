@@ -1,0 +1,7330 @@
+{
+  "parts": {
+    "058021_2024_Q1__": {
+      "partId": "058021_2024_Q1__",
+      "imageUrl": "/question_figures/058021_2024_Q1__.png",
+      "band": [
+        1,
+        145.8,
+        279.3
+      ],
+      "px": [
+        1452,
+        372
+      ]
+    },
+    "058021_2024_Q6__": {
+      "partId": "058021_2024_Q6__",
+      "imageUrl": "/question_figures/058021_2024_Q6__.png",
+      "band": [
+        3,
+        77.1,
+        271.3
+      ],
+      "px": [
+        1452,
+        541
+      ]
+    },
+    "058021_2024_Q11__": {
+      "partId": "058021_2024_Q11__",
+      "imageUrl": "/question_figures/058021_2024_Q11__.png",
+      "band": [
+        6,
+        92.6,
+        294.6
+      ],
+      "px": [
+        1452,
+        562
+      ]
+    },
+    "058021_2024_Q13__": {
+      "partId": "058021_2024_Q13__",
+      "imageUrl": "/question_figures/058021_2024_Q13__.png",
+      "band": [
+        7,
+        75.3,
+        306.2
+      ],
+      "px": [
+        1452,
+        643
+      ]
+    },
+    "058021_2024_Q14__": {
+      "partId": "058021_2024_Q14__",
+      "imageUrl": "/question_figures/058021_2024_Q14__.png",
+      "band": [
+        8,
+        75.1,
+        243.8
+      ],
+      "px": [
+        1452,
+        470
+      ]
+    },
+    "058021_2024_Q16_a": {
+      "partId": "058021_2024_Q16_a",
+      "imageUrl": "/question_figures/058021_2024_Q16_a.png",
+      "band": [
+        9,
+        77.8,
+        215.0
+      ],
+      "px": [
+        1452,
+        382
+      ]
+    },
+    "058021_2024_Q16_b": {
+      "partId": "058021_2024_Q16_b",
+      "imageUrl": "/question_figures/058021_2024_Q16_b.png",
+      "band": [
+        9,
+        251.0,
+        436.5
+      ],
+      "px": [
+        1452,
+        517
+      ]
+    },
+    "058021_2024_Q17__": {
+      "partId": "058021_2024_Q17__",
+      "imageUrl": "/question_figures/058021_2024_Q17__.png",
+      "band": [
+        10,
+        76.9,
+        208.3
+      ],
+      "px": [
+        1452,
+        367
+      ]
+    },
+    "058021_2024_Q18__": {
+      "partId": "058021_2024_Q18__",
+      "imageUrl": "/question_figures/058021_2024_Q18__.png",
+      "band": [
+        11,
+        89.5,
+        394.0
+      ],
+      "px": [
+        1452,
+        848
+      ]
+    },
+    "058021_2024_Q21__": {
+      "partId": "058021_2024_Q21__",
+      "imageUrl": "/question_figures/058021_2024_Q21__.png",
+      "band": [
+        13,
+        76.9,
+        200.5
+      ],
+      "px": [
+        1452,
+        345
+      ]
+    },
+    "0580_2_SP_2025_Q4__": {
+      "partId": "0580_2_SP_2025_Q4__",
+      "imageUrl": "/question_figures/0580_2_SP_2025_Q4__.png",
+      "band": [
+        2,
+        437.6,
+        551.2
+      ],
+      "px": [
+        1452,
+        317
+      ]
+    },
+    "0580_2_SP_2025_Q8__": {
+      "partId": "0580_2_SP_2025_Q8__",
+      "imageUrl": "/question_figures/0580_2_SP_2025_Q8__.png",
+      "band": [
+        4,
+        75.2,
+        183.1
+      ],
+      "px": [
+        1452,
+        300
+      ]
+    },
+    "0580_2_SP_2025_Q15__": {
+      "partId": "0580_2_SP_2025_Q15__",
+      "imageUrl": "/question_figures/0580_2_SP_2025_Q15__.png",
+      "band": [
+        7,
+        76.8,
+        282.8
+      ],
+      "px": [
+        1452,
+        574
+      ]
+    },
+    "0580_2_SP_2025_Q16_b": {
+      "partId": "0580_2_SP_2025_Q16_b",
+      "imageUrl": "/question_figures/0580_2_SP_2025_Q16_b.png",
+      "band": [
+        9,
+        186.5,
+        426.3
+      ],
+      "px": [
+        1452,
+        668
+      ]
+    },
+    "0580_2_SP_2025_Q22__": {
+      "partId": "0580_2_SP_2025_Q22__",
+      "imageUrl": "/question_figures/0580_2_SP_2025_Q22__.png",
+      "band": [
+        14,
+        75.8,
+        141.3
+      ],
+      "px": [
+        1452,
+        183
+      ]
+    },
+    "0580_2_SP_2025_Q25__": {
+      "partId": "0580_2_SP_2025_Q25__",
+      "imageUrl": "/question_figures/0580_2_SP_2025_Q25__.png",
+      "band": [
+        15,
+        290.2,
+        367.4
+      ],
+      "px": [
+        1452,
+        216
+      ]
+    },
+    "0580_4_SP_2025_Q7_b": {
+      "partId": "0580_4_SP_2025_Q7_b",
+      "imageUrl": "/question_figures/0580_4_SP_2025_Q7_b.png",
+      "band": [
+        5,
+        275.8,
+        527.2
+      ],
+      "px": [
+        1452,
+        700
+      ]
+    },
+    "0580_4_SP_2025_Q17__": {
+      "partId": "0580_4_SP_2025_Q17__",
+      "imageUrl": "/question_figures/0580_4_SP_2025_Q17__.png",
+      "band": [
+        12,
+        77.4,
+        167.1
+      ],
+      "px": [
+        1452,
+        250
+      ]
+    },
+    "058022_m24_Q4__": {
+      "partId": "058022_m24_Q4__",
+      "imageUrl": "/question_figures/058022_m24_Q4__.png",
+      "band": [
+        1,
+        402.3,
+        604.8
+      ],
+      "px": [
+        1452,
+        564
+      ]
+    },
+    "058022_m24_Q10__": {
+      "partId": "058022_m24_Q10__",
+      "imageUrl": "/question_figures/058022_m24_Q10__.png",
+      "band": [
+        4,
+        77.1,
+        166.3
+      ],
+      "px": [
+        1452,
+        249
+      ]
+    },
+    "058022_m24_Q16__": {
+      "partId": "058022_m24_Q16__",
+      "imageUrl": "/question_figures/058022_m24_Q16__.png",
+      "band": [
+        7,
+        128.3,
+        293.1
+      ],
+      "px": [
+        1452,
+        459
+      ]
+    },
+    "058022_m24_Q19__": {
+      "partId": "058022_m24_Q19__",
+      "imageUrl": "/question_figures/058022_m24_Q19__.png",
+      "band": [
+        8,
+        98.3,
+        212.1
+      ],
+      "px": [
+        1452,
+        317
+      ]
+    },
+    "058022_m24_Q20__": {
+      "partId": "058022_m24_Q20__",
+      "imageUrl": "/question_figures/058022_m24_Q20__.png",
+      "band": [
+        8,
+        472.6,
+        610.8
+      ],
+      "px": [
+        1452,
+        385
+      ]
+    },
+    "058042_m24_Q4_b": {
+      "partId": "058042_m24_Q4_b",
+      "imageUrl": "/question_figures/058042_m24_Q4_b.png",
+      "band": [
+        8,
+        76.9,
+        226.4
+      ],
+      "px": [
+        1452,
+        417
+      ]
+    },
+    "058042_m24_Q7_b": {
+      "partId": "058042_m24_Q7_b",
+      "imageUrl": "/question_figures/058042_m24_Q7_b.png",
+      "band": [
+        12,
+        427.2,
+        551.7
+      ],
+      "px": [
+        1452,
+        347
+      ]
+    },
+    "058042_m24_Q12_a": {
+      "partId": "058042_m24_Q12_a",
+      "imageUrl": "/question_figures/058042_m24_Q12_a.png",
+      "band": [
+        18,
+        76.9,
+        218.2
+      ],
+      "px": [
+        1452,
+        394
+      ]
+    },
+    "058022_s24_Q7__": {
+      "partId": "058022_s24_Q7__",
+      "imageUrl": "/question_figures/058022_s24_Q7__.png",
+      "band": [
+        2,
+        593.2,
+        702.2
+      ],
+      "px": [
+        1452,
+        304
+      ]
+    },
+    "058022_s24_Q12__": {
+      "partId": "058022_s24_Q12__",
+      "imageUrl": "/question_figures/058022_s24_Q12__.png",
+      "band": [
+        4,
+        297.1,
+        405.3
+      ],
+      "px": [
+        1452,
+        302
+      ]
+    },
+    "058022_s24_Q15__": {
+      "partId": "058022_s24_Q15__",
+      "imageUrl": "/question_figures/058022_s24_Q15__.png",
+      "band": [
+        5,
+        494.2,
+        576.8
+      ],
+      "px": [
+        1452,
+        231
+      ]
+    },
+    "058022_s24_Q17__": {
+      "partId": "058022_s24_Q17__",
+      "imageUrl": "/question_figures/058022_s24_Q17__.png",
+      "band": [
+        6,
+        610.2,
+        731.7
+      ],
+      "px": [
+        1452,
+        339
+      ]
+    },
+    "058022_s24_Q22_a_i": {
+      "partId": "058022_s24_Q22_a_i",
+      "imageUrl": "/question_figures/058022_s24_Q22_a_i.png",
+      "band": [
+        9,
+        101.9,
+        234.2
+      ],
+      "px": [
+        1452,
+        369
+      ]
+    },
+    "058022_s24_Q22_a_ii": {
+      "partId": "058022_s24_Q22_a_ii",
+      "imageUrl": "/question_figures/058022_s24_Q22_a_ii.png",
+      "band": [
+        9,
+        285.9,
+        413.6
+      ],
+      "px": [
+        1452,
+        356
+      ]
+    },
+    "058023_s24_Q9__": {
+      "partId": "058023_s24_Q9__",
+      "imageUrl": "/question_figures/058023_s24_Q9__.png",
+      "band": [
+        2,
+        435.0,
+        616.0
+      ],
+      "px": [
+        1452,
+        504
+      ]
+    },
+    "058023_s24_Q13_b": {
+      "partId": "058023_s24_Q13_b",
+      "imageUrl": "/question_figures/058023_s24_Q13_b.png",
+      "band": [
+        4,
+        211.0,
+        328.6
+      ],
+      "px": [
+        1452,
+        328
+      ]
+    },
+    "058023_s24_Q18__": {
+      "partId": "058023_s24_Q18__",
+      "imageUrl": "/question_figures/058023_s24_Q18__.png",
+      "band": [
+        7,
+        85.4,
+        156.5
+      ],
+      "px": [
+        1452,
+        199
+      ]
+    },
+    "058023_s24_Q24__": {
+      "partId": "058023_s24_Q24__",
+      "imageUrl": "/question_figures/058023_s24_Q24__.png",
+      "band": [
+        9,
+        384.8,
+        490.5
+      ],
+      "px": [
+        1452,
+        295
+      ]
+    },
+    "058023_s24_Q26__": {
+      "partId": "058023_s24_Q26__",
+      "imageUrl": "/question_figures/058023_s24_Q26__.png",
+      "band": [
+        10,
+        371.1,
+        507.2
+      ],
+      "px": [
+        1452,
+        379
+      ]
+    },
+    "058042_s24_Q2_a": {
+      "partId": "058042_s24_Q2_a",
+      "imageUrl": "/question_figures/058042_s24_Q2_a.png",
+      "band": [
+        3,
+        76.9,
+        201.5
+      ],
+      "px": [
+        1452,
+        348
+      ]
+    },
+    "058042_s24_Q2_c": {
+      "partId": "058042_s24_Q2_c",
+      "imageUrl": "/question_figures/058042_s24_Q2_c.png",
+      "band": [
+        4,
+        76.9,
+        266.0
+      ],
+      "px": [
+        1452,
+        527
+      ]
+    },
+    "058042_s24_Q2_d": {
+      "partId": "058042_s24_Q2_d",
+      "imageUrl": "/question_figures/058042_s24_Q2_d.png",
+      "band": [
+        4,
+        472.8,
+        610.3
+      ],
+      "px": [
+        1452,
+        383
+      ]
+    },
+    "058042_s24_Q4_a_ii": {
+      "partId": "058042_s24_Q4_a_ii",
+      "imageUrl": "/question_figures/058042_s24_Q4_a_ii.png",
+      "band": [
+        7,
+        379.5,
+        460.8
+      ],
+      "px": [
+        1452,
+        227
+      ]
+    },
+    "058042_s24_Q4_c": {
+      "partId": "058042_s24_Q4_c",
+      "imageUrl": "/question_figures/058042_s24_Q4_c.png",
+      "band": [
+        8,
+        357.4,
+        544.3
+      ],
+      "px": [
+        1452,
+        521
+      ]
+    },
+    "058042_s24_Q9_a": {
+      "partId": "058042_s24_Q9_a",
+      "imageUrl": "/question_figures/058042_s24_Q9_a.png",
+      "band": [
+        15,
+        73.8,
+        219.1
+      ],
+      "px": [
+        1452,
+        405
+      ]
+    },
+    "058042_s24_Q9_b_ii": {
+      "partId": "058042_s24_Q9_b_ii",
+      "imageUrl": "/question_figures/058042_s24_Q9_b_ii.png",
+      "band": [
+        16,
+        421.3,
+        562.5
+      ],
+      "px": [
+        1452,
+        393
+      ]
+    },
+    "058043_s24_Q5_a_iv": {
+      "partId": "058043_s24_Q5_a_iv",
+      "imageUrl": "/question_figures/058043_s24_Q5_a_iv.png",
+      "band": [
+        10,
+        146.4,
+        182.5
+      ],
+      "px": [
+        1452,
+        101
+      ]
+    },
+    "058043_s24_Q6_a": {
+      "partId": "058043_s24_Q6_a",
+      "imageUrl": "/question_figures/058043_s24_Q6_a.png",
+      "band": [
+        11,
+        97.9,
+        234.2
+      ],
+      "px": [
+        1452,
+        379
+      ]
+    },
+    "058043_s24_Q6_b": {
+      "partId": "058043_s24_Q6_b",
+      "imageUrl": "/question_figures/058043_s24_Q6_b.png",
+      "band": [
+        11,
+        438.4,
+        574.7
+      ],
+      "px": [
+        1452,
+        380
+      ]
+    },
+    "058043_s24_Q6_c": {
+      "partId": "058043_s24_Q6_c",
+      "imageUrl": "/question_figures/058043_s24_Q6_c.png",
+      "band": [
+        12,
+        96.8,
+        201.0
+      ],
+      "px": [
+        1452,
+        290
+      ]
+    },
+    "058043_s24_Q6_d": {
+      "partId": "058043_s24_Q6_d",
+      "imageUrl": "/question_figures/058043_s24_Q6_d.png",
+      "band": [
+        12,
+        477.4,
+        576.1
+      ],
+      "px": [
+        1452,
+        275
+      ]
+    },
+    "058043_s24_Q8_a_iii": {
+      "partId": "058043_s24_Q8_a_iii",
+      "imageUrl": "/question_figures/058043_s24_Q8_a_iii.png",
+      "band": [
+        15,
+        545.0,
+        617.6
+      ],
+      "px": [
+        1452,
+        203
+      ]
+    },
+    "058043_s24_Q11_a": {
+      "partId": "058043_s24_Q11_a",
+      "imageUrl": "/question_figures/058043_s24_Q11_a.png",
+      "band": [
+        21,
+        85.0,
+        202.8
+      ],
+      "px": [
+        1452,
+        328
+      ]
+    },
+    "058022_m25_Q6__": {
+      "partId": "058022_m25_Q6__",
+      "imageUrl": "/question_figures/058022_m25_Q6__.png",
+      "band": [
+        4,
+        75.4,
+        176.3
+      ],
+      "px": [
+        1452,
+        282
+      ]
+    },
+    "058022_m25_Q10__": {
+      "partId": "058022_m25_Q10__",
+      "imageUrl": "/question_figures/058022_m25_Q10__.png",
+      "band": [
+        6,
+        111.2,
+        181.9
+      ],
+      "px": [
+        1452,
+        197
+      ]
+    },
+    "058022_m25_Q13__": {
+      "partId": "058022_m25_Q13__",
+      "imageUrl": "/question_figures/058022_m25_Q13__.png",
+      "band": [
+        9,
+        138.0,
+        185.1
+      ],
+      "px": [
+        1452,
+        132
+      ]
+    },
+    "058022_m25_Q19__": {
+      "partId": "058022_m25_Q19__",
+      "imageUrl": "/question_figures/058022_m25_Q19__.png",
+      "band": [
+        15,
+        75.1,
+        252.2
+      ],
+      "px": [
+        1452,
+        494
+      ]
+    },
+    "058021_s25_Q2__": {
+      "partId": "058021_s25_Q2__",
+      "imageUrl": "/question_figures/058021_s25_Q2__.png",
+      "band": [
+        2,
+        242.6,
+        442.2
+      ],
+      "px": [
+        1452,
+        556
+      ]
+    },
+    "058021_s25_Q17_b_i": {
+      "partId": "058021_s25_Q17_b_i",
+      "imageUrl": "/question_figures/058021_s25_Q17_b_i.png",
+      "band": [
+        12,
+        329.6,
+        608.7
+      ],
+      "px": [
+        1452,
+        777
+      ]
+    },
+    "058021_s25_Q20__": {
+      "partId": "058021_s25_Q20__",
+      "imageUrl": "/question_figures/058021_s25_Q20__.png",
+      "band": [
+        14,
+        255.4,
+        356.2
+      ],
+      "px": [
+        1452,
+        282
+      ]
+    },
+    "058022_s25_Q1_a": {
+      "partId": "058022_s25_Q1_a",
+      "imageUrl": "/question_figures/058022_s25_Q1_a.png",
+      "band": [
+        2,
+        101.0,
+        208.3
+      ],
+      "px": [
+        1452,
+        299
+      ]
+    },
+    "058022_s25_Q1_b": {
+      "partId": "058022_s25_Q1_b",
+      "imageUrl": "/question_figures/058022_s25_Q1_b.png",
+      "band": [
+        2,
+        255.0,
+        362.2
+      ],
+      "px": [
+        1452,
+        299
+      ]
+    },
+    "058022_s25_Q3__": {
+      "partId": "058022_s25_Q3__",
+      "imageUrl": "/question_figures/058022_s25_Q3__.png",
+      "band": [
+        3,
+        75.0,
+        263.5
+      ],
+      "px": [
+        1452,
+        525
+      ]
+    },
+    "058022_s25_Q10__": {
+      "partId": "058022_s25_Q10__",
+      "imageUrl": "/question_figures/058022_s25_Q10__.png",
+      "band": [
+        7,
+        75.2,
+        192.6
+      ],
+      "px": [
+        1452,
+        327
+      ]
+    },
+    "058022_s25_Q12__": {
+      "partId": "058022_s25_Q12__",
+      "imageUrl": "/question_figures/058022_s25_Q12__.png",
+      "band": [
+        8,
+        75.1,
+        248.0
+      ],
+      "px": [
+        1452,
+        482
+      ]
+    },
+    "058022_s25_Q13_a_ii": {
+      "partId": "058022_s25_Q13_a_ii",
+      "imageUrl": "/question_figures/058022_s25_Q13_a_ii.png",
+      "band": [
+        9,
+        590.6,
+        696.6
+      ],
+      "px": [
+        1452,
+        296
+      ]
+    },
+    "058022_s25_Q16__": {
+      "partId": "058022_s25_Q16__",
+      "imageUrl": "/question_figures/058022_s25_Q16__.png",
+      "band": [
+        13,
+        75.3,
+        249.9
+      ],
+      "px": [
+        1452,
+        486
+      ]
+    },
+    "058022_s25_Q23__": {
+      "partId": "058022_s25_Q23__",
+      "imageUrl": "/question_figures/058022_s25_Q23__.png",
+      "band": [
+        17,
+        309.9,
+        386.5
+      ],
+      "px": [
+        1452,
+        214
+      ]
+    },
+    "058023_s25_Q2__": {
+      "partId": "058023_s25_Q2__",
+      "imageUrl": "/question_figures/058023_s25_Q2__.png",
+      "band": [
+        2,
+        235.3,
+        460.3
+      ],
+      "px": [
+        1452,
+        626
+      ]
+    },
+    "058023_s25_Q17__": {
+      "partId": "058023_s25_Q17__",
+      "imageUrl": "/question_figures/058023_s25_Q17__.png",
+      "band": [
+        11,
+        75.5,
+        189.5
+      ],
+      "px": [
+        1452,
+        318
+      ]
+    },
+    "058023_s25_Q20__": {
+      "partId": "058023_s25_Q20__",
+      "imageUrl": "/question_figures/058023_s25_Q20__.png",
+      "band": [
+        12,
+        74.0,
+        191.9
+      ],
+      "px": [
+        1452,
+        329
+      ]
+    },
+    "058023_s25_Q23_b": {
+      "partId": "058023_s25_Q23_b",
+      "imageUrl": "/question_figures/058023_s25_Q23_b.png",
+      "band": [
+        14,
+        130.1,
+        260.9
+      ],
+      "px": [
+        1452,
+        365
+      ]
+    },
+    "058021_w25_Q2__": {
+      "partId": "058021_w25_Q2__",
+      "imageUrl": "/question_figures/058021_w25_Q2__.png",
+      "band": [
+        2,
+        238.2,
+        370.7
+      ],
+      "px": [
+        1452,
+        369
+      ]
+    },
+    "058021_w25_Q12__": {
+      "partId": "058021_w25_Q12__",
+      "imageUrl": "/question_figures/058021_w25_Q12__.png",
+      "band": [
+        6,
+        88.2,
+        197.6
+      ],
+      "px": [
+        1452,
+        305
+      ]
+    },
+    "058021_w25_Q16__": {
+      "partId": "058021_w25_Q16__",
+      "imageUrl": "/question_figures/058021_w25_Q16__.png",
+      "band": [
+        9,
+        90.4,
+        281.5
+      ],
+      "px": [
+        1452,
+        532
+      ]
+    },
+    "058021_w25_Q20_b_i": {
+      "partId": "058021_w25_Q20_b_i",
+      "imageUrl": "/question_figures/058021_w25_Q20_b_i.png",
+      "band": [
+        11,
+        418.5,
+        628.0
+      ],
+      "px": [
+        1452,
+        583
+      ]
+    },
+    "058021_w25_Q24__": {
+      "partId": "058021_w25_Q24__",
+      "imageUrl": "/question_figures/058021_w25_Q24__.png",
+      "band": [
+        14,
+        280.5,
+        370.7
+      ],
+      "px": [
+        1452,
+        252
+      ]
+    },
+    "058022_w25_Q16__": {
+      "partId": "058022_w25_Q16__",
+      "imageUrl": "/question_figures/058022_w25_Q16__.png",
+      "band": [
+        9,
+        344.6,
+        427.3
+      ],
+      "px": [
+        1452,
+        230
+      ]
+    },
+    "058022_w25_Q19__": {
+      "partId": "058022_w25_Q19__",
+      "imageUrl": "/question_figures/058022_w25_Q19__.png",
+      "band": [
+        11,
+        377.2,
+        524.8
+      ],
+      "px": [
+        1452,
+        411
+      ]
+    },
+    "058023_w25_Q1__": {
+      "partId": "058023_w25_Q1__",
+      "imageUrl": "/question_figures/058023_w25_Q1__.png",
+      "band": [
+        2,
+        118.1,
+        199.9
+      ],
+      "px": [
+        1452,
+        228
+      ]
+    },
+    "058023_w25_Q3__": {
+      "partId": "058023_w25_Q3__",
+      "imageUrl": "/question_figures/058023_w25_Q3__.png",
+      "band": [
+        2,
+        520.0,
+        709.1
+      ],
+      "px": [
+        1452,
+        527
+      ]
+    },
+    "058023_w25_Q4__": {
+      "partId": "058023_w25_Q4__",
+      "imageUrl": "/question_figures/058023_w25_Q4__.png",
+      "band": [
+        3,
+        161.1,
+        296.2
+      ],
+      "px": [
+        1452,
+        377
+      ]
+    },
+    "058023_w25_Q5__": {
+      "partId": "058023_w25_Q5__",
+      "imageUrl": "/question_figures/058023_w25_Q5__.png",
+      "band": [
+        3,
+        448.0,
+        573.8
+      ],
+      "px": [
+        1452,
+        351
+      ]
+    },
+    "058023_w25_Q13__": {
+      "partId": "058023_w25_Q13__",
+      "imageUrl": "/question_figures/058023_w25_Q13__.png",
+      "band": [
+        8,
+        75.0,
+        286.7
+      ],
+      "px": [
+        1452,
+        590
+      ]
+    },
+    "058023_w25_Q18_a": {
+      "partId": "058023_w25_Q18_a",
+      "imageUrl": "/question_figures/058023_w25_Q18_a.png",
+      "band": [
+        11,
+        102.4,
+        239.4
+      ],
+      "px": [
+        1452,
+        382
+      ]
+    },
+    "058023_w25_Q18_b": {
+      "partId": "058023_w25_Q18_b",
+      "imageUrl": "/question_figures/058023_w25_Q18_b.png",
+      "band": [
+        11,
+        287.7,
+        458.9
+      ],
+      "px": [
+        1452,
+        477
+      ]
+    },
+    "058023_w25_Q21__": {
+      "partId": "058023_w25_Q21__",
+      "imageUrl": "/question_figures/058023_w25_Q21__.png",
+      "band": [
+        13,
+        299.4,
+        451.2
+      ],
+      "px": [
+        1452,
+        423
+      ]
+    },
+    "058023_w25_Q23__": {
+      "partId": "058023_w25_Q23__",
+      "imageUrl": "/question_figures/058023_w25_Q23__.png",
+      "band": [
+        14,
+        337.1,
+        448.9
+      ],
+      "px": [
+        1452,
+        312
+      ]
+    },
+    "058023_w25_Q24_b": {
+      "partId": "058023_w25_Q24_b",
+      "imageUrl": "/question_figures/058023_w25_Q24_b.png",
+      "band": [
+        15,
+        231.3,
+        278.7
+      ],
+      "px": [
+        1452,
+        133
+      ]
+    },
+    "058023_w25_Q29__": {
+      "partId": "058023_w25_Q29__",
+      "imageUrl": "/question_figures/058023_w25_Q29__.png",
+      "band": [
+        18,
+        88.3,
+        215.7
+      ],
+      "px": [
+        1452,
+        355
+      ]
+    },
+    "058042_m25_Q3__": {
+      "partId": "058042_m25_Q3__",
+      "imageUrl": "/question_figures/058042_m25_Q3__.png",
+      "band": [
+        2,
+        295.8,
+        420.9
+      ],
+      "px": [
+        1452,
+        348
+      ]
+    },
+    "058042_m25_Q5__": {
+      "partId": "058042_m25_Q5__",
+      "imageUrl": "/question_figures/058042_m25_Q5__.png",
+      "band": [
+        3,
+        75.7,
+        331.2
+      ],
+      "px": [
+        1452,
+        711
+      ]
+    },
+    "058042_m25_Q7_a": {
+      "partId": "058042_m25_Q7_a",
+      "imageUrl": "/question_figures/058042_m25_Q7_a.png",
+      "band": [
+        4,
+        168.7,
+        569.3
+      ],
+      "px": [
+        1452,
+        1114
+      ]
+    },
+    "058042_m25_Q15_b": {
+      "partId": "058042_m25_Q15_b",
+      "imageUrl": "/question_figures/058042_m25_Q15_b.png",
+      "band": [
+        9,
+        377.9,
+        674.9
+      ],
+      "px": [
+        1452,
+        827
+      ]
+    },
+    "058042_m25_Q21__": {
+      "partId": "058042_m25_Q21__",
+      "imageUrl": "/question_figures/058042_m25_Q21__.png",
+      "band": [
+        13,
+        326.6,
+        460.3
+      ],
+      "px": [
+        1452,
+        372
+      ]
+    },
+    "058042_m25_Q23__": {
+      "partId": "058042_m25_Q23__",
+      "imageUrl": "/question_figures/058042_m25_Q23__.png",
+      "band": [
+        15,
+        75.7,
+        191.1
+      ],
+      "px": [
+        1452,
+        322
+      ]
+    },
+    "058041_s25_Q12__": {
+      "partId": "058041_s25_Q12__",
+      "imageUrl": "/question_figures/058041_s25_Q12__.png",
+      "band": [
+        7,
+        75.7,
+        206.3
+      ],
+      "px": [
+        1452,
+        364
+      ]
+    },
+    "058041_s25_Q15_c": {
+      "partId": "058041_s25_Q15_c",
+      "imageUrl": "/question_figures/058041_s25_Q15_c.png",
+      "band": [
+        10,
+        285.2,
+        349.9
+      ],
+      "px": [
+        1452,
+        181
+      ]
+    },
+    "058041_s25_Q19__": {
+      "partId": "058041_s25_Q19__",
+      "imageUrl": "/question_figures/058041_s25_Q19__.png",
+      "band": [
+        12,
+        358.1,
+        456.5
+      ],
+      "px": [
+        1452,
+        275
+      ]
+    },
+    "058041_s25_Q20_b": {
+      "partId": "058041_s25_Q20_b",
+      "imageUrl": "/question_figures/058041_s25_Q20_b.png",
+      "band": [
+        14,
+        75.0,
+        225.1
+      ],
+      "px": [
+        1452,
+        418
+      ]
+    },
+    "058042_s25_Q2__": {
+      "partId": "058042_s25_Q2__",
+      "imageUrl": "/question_figures/058042_s25_Q2__.png",
+      "band": [
+        2,
+        256.8,
+        399.4
+      ],
+      "px": [
+        1452,
+        398
+      ]
+    },
+    "058042_s25_Q4__": {
+      "partId": "058042_s25_Q4__",
+      "imageUrl": "/question_figures/058042_s25_Q4__.png",
+      "band": [
+        3,
+        296.9,
+        423.4
+      ],
+      "px": [
+        1452,
+        353
+      ]
+    },
+    "058042_s25_Q18__": {
+      "partId": "058042_s25_Q18__",
+      "imageUrl": "/question_figures/058042_s25_Q18__.png",
+      "band": [
+        11,
+        75.7,
+        324.4
+      ],
+      "px": [
+        1452,
+        692
+      ]
+    },
+    "058042_s25_Q27__": {
+      "partId": "058042_s25_Q27__",
+      "imageUrl": "/question_figures/058042_s25_Q27__.png",
+      "band": [
+        18,
+        87.6,
+        242.0
+      ],
+      "px": [
+        1452,
+        430
+      ]
+    },
+    "058043_s25_Q4__": {
+      "partId": "058043_s25_Q4__",
+      "imageUrl": "/question_figures/058043_s25_Q4__.png",
+      "band": [
+        3,
+        75.3,
+        189.5
+      ],
+      "px": [
+        1452,
+        318
+      ]
+    },
+    "058043_s25_Q12__": {
+      "partId": "058043_s25_Q12__",
+      "imageUrl": "/question_figures/058043_s25_Q12__.png",
+      "band": [
+        6,
+        425.8,
+        459.2
+      ],
+      "px": [
+        1452,
+        94
+      ]
+    },
+    "058043_s25_Q17__": {
+      "partId": "058043_s25_Q17__",
+      "imageUrl": "/question_figures/058043_s25_Q17__.png",
+      "band": [
+        9,
+        431.9,
+        615.6
+      ],
+      "px": [
+        1452,
+        512
+      ]
+    },
+    "058043_s25_Q18_c": {
+      "partId": "058043_s25_Q18_c",
+      "imageUrl": "/question_figures/058043_s25_Q18_c.png",
+      "band": [
+        10,
+        432.0,
+        517.9
+      ],
+      "px": [
+        1452,
+        239
+      ]
+    },
+    "058043_s25_Q21__": {
+      "partId": "058043_s25_Q21__",
+      "imageUrl": "/question_figures/058043_s25_Q21__.png",
+      "band": [
+        13,
+        75.7,
+        242.2
+      ],
+      "px": [
+        1452,
+        464
+      ]
+    },
+    "058043_s25_Q23__": {
+      "partId": "058043_s25_Q23__",
+      "imageUrl": "/question_figures/058043_s25_Q23__.png",
+      "band": [
+        15,
+        75.1,
+        278.4
+      ],
+      "px": [
+        1452,
+        566
+      ]
+    },
+    "058041_w25_Q3__": {
+      "partId": "058041_w25_Q3__",
+      "imageUrl": "/question_figures/058041_w25_Q3__.png",
+      "band": [
+        2,
+        371.2,
+        480.0
+      ],
+      "px": [
+        1452,
+        304
+      ]
+    },
+    "058041_w25_Q13__": {
+      "partId": "058041_w25_Q13__",
+      "imageUrl": "/question_figures/058041_w25_Q13__.png",
+      "band": [
+        6,
+        401.2,
+        498.2
+      ],
+      "px": [
+        1452,
+        271
+      ]
+    },
+    "058041_w25_Q15__": {
+      "partId": "058041_w25_Q15__",
+      "imageUrl": "/question_figures/058041_w25_Q15__.png",
+      "band": [
+        8,
+        392.0,
+        544.7
+      ],
+      "px": [
+        1452,
+        426
+      ]
+    },
+    "058041_w25_Q27__": {
+      "partId": "058041_w25_Q27__",
+      "imageUrl": "/question_figures/058041_w25_Q27__.png",
+      "band": [
+        16,
+        88.0,
+        207.5
+      ],
+      "px": [
+        1452,
+        333
+      ]
+    },
+    "058042_w25_Q7_b": {
+      "partId": "058042_w25_Q7_b",
+      "imageUrl": "/question_figures/058042_w25_Q7_b.png",
+      "band": [
+        4,
+        433.6,
+        520.7
+      ],
+      "px": [
+        1452,
+        243
+      ]
+    },
+    "058042_w25_Q9__": {
+      "partId": "058042_w25_Q9__",
+      "imageUrl": "/question_figures/058042_w25_Q9__.png",
+      "band": [
+        6,
+        93.6,
+        238.0
+      ],
+      "px": [
+        1452,
+        402
+      ]
+    },
+    "058043_w25_Q5_a": {
+      "partId": "058043_w25_Q5_a",
+      "imageUrl": "/question_figures/058043_w25_Q5_a.png",
+      "band": [
+        4,
+        101.3,
+        227.4
+      ],
+      "px": [
+        1452,
+        352
+      ]
+    },
+    "058043_w25_Q11__": {
+      "partId": "058043_w25_Q11__",
+      "imageUrl": "/question_figures/058043_w25_Q11__.png",
+      "band": [
+        7,
+        65.3,
+        101.2
+      ],
+      "px": [
+        1452,
+        101
+      ]
+    },
+    "058043_w25_Q22_a": {
+      "partId": "058043_w25_Q22_a",
+      "imageUrl": "/question_figures/058043_w25_Q22_a.png",
+      "band": [
+        13,
+        75.1,
+        185.0
+      ],
+      "px": [
+        1452,
+        307
+      ]
+    }
+  },
+  "shared": {},
+  "stems": {
+    "058021_2024_Q2": {
+      "questionId": "058021_2024_Q2",
+      "text": "2  \nGeetha has a box of toys.\n \nShe picks a toy at random from the box.\n \nThe probability that she picks a wooden toy is 0.6 .",
+      "imageUrl": "/question_stems/058021_2024_Q2.png",
+      "regions": [
+        [
+          1,
+          430.1,
+          489.1
+        ]
+      ],
+      "px": [
+        1452,
+        165
+      ]
+    },
+    "058021_2024_Q3": {
+      "questionId": "058021_2024_Q3",
+      "text": "3 \nThe table shows some information about two sequences.\nnth term\n5th term\nSequence A\n60 – 4n\nSequence B\nn2 – 300",
+      "imageUrl": "/question_stems/058021_2024_Q3.png",
+      "regions": [
+        [
+          2,
+          53.8,
+          185.1
+        ]
+      ],
+      "px": [
+        1452,
+        366
+      ]
+    },
+    "058021_2024_Q5": {
+      "questionId": "058021_2024_Q5",
+      "text": "5 \nCalculate.",
+      "imageUrl": "/question_stems/058021_2024_Q5.png",
+      "regions": [
+        [
+          2,
+          594.1,
+          627.1
+        ]
+      ],
+      "px": [
+        1452,
+        93
+      ]
+    },
+    "058021_2024_Q7": {
+      "questionId": "058021_2024_Q7",
+      "text": "7\nJ\nL\nK\nNOT TO\nSCALE\n12.8 cm\n12.8 cm\n \nThe diagram shows a shape made from a triangle JKL and a semicircle with diameter JL.\n \nJKL is an isosceles right-angled triangle with JK = JL = 12.8 cm.",
+      "imageUrl": "/question_stems/058021_2024_Q7.png",
+      "regions": [
+        [
+          4,
+          53.6,
+          301.8
+        ]
+      ],
+      "px": [
+        1452,
+        690
+      ],
+      "figure": {
+        "assetId": "058021_2024_Q7_stemfig1",
+        "questionId": "058021_2024_Q7",
+        "imageUrl": "/question_figures/058021_2024_Q7_stemfig1.png",
+        "band": [
+          4,
+          75.1,
+          244.5
+        ],
+        "px": [
+          1452,
+          472
+        ]
+      }
+    },
+    "058021_2024_Q16": {
+      "questionId": "058021_2024_Q16",
+      "text": "",
+      "imageUrl": "/question_stems/058021_2024_Q16.png",
+      "regions": [
+        [
+          9,
+          55.5,
+          62.5
+        ]
+      ],
+      "px": [
+        1452,
+        20
+      ]
+    },
+    "058021_2024_Q19": {
+      "questionId": "058021_2024_Q19",
+      "text": "19 Factorise completely.",
+      "imageUrl": "/question_stems/058021_2024_Q19.png",
+      "regions": [
+        [
+          12,
+          53.8,
+          86.8
+        ]
+      ],
+      "px": [
+        1452,
+        93
+      ]
+    },
+    "058041_2024_Q2": {
+      "questionId": "058041_2024_Q2",
+      "text": "",
+      "imageUrl": "/question_stems/058041_2024_Q2.png",
+      "regions": [
+        [
+          3,
+          53.6,
+          60.6
+        ]
+      ],
+      "px": [
+        1452,
+        20
+      ]
+    },
+    "058041_2024_Q3": {
+      "questionId": "058041_2024_Q3",
+      "text": "1",
+      "imageUrl": "/question_stems/058041_2024_Q3.png",
+      "regions": [
+        [
+          5,
+          60.7,
+          67.7
+        ]
+      ],
+      "px": [
+        1452,
+        21
+      ]
+    },
+    "058041_2024_Q4": {
+      "questionId": "058041_2024_Q4",
+      "text": "",
+      "imageUrl": "/question_stems/058041_2024_Q4.png",
+      "regions": [
+        [
+          7,
+          53.8,
+          60.8
+        ]
+      ],
+      "px": [
+        1452,
+        21
+      ]
+    },
+    "058041_2024_Q6": {
+      "questionId": "058041_2024_Q6",
+      "text": "6 \nA\nB\nH\nC\n25°\n55°\n14 km\n11 km\nNorth\n32 km\nNOT TO\nSCALE\n \nThe diagram shows the positions of two lighthouses A and B, a boat C and a harbour H .\n \nC is due east of B.",
+      "imageUrl": "/question_stems/058041_2024_Q6.png",
+      "regions": [
+        [
+          11,
+          53.8,
+          372.5
+        ]
+      ],
+      "px": [
+        1452,
+        887
+      ],
+      "figure": {
+        "assetId": "058041_2024_Q6_stemfig1",
+        "questionId": "058041_2024_Q6",
+        "imageUrl": "/question_figures/058041_2024_Q6_stemfig1.png",
+        "band": [
+          11,
+          139.9,
+          312.4
+        ],
+        "px": [
+          1452,
+          481
+        ]
+      }
+    },
+    "058041_2024_Q7": {
+      "questionId": "058041_2024_Q7",
+      "text": "",
+      "imageUrl": "/question_stems/058041_2024_Q7.png",
+      "regions": [
+        [
+          13,
+          53.6,
+          60.6
+        ]
+      ],
+      "px": [
+        1452,
+        20
+      ]
+    },
+    "058041_2024_Q9": {
+      "questionId": "058041_2024_Q9",
+      "text": "9 \n \n( )x\nx\n4\n1\nf\n=\n+    \n( )x\nx\n6\n2\ng\n=\n-\n   \n( )x\n3\nh\nx\n2\n=\n-",
+      "imageUrl": "/question_stems/058041_2024_Q9.png",
+      "regions": [
+        [
+          17,
+          57.5,
+          90.5
+        ]
+      ],
+      "px": [
+        1452,
+        93
+      ]
+    },
+    "0580_2_SP_2025_Q7": {
+      "questionId": "0580_2_SP_2025_Q7",
+      "text": "7\t\n\t\nu = \n3\n2\n−\nf\np     v = \n12\n5\n−\nf\np",
+      "imageUrl": "/question_stems/0580_2_SP_2025_Q7.png",
+      "regions": [
+        [
+          3,
+          404.1,
+          446.6
+        ]
+      ],
+      "px": [
+        1452,
+        119
+      ]
+    },
+    "0580_2_SP_2025_Q9": {
+      "questionId": "0580_2_SP_2025_Q9",
+      "text": "9\t\nIn a sequence\nT1 = 17          T2 = 12          T3 = 7          T4 = 2.\n\t\nFind",
+      "imageUrl": "/question_stems/0580_2_SP_2025_Q9.png",
+      "regions": [
+        [
+          4,
+          399.7,
+          487.7
+        ]
+      ],
+      "px": [
+        1452,
+        245
+      ]
+    },
+    "0580_2_SP_2025_Q12": {
+      "questionId": "0580_2_SP_2025_Q12",
+      "text": "12\t Work out, giving your answer in standard form,",
+      "imageUrl": "/question_stems/0580_2_SP_2025_Q12.png",
+      "regions": [
+        [
+          5,
+          389.1,
+          423.1
+        ]
+      ],
+      "px": [
+        1452,
+        96
+      ]
+    },
+    "0580_2_SP_2025_Q16": {
+      "questionId": "0580_2_SP_2025_Q16",
+      "text": "16\t A student measures the height, h cm, of each of 400 plants.",
+      "imageUrl": "/question_stems/0580_2_SP_2025_Q16.png",
+      "regions": [
+        [
+          8,
+          53.5,
+          87.5
+        ]
+      ],
+      "px": [
+        1452,
+        96
+      ]
+    },
+    "0580_2_SP_2025_Q17": {
+      "questionId": "0580_2_SP_2025_Q17",
+      "text": "17 \nD\nC\nX\nB\nA\nNOT TO\nSCALE\n74°\n34°\n\t\nThe diagram shows a cyclic quadrilateral ABCD.\n\t\nBD and AC intersect at X.",
+      "imageUrl": "/question_stems/0580_2_SP_2025_Q17.png",
+      "regions": [
+        [
+          10,
+          53.3,
+          306.9
+        ]
+      ],
+      "px": [
+        1452,
+        706
+      ],
+      "figure": {
+        "assetId": "0580_2_SP_2025_Q17_stemfig1",
+        "questionId": "0580_2_SP_2025_Q17",
+        "imageUrl": "/question_figures/0580_2_SP_2025_Q17_stemfig1.png",
+        "band": [
+          10,
+          75.2,
+          248.8
+        ],
+        "px": [
+          1452,
+          483
+        ]
+      }
+    },
+    "0580_2_SP_2025_Q18": {
+      "questionId": "0580_2_SP_2025_Q18",
+      "text": "18\t f(x) = 3 – 2x          g(x) = 2x + 3          h(x) = 2x",
+      "imageUrl": "/question_stems/0580_2_SP_2025_Q18.png",
+      "regions": [
+        [
+          11,
+          53.5,
+          87.5
+        ]
+      ],
+      "px": [
+        1452,
+        96
+      ]
+    },
+    "0580_2_SP_2025_Q21": {
+      "questionId": "0580_2_SP_2025_Q21",
+      "text": "21\t In this question, all measurements are in centimetres.\nNOT TO\nSCALE\nh\nx\n(\n)\nh\n2\n+\n(\n)\nx\n1\n+\n\t\nThe height of the triangle is h and the height of the rectangle is (h + 2).\n\t\nThe length of the base of the triangle is x and the length of the rectangle is (x + 1).\n\t\nThe area of the triangle is 11 cm2 and the area of the rectangle is 39 cm2.",
+      "imageUrl": "/question_stems/0580_2_SP_2025_Q21.png",
+      "regions": [
+        [
+          13,
+          53.5,
+          250.2
+        ]
+      ],
+      "px": [
+        1452,
+        548
+      ],
+      "figure": {
+        "assetId": "0580_2_SP_2025_Q21_stemfig1",
+        "questionId": "0580_2_SP_2025_Q21",
+        "imageUrl": "/question_figures/0580_2_SP_2025_Q21_stemfig1.png",
+        "band": [
+          13,
+          75.9,
+          158.6
+        ],
+        "px": [
+          1452,
+          230
+        ]
+      }
+    },
+    "0580_2_SP_2025_Q26": {
+      "questionId": "0580_2_SP_2025_Q26",
+      "text": "26\t\n– 3\n0\n4\ny\nx\n24\n– 18\n\t\n\t\n\t\nf(x) = x(x + 2)(x – 3)",
+      "imageUrl": "/question_stems/0580_2_SP_2025_Q26.png",
+      "regions": [
+        [
+          16,
+          53.5,
+          310.4
+        ]
+      ],
+      "px": [
+        1452,
+        715
+      ]
+    },
+    "0580_4_SP_2025_Q5": {
+      "questionId": "0580_4_SP_2025_Q5",
+      "text": "5\t\nA\nB\nNorth\nNorth\n\t\nTwo towns, A and B, are shown on a map.\n\t\nThe scale of the map is 1 cm to 3 km.",
+      "imageUrl": "/question_stems/0580_4_SP_2025_Q5.png",
+      "regions": [
+        [
+          3,
+          53.5,
+          368.1
+        ]
+      ],
+      "px": [
+        1452,
+        876
+      ],
+      "figure": {
+        "assetId": "0580_4_SP_2025_Q5_stemfig1",
+        "questionId": "0580_4_SP_2025_Q5",
+        "imageUrl": "/question_figures/0580_4_SP_2025_Q5_stemfig1.png",
+        "band": [
+          3,
+          138.0,
+          310.1
+        ],
+        "px": [
+          1452,
+          480
+        ]
+      }
+    },
+    "0580_4_SP_2025_Q6": {
+      "questionId": "0580_4_SP_2025_Q6",
+      "text": "6\t\nA solid metal cuboid has a volume of 600 cm3.",
+      "imageUrl": "/question_stems/0580_4_SP_2025_Q6.png",
+      "regions": [
+        [
+          4,
+          53.5,
+          87.5
+        ]
+      ],
+      "px": [
+        1452,
+        96
+      ]
+    },
+    "0580_4_SP_2025_Q7": {
+      "questionId": "0580_4_SP_2025_Q7",
+      "text": "7\t\nOn any day the probability that it rains is 3\n1 .\n\t\nWhen it rains the probability that Amira goes fishing is 5\n3.\n\t\nWhen it does not rain the probability that Amira goes fishing is 4\n3 .",
+      "imageUrl": "/question_stems/0580_4_SP_2025_Q7.png",
+      "regions": [
+        [
+          5,
+          60.9,
+          148.7
+        ]
+      ],
+      "px": [
+        1452,
+        245
+      ]
+    },
+    "0580_4_SP_2025_Q8": {
+      "questionId": "0580_4_SP_2025_Q8",
+      "text": "8\ny\nx\n0\n1\n1\n2\n2\n3\n3\n4\n4\n5\n5\n6\n6\n7\n7\n8\n8",
+      "imageUrl": "/question_stems/0580_4_SP_2025_Q8.png",
+      "regions": [
+        [
+          6,
+          53.3,
+          356.8
+        ]
+      ],
+      "px": [
+        1452,
+        844
+      ],
+      "figure": {
+        "assetId": "0580_4_SP_2025_Q8_stemfig1",
+        "questionId": "0580_4_SP_2025_Q8",
+        "imageUrl": "/question_figures/0580_4_SP_2025_Q8_stemfig1.png",
+        "band": [
+          6,
+          86.1,
+          336.7
+        ],
+        "px": [
+          1452,
+          698
+        ]
+      }
+    },
+    "0580_4_SP_2025_Q9": {
+      "questionId": "0580_4_SP_2025_Q9",
+      "text": "9\t\n0\n0\n10\nTime (seconds)\n13\n8\nSpeed\n(m/s)\nNOT TO\nSCALE\n\t\nThe diagram shows the speed–time graph of part of a car journey.",
+      "imageUrl": "/question_stems/0580_4_SP_2025_Q9.png",
+      "regions": [
+        [
+          6,
+          444.3,
+          648.7
+        ]
+      ],
+      "px": [
+        1452,
+        569
+      ],
+      "figure": {
+        "assetId": "0580_4_SP_2025_Q9_stemfig1",
+        "questionId": "0580_4_SP_2025_Q9",
+        "imageUrl": "/question_figures/0580_4_SP_2025_Q9_stemfig1.png",
+        "band": [
+          6,
+          486.9,
+          592.5
+        ],
+        "px": [
+          1452,
+          295
+        ]
+      }
+    },
+    "0580_4_SP_2025_Q11": {
+      "questionId": "0580_4_SP_2025_Q11",
+      "text": "11\t\nA\n3\nB\n\t\nn( ) = 20, n(A ∪ B)′ = 3, n(A) = 10 and n(B) = 13.\n\t\nThe Venn diagram shows some of this information.\n\t\nFind",
+      "imageUrl": "/question_stems/0580_4_SP_2025_Q11.png",
+      "regions": [
+        [
+          7,
+          161.5,
+          413.8
+        ]
+      ],
+      "px": [
+        1452,
+        703
+      ],
+      "figure": {
+        "assetId": "0580_4_SP_2025_Q11_stemfig1",
+        "questionId": "0580_4_SP_2025_Q11",
+        "imageUrl": "/question_figures/0580_4_SP_2025_Q11_stemfig1.png",
+        "band": [
+          7,
+          183.6,
+          339.0
+        ],
+        "px": [
+          1452,
+          433
+        ]
+      }
+    },
+    "0580_4_SP_2025_Q13": {
+      "questionId": "0580_4_SP_2025_Q13",
+      "text": "13\n15 cm\n12 cm\n14 cm\nD\nB\nA\nC\n62°\nNOT TO\nSCALE\n\t\nThe diagram shows a quadrilateral, ABCD, formed from two triangles, ABC and ACD.\n\t\nABC is a right-angled triangle.",
+      "imageUrl": "/question_stems/0580_4_SP_2025_Q13.png",
+      "regions": [
+        [
+          8,
+          53.3,
+          302.4
+        ]
+      ],
+      "px": [
+        1452,
+        693
+      ],
+      "figure": {
+        "assetId": "0580_4_SP_2025_Q13_stemfig1",
+        "questionId": "0580_4_SP_2025_Q13",
+        "imageUrl": "/question_figures/0580_4_SP_2025_Q13_stemfig1.png",
+        "band": [
+          8,
+          77.2,
+          241.3
+        ],
+        "px": [
+          1452,
+          457
+        ]
+      }
+    },
+    "0580_4_SP_2025_Q15": {
+      "questionId": "0580_4_SP_2025_Q15",
+      "text": "15\t \t\n\t\ny = \nu x\n2",
+      "imageUrl": "/question_stems/0580_4_SP_2025_Q15.png",
+      "regions": [
+        [
+          11,
+          59.1,
+          93.1
+        ]
+      ],
+      "px": [
+        1452,
+        95
+      ]
+    },
+    "0580_4_SP_2025_Q16": {
+      "questionId": "0580_4_SP_2025_Q16",
+      "text": "16 \t A is the point (7, 2) and B is the point (−5, 8).",
+      "imageUrl": "/question_stems/0580_4_SP_2025_Q16.png",
+      "regions": [
+        [
+          11,
+          315.6,
+          349.6
+        ]
+      ],
+      "px": [
+        1452,
+        96
+      ]
+    },
+    "0580_4_SP_2025_Q22": {
+      "questionId": "0580_4_SP_2025_Q22",
+      "text": "22\t The diagram shows triangle OPT.\nNOT TO\nSCALE\nO\nK\nT\nL\nP\np\nt\n\t\nIn the diagram OT  = t and OP = p.\n\t\nOK : KT = 2 : 1 and TL : LP = 2 : 1.",
+      "imageUrl": "/question_stems/0580_4_SP_2025_Q22.png",
+      "regions": [
+        [
+          14,
+          53.5,
+          266.2
+        ]
+      ],
+      "px": [
+        1452,
+        592
+      ],
+      "figure": {
+        "assetId": "0580_4_SP_2025_Q22_stemfig1",
+        "questionId": "0580_4_SP_2025_Q22",
+        "imageUrl": "/question_figures/0580_4_SP_2025_Q22_stemfig1.png",
+        "band": [
+          14,
+          87.4,
+          203.0
+        ],
+        "px": [
+          1452,
+          322
+        ]
+      }
+    },
+    "058022_m24_Q5": {
+      "questionId": "058022_m24_Q5",
+      "text": "5 \nThere are 20 cars in a car park and 3 of the cars are blue.",
+      "imageUrl": "/question_stems/058022_m24_Q5.png",
+      "regions": [
+        [
+          2,
+          53.8,
+          86.8
+        ]
+      ],
+      "px": [
+        1452,
+        93
+      ]
+    },
+    "058022_m24_Q15": {
+      "questionId": "058022_m24_Q15",
+      "text": "15 \n1\ny\nA\nB\nC\nx\n– 2\n– 3\n– 4\n– 5\n– 6\n– 1\n– 8\n– 9\n– 10\n– 7\n– 6\n– 5\n– 4\n– 3\n– 2\n– 1 0\n5\n6\n1\n2\n3\n4\n2\n3\n4",
+      "imageUrl": "/question_stems/058022_m24_Q15.png",
+      "regions": [
+        [
+          6,
+          53.8,
+          344.9
+        ]
+      ],
+      "px": [
+        1452,
+        810
+      ],
+      "figure": {
+        "assetId": "058022_m24_Q15_stemfig1",
+        "questionId": "058022_m24_Q15",
+        "imageUrl": "/question_figures/058022_m24_Q15_stemfig1.png",
+        "band": [
+          6,
+          129.9,
+          264.2
+        ],
+        "px": [
+          1452,
+          374
+        ]
+      }
+    },
+    "058042_m24_Q1": {
+      "questionId": "058042_m24_Q1",
+      "text": "1 \nA grocer sells potatoes, mushrooms and carrots.",
+      "imageUrl": "/question_stems/058042_m24_Q1.png",
+      "regions": [
+        [
+          1,
+          53.8,
+          86.8
+        ]
+      ],
+      "px": [
+        1452,
+        93
+      ]
+    },
+    "058042_m24_Q2": {
+      "questionId": "058042_m24_Q2",
+      "text": "2\nx°\ny°\nD\nX\nNOT TO\nSCALE\nA\nC\nB\n \nA, B, C and D are points on a circle.\n \nADX and BCX are straight lines.\n \nAngle BAD = x° and angle DCX = y°.",
+      "imageUrl": "/question_stems/058042_m24_Q2.png",
+      "regions": [
+        [
+          3,
+          53.6,
+          302.4
+        ]
+      ],
+      "px": [
+        1452,
+        692
+      ],
+      "figure": {
+        "assetId": "058042_m24_Q2_stemfig1",
+        "questionId": "058042_m24_Q2",
+        "imageUrl": "/question_figures/058042_m24_Q2_stemfig1.png",
+        "band": [
+          3,
+          76.9,
+          229.8
+        ],
+        "px": [
+          1452,
+          426
+        ]
+      }
+    },
+    "058042_m24_Q4": {
+      "questionId": "058042_m24_Q4",
+      "text": "",
+      "imageUrl": "/question_stems/058042_m24_Q4.png",
+      "regions": [
+        [
+          7,
+          53.6,
+          60.6
+        ]
+      ],
+      "px": [
+        1452,
+        20
+      ]
+    },
+    "058042_m24_Q6": {
+      "questionId": "058042_m24_Q6",
+      "text": "6\n17.2 cm\n12.8 cm\nNOT TO\nSCALE\n54°\nB\nM\nC\nA\n68°\n \nThe diagram shows triangle ABC with AB = 17.2 cm.\n \nAngle ABC = 54° and angle ACB = 68°.",
+      "imageUrl": "/question_stems/058042_m24_Q6.png",
+      "regions": [
+        [
+          11,
+          53.6,
+          336.2
+        ]
+      ],
+      "px": [
+        1452,
+        786
+      ],
+      "figure": {
+        "assetId": "058042_m24_Q6_stemfig1",
+        "questionId": "058042_m24_Q6",
+        "imageUrl": "/question_figures/058042_m24_Q6_stemfig1.png",
+        "band": [
+          11,
+          78.8,
+          287.6
+        ],
+        "px": [
+          1452,
+          582
+        ]
+      }
+    },
+    "058042_m24_Q7": {
+      "questionId": "058042_m24_Q7",
+      "text": "8\ne\no\n4\ne\no",
+      "imageUrl": "/question_stems/058042_m24_Q7.png",
+      "regions": [
+        [
+          12,
+          64.8,
+          71.8
+        ]
+      ],
+      "px": [
+        1452,
+        20
+      ]
+    },
+    "058042_m24_Q10": {
+      "questionId": "058042_m24_Q10",
+      "text": "10 The table shows some values for   \n.\ny\nx\nx\n2\n6\n2 5\n3\n2\n=\n+\n-\n .\nx\n-3\n-2.5\n-2\n-1.5\n-1\n-0.5\n0\n0.5\n1\ny\n3.75\n5.5\n4.25\n1.5\n-2.5\n-0.75",
+      "imageUrl": "/question_stems/058042_m24_Q10.png",
+      "regions": [
+        [
+          16,
+          57.5,
+          174.9
+        ]
+      ],
+      "px": [
+        1452,
+        328
+      ]
+    },
+    "058042_m24_Q11": {
+      "questionId": "058042_m24_Q11",
+      "text": "11  \n \n( )\n,\nx\nx x\n1\n0\nf\n!\n=\n    \n( )x\nx\n3\n5\ng\n=\n-     \n( )x\n2\nh\nx\n=",
+      "imageUrl": "/question_stems/058042_m24_Q11.png",
+      "regions": [
+        [
+          17,
+          60.7,
+          93.7
+        ]
+      ],
+      "px": [
+        1452,
+        93
+      ]
+    },
+    "058042_m24_Q12": {
+      "questionId": "058042_m24_Q12",
+      "text": "",
+      "imageUrl": "/question_stems/058042_m24_Q12.png",
+      "regions": [
+        [
+          18,
+          53.6,
+          60.6
+        ]
+      ],
+      "px": [
+        1452,
+        20
+      ]
+    },
+    "058022_s24_Q3": {
+      "questionId": "058022_s24_Q3",
+      "text": "3 \nA delivery driver records the number of pizzas she delivers each month for one year.\n48\n44\n39\n28\n57\n22\n36\n41\n54\n57\n49\n52",
+      "imageUrl": "/question_stems/058022_s24_Q3.png",
+      "regions": [
+        [
+          1,
+          328.6,
+          401.5
+        ]
+      ],
+      "px": [
+        1452,
+        204
+      ]
+    },
+    "058022_s24_Q9": {
+      "questionId": "058022_s24_Q9",
+      "text": "9 \n– 5 – 4 – 3 – 2 – 1 0\n1\n2\n3\n4\n5\n6\n7\n8\n10\n9\n– 1\n1\n2\n3\n4\n5\n6\n7\n– 2\n– 3\nx\ny\nA\nB",
+      "imageUrl": "/question_stems/058022_s24_Q9.png",
+      "regions": [
+        [
+          3,
+          222.8,
+          490.6
+        ]
+      ],
+      "px": [
+        1452,
+        745
+      ],
+      "figure": {
+        "assetId": "058022_s24_Q9_stemfig1",
+        "questionId": "058022_s24_Q9",
+        "imageUrl": "/question_figures/058022_s24_Q9_stemfig1.png",
+        "band": [
+          3,
+          297.4,
+          432.2
+        ],
+        "px": [
+          1452,
+          376
+        ]
+      }
+    },
+    "058022_s24_Q16": {
+      "questionId": "058022_s24_Q16",
+      "text": "16 The speed–time graph shows information about a car journey.\nNOT TO\nSCALE\n0\n0\n16\n30\nTime (s)\n240\n320\nSpeed\n(m/s)",
+      "imageUrl": "/question_stems/058022_s24_Q16.png",
+      "regions": [
+        [
+          6,
+          53.8,
+          256.0
+        ]
+      ],
+      "px": [
+        1452,
+        563
+      ],
+      "figure": {
+        "assetId": "058022_s24_Q16_stemfig1",
+        "questionId": "058022_s24_Q16",
+        "imageUrl": "/question_figures/058022_s24_Q16_stemfig1.png",
+        "band": [
+          6,
+          110.6,
+          223.0
+        ],
+        "px": [
+          1452,
+          313
+        ]
+      }
+    },
+    "058022_s24_Q18": {
+      "questionId": "058022_s24_Q18",
+      "text": "18 \n0\n0\n2\n4\n6\n8\n10\n12\n14\n16\n18\n0.5\n1\n1.5\n2\n2.5\n3\n3.5\n4\n4.5\ny\nx\n \nThe graph of \n( )\nf\ny\nx\n=\n is drawn on the grid.",
+      "imageUrl": "/question_stems/058022_s24_Q18.png",
+      "regions": [
+        [
+          7,
+          53.8,
+          410.0
+        ]
+      ],
+      "px": [
+        1452,
+        991
+      ],
+      "figure": {
+        "assetId": "058022_s24_Q18_stemfig1",
+        "questionId": "058022_s24_Q18",
+        "imageUrl": "/question_figures/058022_s24_Q18_stemfig1.png",
+        "band": [
+          7,
+          99.6,
+          362.7
+        ],
+        "px": [
+          1452,
+          733
+        ]
+      }
+    },
+    "058022_s24_Q19": {
+      "questionId": "058022_s24_Q19",
+      "text": "2",
+      "imageUrl": "/question_stems/058022_s24_Q19.png",
+      "regions": [
+        [
+          7,
+          504.0,
+          511.0
+        ]
+      ],
+      "px": [
+        1452,
+        20
+      ]
+    },
+    "058022_s24_Q22": {
+      "questionId": "058022_s24_Q22",
+      "text": "",
+      "imageUrl": "/question_stems/058022_s24_Q22.png",
+      "regions": [
+        [
+          9,
+          53.8,
+          60.8
+        ]
+      ],
+      "px": [
+        1452,
+        21
+      ]
+    },
+    "058022_s24_Q23": {
+      "questionId": "058022_s24_Q23",
+      "text": "E\nF\nS\n8\n1\n1\n3\n2\n4\n5\n6\n \nThe Venn diagram shows information about the number of students in a class.\n \nSome study English (E ), some study French (F ), some study Spanish (S ) and some do not study any of \nthese languages.",
+      "imageUrl": "/question_stems/058022_s24_Q23.png",
+      "regions": [
+        [
+          10,
+          89.6,
+          281.1
+        ]
+      ],
+      "px": [
+        1452,
+        533
+      ],
+      "figure": {
+        "assetId": "058022_s24_Q23_stemfig1",
+        "questionId": "058022_s24_Q23",
+        "imageUrl": "/question_figures/058022_s24_Q23_stemfig1.png",
+        "band": [
+          10,
+          89.6,
+          222.4
+        ],
+        "px": [
+          1452,
+          370
+        ]
+      }
+    },
+    "058022_s24_Q24": {
+      "questionId": "058022_s24_Q24",
+      "text": "24 \na\nO\nP\nR\nM\nS\nQ\nN\nb\nNOT TO\nSCALE\n \nO is the origin and OPQR is a parallelogram.\n \nM is the midpoint of PQ and N divides QR in the ratio  2 : 1.\n \na\nOP =\n and \nb\nOR =\n.",
+      "imageUrl": "/question_stems/058022_s24_Q24.png",
+      "regions": [
+        [
+          11,
+          53.8,
+          257.1
+        ]
+      ],
+      "px": [
+        1452,
+        566
+      ],
+      "figure": {
+        "assetId": "058022_s24_Q24_stemfig1",
+        "questionId": "058022_s24_Q24",
+        "imageUrl": "/question_figures/058022_s24_Q24_stemfig1.png",
+        "band": [
+          11,
+          77.1,
+          179.2
+        ],
+        "px": [
+          1452,
+          285
+        ]
+      }
+    },
+    "058023_s24_Q12": {
+      "questionId": "058023_s24_Q12",
+      "text": "12 Simplify.\ng\n32 16",
+      "imageUrl": "/question_stems/058023_s24_Q12.png",
+      "regions": [
+        [
+          3,
+          444.2,
+          490.2
+        ]
+      ],
+      "px": [
+        1452,
+        129
+      ]
+    },
+    "058023_s24_Q13": {
+      "questionId": "058023_s24_Q13",
+      "text": "A\nB\n \n \nShade the region   A\nB\n, l. \n[1]",
+      "imageUrl": "/question_stems/058023_s24_Q13.png",
+      "regions": [
+        [
+          4,
+          99.8,
+          197.3
+        ]
+      ],
+      "px": [
+        1452,
+        272
+      ],
+      "figure": {
+        "assetId": "058023_s24_Q13_stemfig1",
+        "questionId": "058023_s24_Q13",
+        "imageUrl": "/question_figures/058023_s24_Q13_stemfig1.png",
+        "band": [
+          4,
+          99.8,
+          160.5
+        ],
+        "px": [
+          1452,
+          170
+        ]
+      }
+    },
+    "058023_s24_Q14": {
+      "questionId": "058023_s24_Q14",
+      "text": "14\nNOT TO\nSCALE\nQ\nR\nB\nT\nA\nP\n48°\n50°\n \nP, Q, R and T are points on the circle.\n \nAB is a tangent to the circle at T.\n \nAngle \n°\nATP\n50\n=\n, angle \n°\nPTR\n48\n=\n and PQ\nQR\n=\n.",
+      "imageUrl": "/question_stems/058023_s24_Q14.png",
+      "regions": [
+        [
+          4,
+          397.0,
+          677.3
+        ]
+      ],
+      "px": [
+        1452,
+        780
+      ],
+      "figure": {
+        "assetId": "058023_s24_Q14_stemfig1",
+        "questionId": "058023_s24_Q14",
+        "imageUrl": "/question_figures/058023_s24_Q14_stemfig1.png",
+        "band": [
+          4,
+          427.0,
+          604.0
+        ],
+        "px": [
+          1452,
+          493
+        ]
+      }
+    },
+    "058023_s24_Q15": {
+      "questionId": "058023_s24_Q15",
+      "text": "15\n0\n0\n20\n40\n60\n80\n100\n120\n140\n160\n180\n200\n10\n20\nTime (seconds)\n30\n40\n50\nCumulative\nfrequency\n \nThe time taken for each of 200 students to complete a calculation is measured.\n \nThe cumulative frequency diagram shows the results.\n \nUse the diagram to find an estimate for",
+      "imageUrl": "/question_stems/058023_s24_Q15.png",
+      "regions": [
+        [
+          5,
+          71.0,
+          507.5
+        ]
+      ],
+      "px": [
+        1452,
+        1214
+      ],
+      "figure": {
+        "assetId": "058023_s24_Q15_stemfig1",
+        "questionId": "058023_s24_Q15",
+        "imageUrl": "/question_figures/058023_s24_Q15_stemfig1.png",
+        "band": [
+          5,
+          106.7,
+          398.3
+        ],
+        "px": [
+          1452,
+          812
+        ]
+      }
+    },
+    "058023_s24_Q17": {
+      "questionId": "058023_s24_Q17",
+      "text": "17 Work out, giving each answer in standard form.\n101\n101\n`\n`\nj\nj",
+      "imageUrl": "/question_stems/058023_s24_Q17.png",
+      "regions": [
+        [
+          6,
+          239.0,
+          272.0
+        ]
+      ],
+      "px": [
+        1452,
+        93
+      ]
+    },
+    "058023_s24_Q19": {
+      "questionId": "058023_s24_Q19",
+      "text": "19\nW\nT\n– 8\n– 6\n– 4\n– 2\n2\n4\n6\n8\n– 2\n2\n4\n6\n– 4\n– 6\n– 8\n0\nx\ny",
+      "imageUrl": "/question_stems/058023_s24_Q19.png",
+      "regions": [
+        [
+          7,
+          431.4,
+          697.1
+        ]
+      ],
+      "px": [
+        1452,
+        739
+      ]
+    },
+    "058023_s24_Q20": {
+      "questionId": "058023_s24_Q20",
+      "text": "20  \nf( )x\n3\n2\nx\n=\n+",
+      "imageUrl": "/question_stems/058023_s24_Q20.png",
+      "regions": [
+        [
+          8,
+          71.0,
+          101.6
+        ]
+      ],
+      "px": [
+        1452,
+        86
+      ]
+    },
+    "058042_s24_Q2": {
+      "questionId": "058042_s24_Q2",
+      "text": "",
+      "imageUrl": "/question_stems/058042_s24_Q2.png",
+      "regions": [
+        [
+          3,
+          53.6,
+          60.6
+        ]
+      ],
+      "px": [
+        1452,
+        20
+      ]
+    },
+    "058042_s24_Q4": {
+      "questionId": "058042_s24_Q4",
+      "text": "",
+      "imageUrl": "/question_stems/058042_s24_Q4.png",
+      "regions": [
+        [
+          7,
+          53.6,
+          60.6
+        ]
+      ],
+      "px": [
+        1452,
+        20
+      ]
+    },
+    "058042_s24_Q5": {
+      "questionId": "058042_s24_Q5",
+      "text": "3\n`\nj",
+      "imageUrl": "/question_stems/058042_s24_Q5.png",
+      "regions": [
+        [
+          9,
+          63.5,
+          70.5
+        ]
+      ],
+      "px": [
+        1452,
+        20
+      ]
+    },
+    "058042_s24_Q6": {
+      "questionId": "058042_s24_Q6",
+      "text": "6 \nNOT TO\nSCALE\nA\nD\nC\nB\n6.5 cm\n10.4 cm\n64°\n26°\n42°\n \nABCD is a quadrilateral with \n.\nAB\n10 4\n=\n cm and \n.\nAD\n6 5\n=\n cm.\n \nAngle \n°\nDAB\n64\n=\n, angle \n°\nBDC\n26\n=\n and angle \n°\nDBC\n42\n=\n.",
+      "imageUrl": "/question_stems/058042_s24_Q6.png",
+      "regions": [
+        [
+          11,
+          53.8,
+          306.9
+        ]
+      ],
+      "px": [
+        1452,
+        705
+      ],
+      "figure": {
+        "assetId": "058042_s24_Q6_stemfig1",
+        "questionId": "058042_s24_Q6",
+        "imageUrl": "/question_figures/058042_s24_Q6_stemfig1.png",
+        "band": [
+          11,
+          75.1,
+          263.7
+        ],
+        "px": [
+          1452,
+          526
+        ]
+      }
+    },
+    "058042_s24_Q8": {
+      "questionId": "058042_s24_Q8",
+      "text": "8 \nA baker decorates x small cakes and y large cakes.\n \nIn one day, he decorates:\n• \nnot more than 16 small cakes\n• \nless than 10 large cakes\n• \nmore small cakes than large cakes\n• \na total of not more than 24 cakes.\n \nOne of the inequalities that shows this information is x\n16\nG\n.",
+      "imageUrl": "/question_stems/058042_s24_Q8.png",
+      "regions": [
+        [
+          13,
+          53.8,
+          190.8
+        ]
+      ],
+      "px": [
+        1452,
+        382
+      ]
+    },
+    "058042_s24_Q9": {
+      "questionId": "058042_s24_Q9",
+      "text": "",
+      "imageUrl": "/question_stems/058042_s24_Q9.png",
+      "regions": [
+        [
+          15,
+          53.6,
+          60.6
+        ]
+      ],
+      "px": [
+        1452,
+        20
+      ]
+    },
+    "058043_s24_Q2": {
+      "questionId": "058043_s24_Q2",
+      "text": "3",
+      "imageUrl": "/question_stems/058043_s24_Q2.png",
+      "regions": [
+        [
+          3,
+          70.0,
+          77.0
+        ]
+      ],
+      "px": [
+        1452,
+        21
+      ]
+    },
+    "058043_s24_Q4": {
+      "questionId": "058043_s24_Q4",
+      "text": "4 \nIn this question all the measurements are in centimetres. \nr\n2\n+\nr\n5\n+\nr\n1\n+\n30°\nNOT TO\nSCALE\n \nThe area of the triangle is equal to the area of the square.\n2",
+      "imageUrl": "/question_stems/058043_s24_Q4.png",
+      "regions": [
+        [
+          7,
+          71.0,
+          243.7
+        ]
+      ],
+      "px": [
+        1452,
+        481
+      ],
+      "figure": {
+        "assetId": "058043_s24_Q4_stemfig1",
+        "questionId": "058043_s24_Q4",
+        "imageUrl": "/question_figures/058043_s24_Q4_stemfig1.png",
+        "band": [
+          7,
+          85.7,
+          189.3
+        ],
+        "px": [
+          1452,
+          289
+        ]
+      }
+    },
+    "058043_s24_Q5": {
+      "questionId": "058043_s24_Q5",
+      "text": "5\n– 3\n– 2\n– 1\n– 1\n1\n3\n5\n7\n9\n2\n4\n6\n8\n10\n– 2\n– 3\n– 4\n– 5\n– 6\n– 7\n– 8\n0\n1\n2\n3\ny\nx\n \nThe diagram shows the graph of \n( )\nf\ny\nx\n=\n for values of x from -3 to 3.",
+      "imageUrl": "/question_stems/058043_s24_Q5.png",
+      "regions": [
+        [
+          9,
+          71.0,
+          686.9
+        ]
+      ],
+      "px": [
+        1452,
+        1713
+      ]
+    },
+    "058043_s24_Q9": {
+      "questionId": "058043_s24_Q9",
+      "text": "9\nN\nA\nM\nI\nB\nI\nA\n \nThe diagram shows 7 cards.",
+      "imageUrl": "/question_stems/058043_s24_Q9.png",
+      "regions": [
+        [
+          17,
+          71.0,
+          155.7
+        ]
+      ],
+      "px": [
+        1452,
+        236
+      ],
+      "figure": {
+        "assetId": "058043_s24_Q9_stemfig1",
+        "questionId": "058043_s24_Q9",
+        "imageUrl": "/question_figures/058043_s24_Q9_stemfig1.png",
+        "band": [
+          17,
+          85.0,
+          120.4
+        ],
+        "px": [
+          1452,
+          99
+        ]
+      }
+    },
+    "058043_s24_Q10": {
+      "questionId": "058043_s24_Q10",
+      "text": "10  \n \n    \ny\nx\nx\n7\n7\n6\n=\n-",
+      "imageUrl": "/question_stems/058043_s24_Q10.png",
+      "regions": [
+        [
+          19,
+          70.0,
+          103.0
+        ]
+      ],
+      "px": [
+        1452,
+        93
+      ]
+    },
+    "058022_m25_Q4": {
+      "questionId": "058022_m25_Q4",
+      "text": "4 \n \n \nV\nmp\n4\n2\n=",
+      "imageUrl": "/question_stems/058022_m25_Q4.png",
+      "regions": [
+        [
+          3,
+          60.1,
+          93.1
+        ]
+      ],
+      "px": [
+        1452,
+        92
+      ]
+    },
+    "058022_m25_Q8": {
+      "questionId": "058022_m25_Q8",
+      "text": "8 \nPryanka plays a game in which she can win, lose or draw.\n \nThe table shows the probability of her winning or losing a game.\nResult of game\nwin\nlose\ndraw\nProbability\n0.3\n0.25",
+      "imageUrl": "/question_stems/058022_m25_Q8.png",
+      "regions": [
+        [
+          5,
+          61.1,
+          183.4
+        ]
+      ],
+      "px": [
+        1452,
+        341
+      ]
+    },
+    "058022_m25_Q11": {
+      "questionId": "058022_m25_Q11",
+      "text": "11 A company sells items either on a website or in shops.\n \nThe composite bar chart shows the percentage of sales on the website and in shops for January, February \nand March.\n0\nJan\nFeb\nMonth\nMarch\nApril\nSales in shops\nSales on website\n10\n20\n30\n40\n50\n60\nPercentage\nof sales\n70\n80\n90\n100\n17",
+      "imageUrl": "/question_stems/058022_m25_Q11.png",
+      "regions": [
+        [
+          7,
+          61.1,
+          456.7
+        ]
+      ],
+      "px": [
+        1452,
+        1101
+      ],
+      "figure": {
+        "assetId": "058022_m25_Q11_stemfig1",
+        "questionId": "058022_m25_Q11",
+        "imageUrl": "/question_figures/058022_m25_Q11_stemfig1.png",
+        "band": [
+          7,
+          119.6,
+          411.1
+        ],
+        "px": [
+          1452,
+          811
+        ]
+      }
+    },
+    "058022_m25_Q14": {
+      "questionId": "058022_m25_Q14",
+      "text": "14\nNOT TO\nSCALE\nA\nE\nD\nG\nC\nF\nB\n20°\n45°\n110°\n \nA, B, C, D and E lie on a circle.\n \nFG is a tangent to the circle at C.\n \nAngle BAD = 110°, angle ADB = 20° and angle BEC = 45°.",
+      "imageUrl": "/question_stems/058022_m25_Q14.png",
+      "regions": [
+        [
+          10,
+          61.1,
+          410.7
+        ]
+      ],
+      "px": [
+        1452,
+        973
+      ],
+      "figure": {
+        "assetId": "058022_m25_Q14_stemfig1",
+        "questionId": "058022_m25_Q14",
+        "imageUrl": "/question_figures/058022_m25_Q14_stemfig1.png",
+        "band": [
+          10,
+          87.6,
+          334.1
+        ],
+        "px": [
+          1452,
+          686
+        ]
+      }
+    },
+    "058022_m25_Q15": {
+      "questionId": "058022_m25_Q15",
+      "text": "15 Point A has coordinates (-4, 1) and BA\n5\n12\n=\n-\n-\ne\no.",
+      "imageUrl": "/question_stems/058022_m25_Q15.png",
+      "regions": [
+        [
+          11,
+          67.4,
+          100.4
+        ]
+      ],
+      "px": [
+        1452,
+        92
+      ]
+    },
+    "058022_m25_Q16": {
+      "questionId": "058022_m25_Q16",
+      "text": "16 The stem-and-leaf diagram shows the mass of each of 13 packets.\n3\n1    2    8    \n4\n0    1    2    3    3    8    \n5\n1    2    3    4    \n \nKey: 3 q1 represents 31 g",
+      "imageUrl": "/question_stems/058022_m25_Q16.png",
+      "regions": [
+        [
+          12,
+          61.1,
+          201.2
+        ]
+      ],
+      "px": [
+        1452,
+        391
+      ]
+    },
+    "058022_m25_Q18": {
+      "questionId": "058022_m25_Q18",
+      "text": "18\nNOT TO\nSCALE\n18 cm\n6 cm\n17 cm\nA\nE\nD\nB\nC\n60°\n \nThe quadrilateral ACDE is formed by two right-angled triangles ABE and BCD.\n \nAC = 17 cm, AE = 18 cm and BD = 6 cm.",
+      "imageUrl": "/question_stems/058022_m25_Q18.png",
+      "regions": [
+        [
+          14,
+          61.1,
+          322.1
+        ]
+      ],
+      "px": [
+        1452,
+        727
+      ],
+      "figure": {
+        "assetId": "058022_m25_Q18_stemfig1",
+        "questionId": "058022_m25_Q18",
+        "imageUrl": "/question_figures/058022_m25_Q18_stemfig1.png",
+        "band": [
+          14,
+          103.0,
+          244.9
+        ],
+        "px": [
+          1452,
+          395
+        ]
+      }
+    },
+    "058022_m25_Q22": {
+      "questionId": "058022_m25_Q22",
+      "text": "22 A curve has equation   y\nx\nx\nx\n3\n2\n=\n+\n- .\n \nThe curve has a stationary point at \n,3\n1\n27\n5\n-\ne\no.",
+      "imageUrl": "/question_stems/058022_m25_Q22.png",
+      "regions": [
+        [
+          17,
+          60.1,
+          130.1
+        ]
+      ],
+      "px": [
+        1452,
+        195
+      ]
+    },
+    "058022_m25_Q23": {
+      "questionId": "058022_m25_Q23",
+      "text": "x2\n2\ne\no",
+      "imageUrl": "/question_stems/058022_m25_Q23.png",
+      "regions": [
+        [
+          19,
+          71.8,
+          78.8
+        ]
+      ],
+      "px": [
+        1452,
+        20
+      ]
+    },
+    "058021_s25_Q6": {
+      "questionId": "058021_s25_Q6",
+      "text": "6\ny\nx\n0\n1\n1\n2\n3\n4\n5\n6\n7\n8\n9\n2\n3\n4\n5\n6\n7\n8\n \nThe line   x\ny\n7\n+\n=\n   is drawn on the grid.",
+      "imageUrl": "/question_stems/058021_s25_Q6.png",
+      "regions": [
+        [
+          4,
+          61.1,
+          365.3
+        ]
+      ],
+      "px": [
+        1452,
+        847
+      ],
+      "figure": {
+        "assetId": "058021_s25_Q6_stemfig1",
+        "questionId": "058021_s25_Q6",
+        "imageUrl": "/question_figures/058021_s25_Q6_stemfig1.png",
+        "band": [
+          4,
+          75.0,
+          313.8
+        ],
+        "px": [
+          1452,
+          665
+        ]
+      }
+    },
+    "058021_s25_Q8": {
+      "questionId": "058021_s25_Q8",
+      "text": "8 \n \nm\nn\n11\n5\n8\n3\n=\n= -\ne\ne\no\no",
+      "imageUrl": "/question_stems/058021_s25_Q8.png",
+      "regions": [
+        [
+          5,
+          67.4,
+          107.4
+        ]
+      ],
+      "px": [
+        1452,
+        112
+      ]
+    },
+    "058021_s25_Q10": {
+      "questionId": "058021_s25_Q10",
+      "text": "10\nNOT TO\nSCALE\nD\nE\nA\nB\nC\nO\n35°\n40°\n \nA, B and C are three points on a circle, centre O.\n \nDE is a tangent to the circle at A.\n \nAngle \n°\nACO\n35\n=\n and angle \n°\nBCO\n40\n=\n.\n \nFind",
+      "imageUrl": "/question_stems/058021_s25_Q10.png",
+      "regions": [
+        [
+          6,
+          61.1,
+          406.8
+        ]
+      ],
+      "px": [
+        1452,
+        962
+      ],
+      "figure": {
+        "assetId": "058021_s25_Q10_stemfig1",
+        "questionId": "058021_s25_Q10",
+        "imageUrl": "/question_figures/058021_s25_Q10_stemfig1.png",
+        "band": [
+          6,
+          75.0,
+          305.5
+        ],
+        "px": [
+          1452,
+          642
+        ]
+      }
+    },
+    "058021_s25_Q11": {
+      "questionId": "058021_s25_Q11",
+      "text": "11 The diagram shows the graph of   \n( )\nf\ny\nx\n=\n  and the point \n(\n,\n)\nP\n2 11\n-\n.\n0\n1\n5\n– 5\n– 10\n10\n15\n2\n3\n– 2\n– 1\ny\nP\nx\n \nThe tangent from P touches the graph of \n( )\nf\ny\nx\n=\n at the point (a, b).\n \nThe values of a and b are integers.",
+      "imageUrl": "/question_stems/058021_s25_Q11.png",
+      "regions": [
+        [
+          7,
+          61.1,
+          491.7
+        ]
+      ],
+      "px": [
+        1452,
+        1198
+      ],
+      "figure": {
+        "assetId": "058021_s25_Q11_stemfig1",
+        "questionId": "058021_s25_Q11",
+        "imageUrl": "/question_figures/058021_s25_Q11_stemfig1.png",
+        "band": [
+          7,
+          224.2,
+          426.6
+        ],
+        "px": [
+          1452,
+          564
+        ]
+      }
+    },
+    "058021_s25_Q12": {
+      "questionId": "058021_s25_Q12",
+      "text": "12 The time spent on the internet by each of 120 adults is recorded for one day.\n \nThe cumulative frequency diagram shows this information.\n0\n0\nCumulative\nfrequency\nTime (hours)\n20\n40\n60\n80\n100\n120\n2\n4\n6\n8\n10",
+      "imageUrl": "/question_stems/058021_s25_Q12.png",
+      "regions": [
+        [
+          8,
+          61.1,
+          510.9
+        ]
+      ],
+      "px": [
+        1452,
+        1252
+      ],
+      "figure": {
+        "assetId": "058021_s25_Q12_stemfig1",
+        "questionId": "058021_s25_Q12",
+        "imageUrl": "/question_figures/058021_s25_Q12_stemfig1.png",
+        "band": [
+          8,
+          100.1,
+          500.9
+        ],
+        "px": [
+          1452,
+          1115
+        ]
+      }
+    },
+    "058021_s25_Q13": {
+      "questionId": "058021_s25_Q13",
+      "text": "13\n10 cm\n6 cm\nSolid A\nSolid B\n4 cm\nh cm\nNOT TO\nSCALE\n \nThe diagram shows solid A and solid B.\n \nSolid A is made from a hemisphere and a cone each with radius 6 cm.\n \nThe cone has sloping edge 10 cm.\n \nSolid B is a cylinder with radius 4 cm and height h cm.\n \nThe total surface area of solid A is equal to the total surface area of solid B.",
+      "imageUrl": "/question_stems/058021_s25_Q13.png",
+      "regions": [
+        [
+          9,
+          61.1,
+          328.7
+        ]
+      ],
+      "px": [
+        1452,
+        745
+      ],
+      "figure": {
+        "assetId": "058021_s25_Q13_stemfig1",
+        "questionId": "058021_s25_Q13",
+        "imageUrl": "/question_figures/058021_s25_Q13_stemfig1.png",
+        "band": [
+          9,
+          75.7,
+          227.7
+        ],
+        "px": [
+          1452,
+          423
+        ]
+      }
+    },
+    "058021_s25_Q14": {
+      "questionId": "058021_s25_Q14",
+      "text": "14  \n \n ( )\nf x\nx\n3\n4\n=\n-       \n( )\ng x\nx\n4\n1\n=\n+",
+      "imageUrl": "/question_stems/058021_s25_Q14.png",
+      "regions": [
+        [
+          10,
+          61.1,
+          90.5
+        ]
+      ],
+      "px": [
+        1452,
+        83
+      ]
+    },
+    "058021_s25_Q18": {
+      "questionId": "058021_s25_Q18",
+      "text": "18 One day, Anya runs 12 km at a speed of x km/h.\n \nThe next day she walks 10 km at a speed of (\n)\nx\n4\n-\n km/h.",
+      "imageUrl": "/question_stems/058021_s25_Q18.png",
+      "regions": [
+        [
+          13,
+          61.1,
+          102.4
+        ]
+      ],
+      "px": [
+        1452,
+        116
+      ]
+    },
+    "058021_s25_Q21": {
+      "questionId": "058021_s25_Q21",
+      "text": "21\nA\nB\nO\nC\nP\nNOT TO\nSCALE\nn\n2m\n \nOABC is a rhombus and O is the origin.\n \nThe diagonals of the rhombus intersect at P.\n \nand\nm\nn\n2\nOP\nAP\n=\n=\n.",
+      "imageUrl": "/question_stems/058021_s25_Q21.png",
+      "regions": [
+        [
+          15,
+          61.1,
+          258.9
+        ]
+      ],
+      "px": [
+        1452,
+        551
+      ],
+      "figure": {
+        "assetId": "058021_s25_Q21_stemfig1",
+        "questionId": "058021_s25_Q21",
+        "imageUrl": "/question_figures/058021_s25_Q21_stemfig1.png",
+        "band": [
+          15,
+          75.0,
+          195.8
+        ],
+        "px": [
+          1452,
+          337
+        ]
+      }
+    },
+    "058021_s25_Q22": {
+      "questionId": "058021_s25_Q22",
+      "text": "22 A curve has equation   y\nx\nqx\nx\n9\nn\n2\n=\n+\n+\n.\n \nx\ny\nx\nx\n3\n12\n9\nd\nd\n2\n=\n-\n+",
+      "imageUrl": "/question_stems/058021_s25_Q22.png",
+      "regions": [
+        [
+          16,
+          60.1,
+          125.1
+        ]
+      ],
+      "px": [
+        1452,
+        181
+      ]
+    },
+    "058022_s25_Q1": {
+      "questionId": "058022_s25_Q1",
+      "text": "",
+      "imageUrl": "/question_stems/058022_s25_Q1.png",
+      "regions": [
+        [
+          2,
+          82.4,
+          89.4
+        ]
+      ],
+      "px": [
+        1452,
+        20
+      ]
+    },
+    "058022_s25_Q2": {
+      "questionId": "058022_s25_Q2",
+      "text": "2 \nThe scale drawing shows the positions of two villages, P and Q.\n \nThe scale is 1 cm represents 0.5 km.\nNorth\nP\nNorth\nQ",
+      "imageUrl": "/question_stems/058022_s25_Q2.png",
+      "regions": [
+        [
+          2,
+          403.2,
+          658.4
+        ]
+      ],
+      "px": [
+        1452,
+        711
+      ],
+      "figure": {
+        "assetId": "058022_s25_Q2_stemfig1",
+        "questionId": "058022_s25_Q2",
+        "imageUrl": "/question_figures/058022_s25_Q2_stemfig1.png",
+        "band": [
+          2,
+          540.4,
+          635.6
+        ],
+        "px": [
+          1452,
+          266
+        ]
+      }
+    },
+    "058022_s25_Q4": {
+      "questionId": "058022_s25_Q4",
+      "text": "4\n1\n  \n2\n  \n3\n  \n4\n  \n5\n  \n6\n  \n7\n \nSamira picks one of these cards at random and replaces it.",
+      "imageUrl": "/question_stems/058022_s25_Q4.png",
+      "regions": [
+        [
+          3,
+          473.6,
+          562.7
+        ]
+      ],
+      "px": [
+        1452,
+        249
+      ],
+      "figure": {
+        "assetId": "058022_s25_Q4_stemfig1",
+        "questionId": "058022_s25_Q4",
+        "imageUrl": "/question_figures/058022_s25_Q4_stemfig1.png",
+        "band": [
+          3,
+          492.4,
+          527.7
+        ],
+        "px": [
+          1452,
+          99
+        ]
+      }
+    },
+    "058022_s25_Q5": {
+      "questionId": "058022_s25_Q5",
+      "text": "5\ny\nx\n4\n2\n3\n1\n0\n– 2\n– 3\n– 1\n– 4\n– 2\n– 3\n– 1\n2\n1\n3\n4\n– 4\nT\nU\n0\ne\no",
+      "imageUrl": "/question_stems/058022_s25_Q5.png",
+      "regions": [
+        [
+          4,
+          61.1,
+          361.1
+        ]
+      ],
+      "px": [
+        1452,
+        835
+      ],
+      "figure": {
+        "assetId": "058022_s25_Q5_stemfig1",
+        "questionId": "058022_s25_Q5",
+        "imageUrl": "/question_figures/058022_s25_Q5_stemfig1.png",
+        "band": [
+          4,
+          131.2,
+          195.9
+        ],
+        "px": [
+          1452,
+          181
+        ]
+      }
+    },
+    "058022_s25_Q6": {
+      "questionId": "058022_s25_Q6",
+      "text": "6 \nSolve.",
+      "imageUrl": "/question_stems/058022_s25_Q6.png",
+      "regions": [
+        [
+          4,
+          478.1,
+          511.1
+        ]
+      ],
+      "px": [
+        1452,
+        92
+      ]
+    },
+    "058022_s25_Q7": {
+      "questionId": "058022_s25_Q7",
+      "text": "7 \nThese are the first 4 terms of a sequence.\n \n      11   8   5   2",
+      "imageUrl": "/question_stems/058022_s25_Q7.png",
+      "regions": [
+        [
+          5,
+          61.1,
+          141.4
+        ]
+      ],
+      "px": [
+        1452,
+        225
+      ]
+    },
+    "058022_s25_Q9": {
+      "questionId": "058022_s25_Q9",
+      "text": "9 \nA is the point ( ,\n)\n3\n1\n-\n.\n \nAB\n2\n4\n= -\ne\no",
+      "imageUrl": "/question_stems/058022_s25_Q9.png",
+      "regions": [
+        [
+          6,
+          61.1,
+          126.5
+        ]
+      ],
+      "px": [
+        1452,
+        183
+      ]
+    },
+    "058022_s25_Q15": {
+      "questionId": "058022_s25_Q15",
+      "text": "15\ny\nx\n4\n5\n3\n2\n1\n0\n– 2\n– 3\n– 5\n– 1\n– 4\n– 2\n– 1\n– 3\n– 5\n– 7\n2\n4\n1\n3\n5\n7\n6\n8\n– 4\n– 6\n– 8\n \nThe diagram shows the graph of   y\nx\n2\n1\n=\n- .",
+      "imageUrl": "/question_stems/058022_s25_Q15.png",
+      "regions": [
+        [
+          12,
+          61.1,
+          449.3
+        ]
+      ],
+      "px": [
+        1452,
+        1081
+      ],
+      "figure": {
+        "assetId": "058022_s25_Q15_stemfig1",
+        "questionId": "058022_s25_Q15",
+        "imageUrl": "/question_figures/058022_s25_Q15_stemfig1.png",
+        "band": [
+          12,
+          102.4,
+          393.9
+        ],
+        "px": [
+          1452,
+          812
+        ]
+      }
+    },
+    "058022_s25_Q17": {
+      "questionId": "058022_s25_Q17",
+      "text": "17 Find the value of\n2",
+      "imageUrl": "/question_stems/058022_s25_Q17.png",
+      "regions": [
+        [
+          13,
+          564.2,
+          597.2
+        ]
+      ],
+      "px": [
+        1452,
+        93
+      ]
+    },
+    "058022_s25_Q18": {
+      "questionId": "058022_s25_Q18",
+      "text": "9",
+      "imageUrl": "/question_stems/058022_s25_Q18.png",
+      "regions": [
+        [
+          14,
+          63.3,
+          70.3
+        ]
+      ],
+      "px": [
+        1452,
+        20
+      ]
+    },
+    "058022_s25_Q19": {
+      "questionId": "058022_s25_Q19",
+      "text": "19 Write as a single fraction in its simplest form.\na\nb\n5\n3",
+      "imageUrl": "/question_stems/058022_s25_Q19.png",
+      "regions": [
+        [
+          14,
+          414.3,
+          447.3
+        ]
+      ],
+      "px": [
+        1452,
+        93
+      ]
+    },
+    "058022_s25_Q20": {
+      "questionId": "058022_s25_Q20",
+      "text": "20  \ny\nx\n1\n\\",
+      "imageUrl": "/question_stems/058022_s25_Q20.png",
+      "regions": [
+        [
+          15,
+          63.3,
+          103.3
+        ]
+      ],
+      "px": [
+        1452,
+        112
+      ]
+    },
+    "058022_s25_Q21": {
+      "questionId": "058022_s25_Q21",
+      "text": "21\nNOT TO\nSCALE\ny\nx\nA\nB\nO\nP\nQ\n \nThe diagram shows the graph of   y\nx\nx\n3\n3\n=\n-\n .\n \nThe graph crosses the x-axis at A, at O and at B.\n \nThe turning points of the graph are at P and at Q.",
+      "imageUrl": "/question_stems/058022_s25_Q21.png",
+      "regions": [
+        [
+          16,
+          61.1,
+          269.8
+        ]
+      ],
+      "px": [
+        1452,
+        582
+      ],
+      "figure": {
+        "assetId": "058022_s25_Q21_stemfig1",
+        "questionId": "058022_s25_Q21",
+        "imageUrl": "/question_figures/058022_s25_Q21_stemfig1.png",
+        "band": [
+          16,
+          94.6,
+          204.7
+        ],
+        "px": [
+          1452,
+          307
+        ]
+      }
+    },
+    "058023_s25_Q3": {
+      "questionId": "058023_s25_Q3",
+      "text": "3\nNOT TO\nSCALE\nM\nC\nB\nA\nD\nE\n \nThe diagram shows a pyramid ABCDE with a square base.\n \nM is the centre of the square base.\n \nE is vertically above M.",
+      "imageUrl": "/question_stems/058023_s25_Q3.png",
+      "regions": [
+        [
+          3,
+          61.1,
+          314.5
+        ]
+      ],
+      "px": [
+        1452,
+        706
+      ],
+      "figure": {
+        "assetId": "058023_s25_Q3_stemfig1",
+        "questionId": "058023_s25_Q3",
+        "imageUrl": "/question_figures/058023_s25_Q3_stemfig1.png",
+        "band": [
+          3,
+          75.7,
+          240.7
+        ],
+        "px": [
+          1452,
+          460
+        ]
+      }
+    },
+    "058023_s25_Q5": {
+      "questionId": "058023_s25_Q5",
+      "text": "5\n1\n0\n– 1\n– 1\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n– 2\n– 3\n– 4\n– 5\n– 6\n– 7\n– 2\n– 3\n– 4\n– 5\n– 6\n– 7\n2\n3\n4\n5\n6\n7\n8\n9\ny\nx\nA\nB",
+      "imageUrl": "/question_stems/058023_s25_Q5.png",
+      "regions": [
+        [
+          4,
+          61.1,
+          486.6
+        ]
+      ],
+      "px": [
+        1452,
+        1184
+      ],
+      "figure": {
+        "assetId": "058023_s25_Q5_stemfig1",
+        "questionId": "058023_s25_Q5",
+        "imageUrl": "/question_figures/058023_s25_Q5_stemfig1.png",
+        "band": [
+          4,
+          123.3,
+          335.0
+        ],
+        "px": [
+          1452,
+          590
+        ]
+      }
+    },
+    "058023_s25_Q7": {
+      "questionId": "058023_s25_Q7",
+      "text": "7 \nWork out.\n5\n7",
+      "imageUrl": "/question_stems/058023_s25_Q7.png",
+      "regions": [
+        [
+          6,
+          61.1,
+          89.4
+        ]
+      ],
+      "px": [
+        1452,
+        80
+      ]
+    },
+    "058023_s25_Q11": {
+      "questionId": "058023_s25_Q11",
+      "text": "11 Angela picks a number at random from the numbers 1, 2 and 3.\n \nShe then picks a number at random from the numbers 4, 5 and 6.\n \nShe adds the two numbers to find the total.",
+      "imageUrl": "/question_stems/058023_s25_Q11.png",
+      "regions": [
+        [
+          8,
+          61.1,
+          115.4
+        ]
+      ],
+      "px": [
+        1452,
+        152
+      ]
+    },
+    "058023_s25_Q12": {
+      "questionId": "058023_s25_Q12",
+      "text": "2\ne\no",
+      "imageUrl": "/question_stems/058023_s25_Q12.png",
+      "regions": [
+        [
+          8,
+          392.9,
+          399.9
+        ]
+      ],
+      "px": [
+        1452,
+        20
+      ]
+    },
+    "058023_s25_Q13": {
+      "questionId": "058023_s25_Q13",
+      "text": "13\n60°\n35°\nD\nA\nF\nB\nC\nE\nNOT TO\nSCALE\n \nA, B, C and D are points on a circle.\n \nEF is a tangent to the circle at A.\n \nAB is parallel to DC.",
+      "imageUrl": "/question_stems/058023_s25_Q13.png",
+      "regions": [
+        [
+          9,
+          61.1,
+          352.7
+        ]
+      ],
+      "px": [
+        1452,
+        812
+      ],
+      "figure": {
+        "assetId": "058023_s25_Q13_stemfig1",
+        "questionId": "058023_s25_Q13",
+        "imageUrl": "/question_figures/058023_s25_Q13_stemfig1.png",
+        "band": [
+          9,
+          75.7,
+          282.8
+        ],
+        "px": [
+          1452,
+          577
+        ]
+      }
+    },
+    "058023_s25_Q21": {
+      "questionId": "058023_s25_Q21",
+      "text": "3\n2",
+      "imageUrl": "/question_stems/058023_s25_Q21.png",
+      "regions": [
+        [
+          12,
+          423.1,
+          430.1
+        ]
+      ],
+      "px": [
+        1452,
+        20
+      ]
+    },
+    "058023_s25_Q22": {
+      "questionId": "058023_s25_Q22",
+      "text": "22   \n( )x\nx\n2\n5\nf\n=\n+      \n( )x\nx\n4\ng\n=\n-      \n( )x\n5\nh\nx\n=",
+      "imageUrl": "/question_stems/058023_s25_Q22.png",
+      "regions": [
+        [
+          13,
+          61.1,
+          91.7
+        ]
+      ],
+      "px": [
+        1452,
+        87
+      ]
+    },
+    "058021_w25_Q5": {
+      "questionId": "058021_w25_Q5",
+      "text": "5\nP\nT\ny\nx\n4\n2\n3\n1\n0\n– 2\n– 1\n– 2\n– 3\n– 1\n2\n1\n3\n4\n– 4",
+      "imageUrl": "/question_stems/058021_w25_Q5.png",
+      "regions": [
+        [
+          3,
+          250.3,
+          490.5
+        ]
+      ],
+      "px": [
+        1452,
+        669
+      ],
+      "figure": {
+        "assetId": "058021_w25_Q5_stemfig1",
+        "questionId": "058021_w25_Q5",
+        "imageUrl": "/question_figures/058021_w25_Q5_stemfig1.png",
+        "band": [
+          3,
+          310.9,
+          388.4
+        ],
+        "px": [
+          1452,
+          216
+        ]
+      }
+    },
+    "058021_w25_Q6": {
+      "questionId": "058021_w25_Q6",
+      "text": "6 \nFind the value of\n5\n5",
+      "imageUrl": "/question_stems/058021_w25_Q6.png",
+      "regions": [
+        [
+          3,
+          600.5,
+          633.5
+        ]
+      ],
+      "px": [
+        1452,
+        93
+      ]
+    },
+    "058021_w25_Q7": {
+      "questionId": "058021_w25_Q7",
+      "text": "7 \nSimplify.\np\n2",
+      "imageUrl": "/question_stems/058021_w25_Q7.png",
+      "regions": [
+        [
+          4,
+          61.1,
+          89.4
+        ]
+      ],
+      "px": [
+        1452,
+        80
+      ]
+    },
+    "058021_w25_Q10": {
+      "questionId": "058021_w25_Q10",
+      "text": "10 % = {n: n is an integer and \nn\n1\n8\nG\nG\n}\n \nA = {factors of 12}\n \nB = {odd numbers}\n \nFind",
+      "imageUrl": "/question_stems/058021_w25_Q10.png",
+      "regions": [
+        [
+          5,
+          289.6,
+          374.6
+        ]
+      ],
+      "px": [
+        1452,
+        237
+      ]
+    },
+    "058021_w25_Q14": {
+      "questionId": "058021_w25_Q14",
+      "text": "14\nD\nE\nNOT TO\nSCALE\n88°\n55°\nX\nB\nA\nC\n \nA, B, C, D and E lie on the circle.\n \nAC and BD intersect at X.\n \nAngle ACD = 55° and angle CXD = 88°.",
+      "imageUrl": "/question_stems/058021_w25_Q14.png",
+      "regions": [
+        [
+          7,
+          61.1,
+          367.6
+        ]
+      ],
+      "px": [
+        1452,
+        853
+      ],
+      "figure": {
+        "assetId": "058021_w25_Q14_stemfig1",
+        "questionId": "058021_w25_Q14",
+        "imageUrl": "/question_figures/058021_w25_Q14_stemfig1.png",
+        "band": [
+          7,
+          75.7,
+          299.3
+        ],
+        "px": [
+          1452,
+          623
+        ]
+      }
+    },
+    "058021_w25_Q17": {
+      "questionId": "058021_w25_Q17",
+      "text": "17  \n(\nI\nM k2\n2\n=\n)\nc\n+",
+      "imageUrl": "/question_stems/058021_w25_Q17.png",
+      "regions": [
+        [
+          9,
+          455.3,
+          488.3
+        ]
+      ],
+      "px": [
+        1452,
+        93
+      ]
+    },
+    "058021_w25_Q20": {
+      "questionId": "058021_w25_Q20",
+      "text": "20\nBag A\nBag B\n \nBag A contains 5 white balls and 3 black balls.\n \nBag B contains 3 white balls and 1 black ball.",
+      "imageUrl": "/question_stems/058021_w25_Q20.png",
+      "regions": [
+        [
+          11,
+          61.1,
+          220.2
+        ]
+      ],
+      "px": [
+        1452,
+        444
+      ],
+      "figure": {
+        "assetId": "058021_w25_Q20_stemfig1",
+        "questionId": "058021_w25_Q20",
+        "imageUrl": "/question_figures/058021_w25_Q20_stemfig1.png",
+        "band": [
+          11,
+          75.1,
+          157.1
+        ],
+        "px": [
+          1452,
+          229
+        ]
+      }
+    },
+    "058021_w25_Q21": {
+      "questionId": "058021_w25_Q21",
+      "text": "`\n`j\nj",
+      "imageUrl": "/question_stems/058021_w25_Q21.png",
+      "regions": [
+        [
+          13,
+          61.2,
+          68.2
+        ]
+      ],
+      "px": [
+        1452,
+        20
+      ]
+    },
+    "058022_w25_Q5": {
+      "questionId": "058022_w25_Q5",
+      "text": "5 \nThe pie chart shows some information about the way 600 students travel to school.\nWalk\nBicycle\n60°",
+      "imageUrl": "/question_stems/058022_w25_Q5.png",
+      "regions": [
+        [
+          3,
+          61.1,
+          389.1
+        ]
+      ],
+      "px": [
+        1452,
+        913
+      ],
+      "figure": {
+        "assetId": "058022_w25_Q5_stemfig1",
+        "questionId": "058022_w25_Q5",
+        "imageUrl": "/question_figures/058022_w25_Q5_stemfig1.png",
+        "band": [
+          3,
+          75.3,
+          379.8
+        ],
+        "px": [
+          1452,
+          847
+        ]
+      }
+    },
+    "058022_w25_Q6": {
+      "questionId": "058022_w25_Q6",
+      "text": "6\nNOT TO\nSCALE\nC\nE\nD\nB\nA\n80°\n75°\n \nABCD is a quadrilateral.\n \nE lies on CD and AE is parallel to BC.\n \nEA = ED.\n \nFind",
+      "imageUrl": "/question_stems/058022_w25_Q6.png",
+      "regions": [
+        [
+          4,
+          61.1,
+          308.0
+        ]
+      ],
+      "px": [
+        1452,
+        688
+      ],
+      "figure": {
+        "assetId": "058022_w25_Q6_stemfig1",
+        "questionId": "058022_w25_Q6",
+        "imageUrl": "/question_figures/058022_w25_Q6_stemfig1.png",
+        "band": [
+          4,
+          87.4,
+          209.9
+        ],
+        "px": [
+          1452,
+          341
+        ]
+      }
+    },
+    "058022_w25_Q10": {
+      "questionId": "058022_w25_Q10",
+      "text": "10  \n \nb\ndm\nmk\n2\n=\n+",
+      "imageUrl": "/question_stems/058022_w25_Q10.png",
+      "regions": [
+        [
+          5,
+          452.0,
+          485.0
+        ]
+      ],
+      "px": [
+        1452,
+        93
+      ]
+    },
+    "058022_w25_Q11": {
+      "questionId": "058022_w25_Q11",
+      "text": "11\nNOT TO\nSCALE\nS\nP\nQ\nT\nR\n \nIn the diagram, S lies on PQ and T lies on PR.\n \nST is parallel to QR.",
+      "imageUrl": "/question_stems/058022_w25_Q11.png",
+      "regions": [
+        [
+          6,
+          61.1,
+          297.5
+        ]
+      ],
+      "px": [
+        1452,
+        658
+      ],
+      "figure": {
+        "assetId": "058022_w25_Q11_stemfig1",
+        "questionId": "058022_w25_Q11",
+        "imageUrl": "/question_figures/058022_w25_Q11_stemfig1.png",
+        "band": [
+          6,
+          88.4,
+          242.6
+        ],
+        "px": [
+          1452,
+          430
+        ]
+      }
+    },
+    "058022_w25_Q12": {
+      "questionId": "058022_w25_Q12",
+      "text": "12 A fitness club has 100 members.\n \n60 swim (S ).\n \n70 cycle (C ).\n \n25 do not swim or cycle.\nC\nS\n%",
+      "imageUrl": "/question_stems/058022_w25_Q12.png",
+      "regions": [
+        [
+          7,
+          61.1,
+          297.9
+        ]
+      ],
+      "px": [
+        1452,
+        660
+      ],
+      "figure": {
+        "assetId": "058022_w25_Q12_stemfig1",
+        "questionId": "058022_w25_Q12",
+        "imageUrl": "/question_figures/058022_w25_Q12_stemfig1.png",
+        "band": [
+          7,
+          127.3,
+          288.6
+        ],
+        "px": [
+          1452,
+          450
+        ]
+      }
+    },
+    "058022_w25_Q13": {
+      "questionId": "058022_w25_Q13",
+      "text": "13  \n \nM\n2\n3\n5\n7\n3\n2\n#\n#\n=",
+      "imageUrl": "/question_stems/058022_w25_Q13.png",
+      "regions": [
+        [
+          8,
+          60.1,
+          93.1
+        ]
+      ],
+      "px": [
+        1452,
+        92
+      ]
+    },
+    "058022_w25_Q14": {
+      "questionId": "058022_w25_Q14",
+      "text": "14 Find the value of\n2\n2",
+      "imageUrl": "/question_stems/058022_w25_Q14.png",
+      "regions": [
+        [
+          8,
+          464.7,
+          497.7
+        ]
+      ],
+      "px": [
+        1452,
+        93
+      ]
+    },
+    "058022_w25_Q15": {
+      "questionId": "058022_w25_Q15",
+      "text": "15 Factorise.\n2",
+      "imageUrl": "/question_stems/058022_w25_Q15.png",
+      "regions": [
+        [
+          9,
+          61.1,
+          89.4
+        ]
+      ],
+      "px": [
+        1452,
+        80
+      ]
+    },
+    "058022_w25_Q17": {
+      "questionId": "058022_w25_Q17",
+      "text": "17 B is the point (-3, 1) and D is the point (-5, 9).\n \nBD is a diagonal of the kite ABCD.",
+      "imageUrl": "/question_stems/058022_w25_Q17.png",
+      "regions": [
+        [
+          10,
+          61.1,
+          104.2
+        ]
+      ],
+      "px": [
+        1452,
+        121
+      ]
+    },
+    "058022_w25_Q20": {
+      "questionId": "058022_w25_Q20",
+      "text": "20  \n \n( )x\nx\n2\n1\n21\nf\n=\n-  , x\n2\n1\n!\n    \n( )x\nx\n3\n4\ng\n=\n+",
+      "imageUrl": "/question_stems/058022_w25_Q20.png",
+      "regions": [
+        [
+          12,
+          63.3,
+          96.3
+        ]
+      ],
+      "px": [
+        1452,
+        92
+      ]
+    },
+    "058022_w25_Q23": {
+      "questionId": "058022_w25_Q23",
+      "text": "23\nNOT TO\nSCALE\nB\nA\n240°\n12 cm\nO\n \nThe diagram shows a major sector, AOB, of a circle.\n \nThe sector angle is 240° and the radius is 12 cm.",
+      "imageUrl": "/question_stems/058022_w25_Q23.png",
+      "regions": [
+        [
+          14,
+          61.1,
+          287.5
+        ]
+      ],
+      "px": [
+        1452,
+        631
+      ],
+      "figure": {
+        "assetId": "058022_w25_Q23_stemfig1",
+        "questionId": "058022_w25_Q23",
+        "imageUrl": "/question_figures/058022_w25_Q23_stemfig1.png",
+        "band": [
+          14,
+          87.2,
+          239.2
+        ],
+        "px": [
+          1452,
+          424
+        ]
+      }
+    },
+    "058023_w25_Q6": {
+      "questionId": "058023_w25_Q6",
+      "text": "6 \nThe scatter diagram shows the value, in thousands of dollars, of ten paintings in 2005 and the value of \nthe same paintings in 2025.\n0\n0\n10\n20\n30\n40\n50\n60\n70\n80\n90\n100\n20\n40\n60\n80\n100\n120\nValue in 2025\n($ thousands)\nValue in 2005 ($ thousands)\n140\n160\n180\n200",
+      "imageUrl": "/question_stems/058023_w25_Q6.png",
+      "regions": [
+        [
+          4,
+          61.1,
+          459.8
+        ]
+      ],
+      "px": [
+        1452,
+        1110
+      ],
+      "figure": {
+        "assetId": "058023_w25_Q6_stemfig1",
+        "questionId": "058023_w25_Q6",
+        "imageUrl": "/question_figures/058023_w25_Q6_stemfig1.png",
+        "band": [
+          4,
+          106.5,
+          408.5
+        ],
+        "px": [
+          1452,
+          840
+        ]
+      }
+    },
+    "058023_w25_Q8": {
+      "questionId": "058023_w25_Q8",
+      "text": "8 \nDE\n3\n4\n= -\ne\no",
+      "imageUrl": "/question_stems/058023_w25_Q8.png",
+      "regions": [
+        [
+          5,
+          355.4,
+          401.4
+        ]
+      ],
+      "px": [
+        1452,
+        129
+      ]
+    },
+    "058023_w25_Q10": {
+      "questionId": "058023_w25_Q10",
+      "text": "10\nC\nA\nB\n11 cm\n8 cm\nNOT TO\nSCALE\nx°\n \nThe diagram shows a right-angled triangle ABC.",
+      "imageUrl": "/question_stems/058023_w25_Q10.png",
+      "regions": [
+        [
+          6,
+          203.1,
+          360.2
+        ]
+      ],
+      "px": [
+        1452,
+        438
+      ],
+      "figure": {
+        "assetId": "058023_w25_Q10_stemfig1",
+        "questionId": "058023_w25_Q10",
+        "imageUrl": "/question_figures/058023_w25_Q10_stemfig1.png",
+        "band": [
+          6,
+          234.8,
+          309.9
+        ],
+        "px": [
+          1452,
+          210
+        ]
+      }
+    },
+    "058023_w25_Q12": {
+      "questionId": "058023_w25_Q12",
+      "text": "0",
+      "imageUrl": "/question_stems/058023_w25_Q12.png",
+      "regions": [
+        [
+          7,
+          238.4,
+          245.4
+        ]
+      ],
+      "px": [
+        1452,
+        21
+      ]
+    },
+    "058023_w25_Q14": {
+      "questionId": "058023_w25_Q14",
+      "text": "14 The minimum point on a quadratic curve is (–3, –5).",
+      "imageUrl": "/question_stems/058023_w25_Q14.png",
+      "regions": [
+        [
+          8,
+          518.6,
+          551.6
+        ]
+      ],
+      "px": [
+        1452,
+        93
+      ]
+    },
+    "058023_w25_Q15": {
+      "questionId": "058023_w25_Q15",
+      "text": "15 Factorise.\n2",
+      "imageUrl": "/question_stems/058023_w25_Q15.png",
+      "regions": [
+        [
+          9,
+          61.1,
+          89.4
+        ]
+      ],
+      "px": [
+        1452,
+        80
+      ]
+    },
+    "058023_w25_Q18": {
+      "questionId": "058023_w25_Q18",
+      "text": "18 Shade the region in each Venn diagram.",
+      "imageUrl": "/question_stems/058023_w25_Q18.png",
+      "regions": [
+        [
+          11,
+          61.1,
+          89.4
+        ]
+      ],
+      "px": [
+        1452,
+        80
+      ]
+    },
+    "058023_w25_Q19": {
+      "questionId": "058023_w25_Q19",
+      "text": "19\n60°\nA\nB\nO\nNOT TO\nSCALE\n \nThe diagram shows a circle, centre O, radius 12 cm.",
+      "imageUrl": "/question_stems/058023_w25_Q19.png",
+      "regions": [
+        [
+          12,
+          61.1,
+          251.0
+        ]
+      ],
+      "px": [
+        1452,
+        529
+      ],
+      "figure": {
+        "assetId": "058023_w25_Q19_stemfig1",
+        "questionId": "058023_w25_Q19",
+        "imageUrl": "/question_figures/058023_w25_Q19_stemfig1.png",
+        "band": [
+          12,
+          75.2,
+          215.7
+        ],
+        "px": [
+          1452,
+          391
+        ]
+      }
+    },
+    "058023_w25_Q25": {
+      "questionId": "058023_w25_Q25",
+      "text": "25 Mahir picks one number at random from the numbers 5, 10 and 15.\n \nHe then picks one number at random from the numbers 4, 5 and 6.\n \nHe adds the two numbers.\n \nThe sample space diagram shows some of the possible outcomes. \n4\n+\n5\n5\n6\n14\n10\nFirst number\nSecond\nnumber\n15\n16\n19\n15\n20\n21",
+      "imageUrl": "/question_stems/058023_w25_Q25.png",
+      "regions": [
+        [
+          16,
+          61.1,
+          287.5
+        ]
+      ],
+      "px": [
+        1452,
+        631
+      ],
+      "figure": {
+        "assetId": "058023_w25_Q25_stemfig1",
+        "questionId": "058023_w25_Q25",
+        "imageUrl": "/question_figures/058023_w25_Q25_stemfig1.png",
+        "band": [
+          16,
+          152.8,
+          278.1
+        ],
+        "px": [
+          1452,
+          350
+        ]
+      }
+    },
+    "058023_w25_Q26": {
+      "questionId": "058023_w25_Q26",
+      "text": "26 Write as a single fraction in its simplest form.\nmp\n15",
+      "imageUrl": "/question_stems/058023_w25_Q26.png",
+      "regions": [
+        [
+          16,
+          423.5,
+          456.5
+        ]
+      ],
+      "px": [
+        1452,
+        93
+      ]
+    },
+    "058042_m25_Q7": {
+      "questionId": "058042_m25_Q7",
+      "text": "7 \nThe table shows the age and mass of each of 10 babies.\nAge (weeks)\n9\n12\n15\n2\n5\n6\n9\n7\n1\n11\nMass (kg)\n4.3\n5.8\n6.2\n3.0\n3.9\n4.0\n4.6\n4.5\n2.5\n5.3",
+      "imageUrl": "/question_stems/058042_m25_Q7.png",
+      "regions": [
+        [
+          4,
+          61.1,
+          144.4
+        ]
+      ],
+      "px": [
+        1452,
+        233
+      ],
+      "figure": {
+        "assetId": "058042_m25_Q7_stemfig1",
+        "questionId": "058042_m25_Q7",
+        "imageUrl": "/question_figures/058042_m25_Q7_stemfig1.png",
+        "band": [
+          4,
+          89.8,
+          139.3
+        ],
+        "px": [
+          1452,
+          139
+        ]
+      }
+    },
+    "058042_m25_Q8": {
+      "questionId": "058042_m25_Q8",
+      "text": "8 \nThe scale drawing shows the positions of boat A and boat B.\n \nThe scale is 1 cm represents 0.5 km.\nA\nB\nScale: 1 cm to 0.5 km\nNorth",
+      "imageUrl": "/question_stems/058042_m25_Q8.png",
+      "regions": [
+        [
+          5,
+          61.1,
+          370.3
+        ]
+      ],
+      "px": [
+        1452,
+        861
+      ],
+      "figure": {
+        "assetId": "058042_m25_Q8_stemfig1",
+        "questionId": "058042_m25_Q8",
+        "imageUrl": "/question_figures/058042_m25_Q8_stemfig1.png",
+        "band": [
+          5,
+          100.8,
+          348.5
+        ],
+        "px": [
+          1452,
+          689
+        ]
+      }
+    },
+    "058042_m25_Q10": {
+      "questionId": "058042_m25_Q10",
+      "text": "10\n-5\n-6\n-5\n-4\n-3\n-2\n-1\n1\n2\n3\n4\n5\n6\nx\ny\n-4\n-3\n-2\n-1\n0\n1\n2\n3\n4\n5\n6\n7\nB\nA",
+      "imageUrl": "/question_stems/058042_m25_Q10.png",
+      "regions": [
+        [
+          6,
+          61.1,
+          477.9
+        ]
+      ],
+      "px": [
+        1452,
+        1160
+      ],
+      "figure": {
+        "assetId": "058042_m25_Q10_stemfig1",
+        "questionId": "058042_m25_Q10",
+        "imageUrl": "/question_figures/058042_m25_Q10_stemfig1.png",
+        "band": [
+          6,
+          87.6,
+          469.1
+        ],
+        "px": [
+          1452,
+          1062
+        ]
+      }
+    },
+    "058042_m25_Q14": {
+      "questionId": "058042_m25_Q14",
+      "text": "14  \n \n( )\nf x\nx\n5\n4\n=\n-\n`\nj",
+      "imageUrl": "/question_stems/058042_m25_Q14.png",
+      "regions": [
+        [
+          8,
+          496.4,
+          529.4
+        ]
+      ],
+      "px": [
+        1452,
+        93
+      ]
+    },
+    "058042_m25_Q15": {
+      "questionId": "058042_m25_Q15",
+      "text": "15 Virat records the height of each of 80 sunflowers. \n \nThe results are shown in the table.\nHeight (h m)\n.\n.\nh\n1 2\n1 5\n1\n#\n.\n.\nh\n1 5\n1 6\n1\n#\n.\n.\nh\n1\n1\n6\n7\n1\n#\n.\n.\nh\n1\n1\n7\n9\n1\n#\nFrequency\n12\n20\n34  \n14",
+      "imageUrl": "/question_stems/058042_m25_Q15.png",
+      "regions": [
+        [
+          9,
+          61.1,
+          158.5
+        ]
+      ],
+      "px": [
+        1452,
+        272
+      ]
+    },
+    "058042_m25_Q16": {
+      "questionId": "058042_m25_Q16",
+      "text": "16 The graph shows the speed of a cyclist during a journey of 30 seconds.\n0\n0\n5\n10\n15\nTime (seconds)\n20\n25\n30\n2\n4\n6\nSpeed (m/s)\n8",
+      "imageUrl": "/question_stems/058042_m25_Q16.png",
+      "regions": [
+        [
+          10,
+          61.1,
+          414.5
+        ]
+      ],
+      "px": [
+        1452,
+        984
+      ],
+      "figure": {
+        "assetId": "058042_m25_Q16_stemfig1",
+        "questionId": "058042_m25_Q16",
+        "imageUrl": "/question_figures/058042_m25_Q16_stemfig1.png",
+        "band": [
+          10,
+          87.8,
+          405.7
+        ],
+        "px": [
+          1452,
+          884
+        ]
+      }
+    },
+    "058042_m25_Q17": {
+      "questionId": "058042_m25_Q17",
+      "text": "17\nNorth\nNOT TO\nSCALE\n38°\nA\nB\nC\n95 m\n65 m\n \nThe diagram shows three points A, B and C on horizontal ground.\n \nThe bearing of C from A is 145° and angle ACB = 38°.\n \nAC = 65 m and BC = 95 m.",
+      "imageUrl": "/question_stems/058042_m25_Q17.png",
+      "regions": [
+        [
+          11,
+          61.1,
+          350.8
+        ]
+      ],
+      "px": [
+        1452,
+        807
+      ],
+      "figure": {
+        "assetId": "058042_m25_Q17_stemfig1",
+        "questionId": "058042_m25_Q17",
+        "imageUrl": "/question_figures/058042_m25_Q17_stemfig1.png",
+        "band": [
+          11,
+          75.7,
+          290.0
+        ],
+        "px": [
+          1452,
+          597
+        ]
+      }
+    },
+    "058041_s25_Q4": {
+      "questionId": "058041_s25_Q4",
+      "text": "4\ny\nx\n– 1\n1\n0\n2\n3\n4\n5\n6\n7\n8\n– 2\n– 3\n– 4\n– 5\n– 6\n– 7\n– 8\n– 9\n– 10\n– 1\n1\n2\n3\n4\n5\n6\n– 2\n– 3\n– 4\n– 5\n– 6\n– 7\n– 8\nA\nB\nC",
+      "imageUrl": "/question_stems/058041_s25_Q4.png",
+      "regions": [
+        [
+          3,
+          61.1,
+          534.5
+        ]
+      ],
+      "px": [
+        1452,
+        1317
+      ],
+      "figure": {
+        "assetId": "058041_s25_Q4_stemfig1",
+        "questionId": "058041_s25_Q4",
+        "imageUrl": "/question_figures/058041_s25_Q4_stemfig1.png",
+        "band": [
+          3,
+          134.8,
+          314.5
+        ],
+        "px": [
+          1452,
+          501
+        ]
+      }
+    },
+    "058041_s25_Q8": {
+      "questionId": "058041_s25_Q8",
+      "text": "8 \nHadi buys a dishwasher.\n \nHe can either pay a single payment of $980 or he can pay using a monthly plan.\n \nThe monthly plan is 20% of $980 plus 12 payments of $75.25 .",
+      "imageUrl": "/question_stems/058041_s25_Q8.png",
+      "regions": [
+        [
+          5,
+          196.2,
+          255.2
+        ]
+      ],
+      "px": [
+        1452,
+        165
+      ]
+    },
+    "058041_s25_Q14": {
+      "questionId": "058041_s25_Q14",
+      "text": "14 The table shows some values for   y\nx\nx\n5\n4\n2\n3\n=\n-\n-  .\nx\n-2\n-1\n0\n1\n2\n3\n4\n5\ny\n24\n-4\n8\n14\n-4",
+      "imageUrl": "/question_stems/058041_s25_Q14.png",
+      "regions": [
+        [
+          8,
+          60.1,
+          209.6
+        ]
+      ],
+      "px": [
+        1452,
+        416
+      ]
+    },
+    "058041_s25_Q15": {
+      "questionId": "058041_s25_Q15",
+      "text": "15 The height of each of 140 basketball players is recorded.\n \nThe table shows the results.\nHeight (h cm)\nh\n0\n0\n16\n18\n1\nG\nh\n0\n18\n185\n1\nG\nh\n0\n185\n19\n1\nG\nh\n0\n2 0\n19\n0\n1\nG\nh\n200\n210\n1\nG\nFrequency\n7\n12\n31\n70\n20",
+      "imageUrl": "/question_stems/058041_s25_Q15.png",
+      "regions": [
+        [
+          9,
+          61.1,
+          171.5
+        ]
+      ],
+      "px": [
+        1452,
+        308
+      ]
+    },
+    "058041_s25_Q17": {
+      "questionId": "058041_s25_Q17",
+      "text": "17\n56°\n47°\n12.1 cm\n15.8 cm\n9.6 cm\nB\nA\nD\nC\nNOT TO\nSCALE\n \nThe diagram shows a quadrilateral ABCD.",
+      "imageUrl": "/question_stems/058041_s25_Q17.png",
+      "regions": [
+        [
+          11,
+          61.1,
+          266.8
+        ]
+      ],
+      "px": [
+        1452,
+        573
+      ],
+      "figure": {
+        "assetId": "058041_s25_Q17_stemfig1",
+        "questionId": "058041_s25_Q17",
+        "imageUrl": "/question_figures/058041_s25_Q17_stemfig1.png",
+        "band": [
+          11,
+          75.7,
+          218.7
+        ],
+        "px": [
+          1452,
+          399
+        ]
+      }
+    },
+    "058041_s25_Q20": {
+      "questionId": "058041_s25_Q20",
+      "text": "20\nNOT TO\nSCALE\nA\nD\nO\nM\nB\nC\n24 cm\n10.5 cm\n10.5 cm\n \nThe diagram shows a pyramid OABCD.\n \nThe pyramid has a square base, ABCD, with sides 10.5 cm.\n \nThe vertex O is vertically above the centre of the base, M.\n \nThe height of the pyramid is 24 cm.",
+      "imageUrl": "/question_stems/058041_s25_Q20.png",
+      "regions": [
+        [
+          13,
+          61.1,
+          324.7
+        ]
+      ],
+      "px": [
+        1452,
+        734
+      ],
+      "figure": {
+        "assetId": "058041_s25_Q20_stemfig1",
+        "questionId": "058041_s25_Q20",
+        "imageUrl": "/question_figures/058041_s25_Q20_stemfig1.png",
+        "band": [
+          13,
+          75.7,
+          236.7
+        ],
+        "px": [
+          1452,
+          449
+        ]
+      }
+    },
+    "058042_s25_Q13": {
+      "questionId": "058042_s25_Q13",
+      "text": "13\nNOT TO\nSCALE\nA\nB\nC\nP\nQ\nR\n9 cm\n6 cm\n12 cm\n16 cm\n \nTriangle ABC and triangle PQR are mathematically similar.",
+      "imageUrl": "/question_stems/058042_s25_Q13.png",
+      "regions": [
+        [
+          7,
+          61.1,
+          230.2
+        ]
+      ],
+      "px": [
+        1452,
+        472
+      ],
+      "figure": {
+        "assetId": "058042_s25_Q13_stemfig1",
+        "questionId": "058042_s25_Q13",
+        "imageUrl": "/question_figures/058042_s25_Q13_stemfig1.png",
+        "band": [
+          7,
+          75.7,
+          195.4
+        ],
+        "px": [
+          1452,
+          334
+        ]
+      }
+    },
+    "058042_s25_Q16": {
+      "questionId": "058042_s25_Q16",
+      "text": "16 On any day, the probability that the weather will be sunny is 0.7 .",
+      "imageUrl": "/question_stems/058042_s25_Q16.png",
+      "regions": [
+        [
+          8,
+          212.4,
+          245.4
+        ]
+      ],
+      "px": [
+        1452,
+        93
+      ]
+    },
+    "058042_s25_Q19": {
+      "questionId": "058042_s25_Q19",
+      "text": "19  \n \n( )\nf x\nx\n1\n=\n+     \n( )\ng x\nx\n5\n2\n=\n-\n    \n( )\nh x\n2x\n=",
+      "imageUrl": "/question_stems/058042_s25_Q19.png",
+      "regions": [
+        [
+          12,
+          61.1,
+          91.7
+        ]
+      ],
+      "px": [
+        1452,
+        87
+      ]
+    },
+    "058042_s25_Q20": {
+      "questionId": "058042_s25_Q20",
+      "text": "20\n10 m\n12 m\n56°\n34°\nD\nC\nB\nA\nNOT TO\nSCALE\n \nThe diagram shows a quadrilateral ABCD.\n \nCD = 10 m and DB = 12 m.\n \nAngle DBA = 90°, angle CDB = 56° and angle ADB = 34°.",
+      "imageUrl": "/question_stems/058042_s25_Q20.png",
+      "regions": [
+        [
+          13,
+          61.1,
+          318.8
+        ]
+      ],
+      "px": [
+        1452,
+        718
+      ],
+      "figure": {
+        "assetId": "058042_s25_Q20_stemfig1",
+        "questionId": "058042_s25_Q20",
+        "imageUrl": "/question_figures/058042_s25_Q20_stemfig1.png",
+        "band": [
+          13,
+          75.7,
+          258.0
+        ],
+        "px": [
+          1452,
+          508
+        ]
+      }
+    },
+    "058042_s25_Q21": {
+      "questionId": "058042_s25_Q21",
+      "text": "21 Simplify.\n5\n3",
+      "imageUrl": "/question_stems/058042_s25_Q21.png",
+      "regions": [
+        [
+          14,
+          461.7,
+          494.7
+        ]
+      ],
+      "px": [
+        1452,
+        93
+      ]
+    },
+    "058042_s25_Q22": {
+      "questionId": "058042_s25_Q22",
+      "text": "22\n%\n13\n8\n5\nG\nH\n7\n \n% = {number of students in a class}\n \nG = {number of students who study geography}\n \nH = {number of students who study history}\n \nThe Venn diagram shows information about the 33 students in a class.",
+      "imageUrl": "/question_stems/058042_s25_Q22.png",
+      "regions": [
+        [
+          15,
+          61.1,
+          287.5
+        ]
+      ],
+      "px": [
+        1452,
+        631
+      ],
+      "figure": {
+        "assetId": "058042_s25_Q22_stemfig1",
+        "questionId": "058042_s25_Q22",
+        "imageUrl": "/question_figures/058042_s25_Q22_stemfig1.png",
+        "band": [
+          15,
+          75.7,
+          200.7
+        ],
+        "px": [
+          1452,
+          349
+        ]
+      }
+    },
+    "058042_s25_Q24": {
+      "questionId": "058042_s25_Q24",
+      "text": "24 Ahmed walks 2 km at a speed of x km/h.\n \nHe then walks a further 3 km at a speed of (\n)\nx\n1\n+\n km/h.\n \nThe total time he takes to walk the 5 km is 1 4\n1 hours.\n2",
+      "imageUrl": "/question_stems/058042_s25_Q24.png",
+      "regions": [
+        [
+          16,
+          303.4,
+          375.4
+        ]
+      ],
+      "px": [
+        1452,
+        201
+      ]
+    },
+    "058043_s25_Q3": {
+      "questionId": "058043_s25_Q3",
+      "text": "3\n5\n2    \n15    23    \n144    \n2\n-     0.8\n \nFrom this list, write down",
+      "imageUrl": "/question_stems/058043_s25_Q3.png",
+      "regions": [
+        [
+          2,
+          535.1,
+          630.3
+        ]
+      ],
+      "px": [
+        1452,
+        266
+      ],
+      "figure": {
+        "assetId": "058043_s25_Q3_stemfig1",
+        "questionId": "058043_s25_Q3",
+        "imageUrl": "/question_figures/058043_s25_Q3_stemfig1.png",
+        "band": [
+          2,
+          553.7,
+          595.2
+        ],
+        "px": [
+          1452,
+          116
+        ]
+      }
+    },
+    "058043_s25_Q5": {
+      "questionId": "058043_s25_Q5",
+      "text": "2\n2",
+      "imageUrl": "/question_stems/058043_s25_Q5.png",
+      "regions": [
+        [
+          3,
+          441.2,
+          448.2
+        ]
+      ],
+      "px": [
+        1452,
+        21
+      ]
+    },
+    "058043_s25_Q7": {
+      "questionId": "058043_s25_Q7",
+      "text": "7 \n% = {x: x is an integer and \nx\n1\n12\nG\nG\n}\n \nE = {even numbers}\n \nM = {multiples of 3}",
+      "imageUrl": "/question_stems/058043_s25_Q7.png",
+      "regions": [
+        [
+          4,
+          61.1,
+          143.2
+        ]
+      ],
+      "px": [
+        1452,
+        230
+      ]
+    },
+    "058043_s25_Q8": {
+      "questionId": "058043_s25_Q8",
+      "text": "8 \nFactorise.",
+      "imageUrl": "/question_stems/058043_s25_Q8.png",
+      "regions": [
+        [
+          4,
+          384.6,
+          417.6
+        ]
+      ],
+      "px": [
+        1452,
+        92
+      ]
+    },
+    "058043_s25_Q10": {
+      "questionId": "058043_s25_Q10",
+      "text": "10 Expand and simplify.\n2",
+      "imageUrl": "/question_stems/058043_s25_Q10.png",
+      "regions": [
+        [
+          5,
+          225.4,
+          258.4
+        ]
+      ],
+      "px": [
+        1452,
+        93
+      ]
+    },
+    "058043_s25_Q13": {
+      "questionId": "058043_s25_Q13",
+      "text": "13 Line L has the equation \n(\n)\ny\nx\n2\n5\n=\n-\n.",
+      "imageUrl": "/question_stems/058043_s25_Q13.png",
+      "regions": [
+        [
+          7,
+          61.1,
+          90.5
+        ]
+      ],
+      "px": [
+        1452,
+        83
+      ]
+    },
+    "058043_s25_Q18": {
+      "questionId": "058043_s25_Q18",
+      "text": "18\n8 cm\n4.5 cm\n13.2 cm\nNOT TO\nSCALE\n \nThe diagram shows a solid cuboid with sides of length 4.5 cm, 8 cm and 13.2 cm.",
+      "imageUrl": "/question_stems/058043_s25_Q18.png",
+      "regions": [
+        [
+          10,
+          61.1,
+          211.2
+        ]
+      ],
+      "px": [
+        1452,
+        419
+      ],
+      "figure": {
+        "assetId": "058043_s25_Q18_stemfig1",
+        "questionId": "058043_s25_Q18",
+        "imageUrl": "/question_figures/058043_s25_Q18_stemfig1.png",
+        "band": [
+          10,
+          75.1,
+          161.0
+        ],
+        "px": [
+          1452,
+          240
+        ]
+      }
+    },
+    "058043_s25_Q19": {
+      "questionId": "058043_s25_Q19",
+      "text": "19 The table shows some information about the heights of 200 plants.\nHeight (h cm)\nCumulative \nfrequency\nh\n30\nG\n6\nh\n40\nG\n42\nh\n50\nG\n76\nh\n60\nG\n170\nh\n70\nG\n190\nh\n80\nG\n200",
+      "imageUrl": "/question_stems/058043_s25_Q19.png",
+      "regions": [
+        [
+          11,
+          61.1,
+          280.7
+        ]
+      ],
+      "px": [
+        1452,
+        612
+      ]
+    },
+    "058043_s25_Q20": {
+      "questionId": "058043_s25_Q20",
+      "text": "20 Stephan has two bags, A and B, each containing red sweets and yellow sweets only.\n \nHe picks two sweets at random, one from bag A and the other from bag B.\n \nThe probability that Stephan picks a red sweet from bag A is 5\n3.\n \nThe probability that Stephan picks a red sweet from bag A and a red sweet from bag B is 15\n2 .",
+      "imageUrl": "/question_stems/058043_s25_Q20.png",
+      "regions": [
+        [
+          12,
+          61.1,
+          140.4
+        ]
+      ],
+      "px": [
+        1452,
+        222
+      ]
+    },
+    "058043_s25_Q22": {
+      "questionId": "058043_s25_Q22",
+      "text": "22 A metal cube has mass 14.2 g, correct to 1 decimal place.",
+      "imageUrl": "/question_stems/058043_s25_Q22.png",
+      "regions": [
+        [
+          14,
+          61.1,
+          89.4
+        ]
+      ],
+      "px": [
+        1452,
+        80
+      ]
+    },
+    "058043_s25_Q24": {
+      "questionId": "058043_s25_Q24",
+      "text": "24 The histogram shows information about the distance some people travel to work.\nd\n3\nFrequency\ndensity\n4\n2\n1\n0\n10\n0\n20\n30\nDistance (km)\n40\n50",
+      "imageUrl": "/question_stems/058043_s25_Q24.png",
+      "regions": [
+        [
+          16,
+          61.1,
+          383.9
+        ]
+      ],
+      "px": [
+        1452,
+        899
+      ],
+      "figure": {
+        "assetId": "058043_s25_Q24_stemfig1",
+        "questionId": "058043_s25_Q24",
+        "imageUrl": "/question_figures/058043_s25_Q24_stemfig1.png",
+        "band": [
+          16,
+          140.7,
+          341.4
+        ],
+        "px": [
+          1452,
+          559
+        ]
+      }
+    },
+    "058043_s25_Q26": {
+      "questionId": "058043_s25_Q26",
+      "text": "26\nNOT TO\nSCALE\na\nb\n5\n2\n-\n12b\n3a\nO\nY\nT\nX\nP\n \nThe diagram shows a quadrilateral OXPY with diagonals meeting at T.\n \na\nOX\n3\n=\n   and   \nb\nOY\n12\n=\n.",
+      "imageUrl": "/question_stems/058043_s25_Q26.png",
+      "regions": [
+        [
+          18,
+          61.1,
+          334.3
+        ]
+      ],
+      "px": [
+        1452,
+        761
+      ],
+      "figure": {
+        "assetId": "058043_s25_Q26_stemfig1",
+        "questionId": "058043_s25_Q26",
+        "imageUrl": "/question_figures/058043_s25_Q26_stemfig1.png",
+        "band": [
+          18,
+          84.2,
+          271.6
+        ],
+        "px": [
+          1452,
+          523
+        ]
+      }
+    },
+    "058041_w25_Q5": {
+      "questionId": "058041_w25_Q5",
+      "text": "5\nB\nA",
+      "imageUrl": "/question_stems/058041_w25_Q5.png",
+      "regions": [
+        [
+          3,
+          61.1,
+          331.3
+        ]
+      ],
+      "px": [
+        1452,
+        752
+      ]
+    },
+    "058041_w25_Q11": {
+      "questionId": "058041_w25_Q11",
+      "text": "11 In a sale, the prices of coats are reduced by 15%.",
+      "imageUrl": "/question_stems/058041_w25_Q11.png",
+      "regions": [
+        [
+          5,
+          251.4,
+          284.4
+        ]
+      ],
+      "px": [
+        1452,
+        93
+      ]
+    },
+    "058041_w25_Q12": {
+      "questionId": "058041_w25_Q12",
+      "text": "12 Some students are asked if they like football (F) or rugby (R).\n \nThe Venn diagram shows the results.\nR\nF\n33\n7\n6\n4\n%",
+      "imageUrl": "/question_stems/058041_w25_Q12.png",
+      "regions": [
+        [
+          6,
+          61.1,
+          224.3
+        ]
+      ],
+      "px": [
+        1452,
+        455
+      ],
+      "figure": {
+        "assetId": "058041_w25_Q12_stemfig1",
+        "questionId": "058041_w25_Q12",
+        "imageUrl": "/question_figures/058041_w25_Q12_stemfig1.png",
+        "band": [
+          6,
+          101.3,
+          215.0
+        ],
+        "px": [
+          1452,
+          317
+        ]
+      }
+    },
+    "058041_w25_Q14": {
+      "questionId": "058041_w25_Q14",
+      "text": "14 A cube contains a solid metal sphere.\n \nThe sphere touches all the faces of the cube.\n \nThe side length of the cube is 8 cm.\n256\n3",
+      "imageUrl": "/question_stems/058041_w25_Q14.png",
+      "regions": [
+        [
+          7,
+          61.1,
+          115.4
+        ]
+      ],
+      "px": [
+        1452,
+        152
+      ]
+    },
+    "058041_w25_Q18": {
+      "questionId": "058041_w25_Q18",
+      "text": "18\n10\n2\n0\n8\nSpeed\n(m/s)\nTime (seconds)\nNOT TO\nSCALE\n0\n \nThe diagram shows part of the speed–time graph for an athlete in a race.",
+      "imageUrl": "/question_stems/058041_w25_Q18.png",
+      "regions": [
+        [
+          10,
+          61.1,
+          267.8
+        ]
+      ],
+      "px": [
+        1452,
+        576
+      ],
+      "figure": {
+        "assetId": "058041_w25_Q18_stemfig1",
+        "questionId": "058041_w25_Q18",
+        "imageUrl": "/question_figures/058041_w25_Q18_stemfig1.png",
+        "band": [
+          10,
+          94.1,
+          206.6
+        ],
+        "px": [
+          1452,
+          314
+        ]
+      }
+    },
+    "058041_w25_Q20": {
+      "questionId": "058041_w25_Q20",
+      "text": "20 These are the first five terms of a sequence.\n48     24     12     6     3",
+      "imageUrl": "/question_stems/058041_w25_Q20.png",
+      "regions": [
+        [
+          11,
+          331.6,
+          390.6
+        ]
+      ],
+      "px": [
+        1452,
+        165
+      ]
+    },
+    "058041_w25_Q24": {
+      "questionId": "058041_w25_Q24",
+      "text": "24 Martha walks a distance of 10 km at a speed of x km/h.\n \nShe then runs a distance of 5 km at a speed of (\n)\nx\n4\n+\n km/h.\n \nThe total time taken for the whole journey is 3.5 hours.",
+      "imageUrl": "/question_stems/058041_w25_Q24.png",
+      "regions": [
+        [
+          13,
+          61.1,
+          115.4
+        ]
+      ],
+      "px": [
+        1452,
+        152
+      ]
+    },
+    "058041_w25_Q25": {
+      "questionId": "058041_w25_Q25",
+      "text": "25 Kai sorts parcels into two types, light and heavy.\nType of parcel\nMass (m kg)\nLight\nm\n0\n2\n1\nG\nHeavy\nm\n2\n5\n1\nG\n \nThe histogram shows some information about the number of parcels Kai sorts in one day.\nm\n5\n0\nFrequency\ndensity\nMass (kg)\n0\n20\n40\n10\n30\n1\n2\n3\n4",
+      "imageUrl": "/question_stems/058041_w25_Q25.png",
+      "regions": [
+        [
+          14,
+          61.1,
+          371.7
+        ]
+      ],
+      "px": [
+        1452,
+        865
+      ],
+      "figure": {
+        "assetId": "058041_w25_Q25_stemfig1",
+        "questionId": "058041_w25_Q25",
+        "imageUrl": "/question_figures/058041_w25_Q25_stemfig1.png",
+        "band": [
+          14,
+          265.2,
+          329.9
+        ],
+        "px": [
+          1452,
+          181
+        ]
+      }
+    },
+    "058041_w25_Q28": {
+      "questionId": "058041_w25_Q28",
+      "text": "28  \n \n( )x\n7\nf\nx\n4\n=\n-\n \nFind the value of x when",
+      "imageUrl": "/question_stems/058041_w25_Q28.png",
+      "regions": [
+        [
+          17,
+          60.1,
+          119.1
+        ]
+      ],
+      "px": [
+        1452,
+        165
+      ]
+    },
+    "058041_w25_Q29": {
+      "questionId": "058041_w25_Q29",
+      "text": "29\nNOT TO\nSCALE\nD\nC\nB\nA\ny°\n38°\n97°\n14 cm\n13 cm\n10 cm",
+      "imageUrl": "/question_stems/058041_w25_Q29.png",
+      "regions": [
+        [
+          18,
+          61.1,
+          283.3
+        ]
+      ],
+      "px": [
+        1452,
+        619
+      ],
+      "figure": {
+        "assetId": "058041_w25_Q29_stemfig1",
+        "questionId": "058041_w25_Q29",
+        "imageUrl": "/question_figures/058041_w25_Q29_stemfig1.png",
+        "band": [
+          18,
+          101.5,
+          258.7
+        ],
+        "px": [
+          1452,
+          438
+        ]
+      }
+    },
+    "058042_w25_Q4": {
+      "questionId": "058042_w25_Q4",
+      "text": "4 \nPedro makes cards.",
+      "imageUrl": "/question_stems/058042_w25_Q4.png",
+      "regions": [
+        [
+          2,
+          421.3,
+          454.3
+        ]
+      ],
+      "px": [
+        1452,
+        92
+      ]
+    },
+    "058042_w25_Q7": {
+      "questionId": "058042_w25_Q7",
+      "text": "7 \nThe diagram shows a parallelogram.\nNOT TO\nSCALE\nx m\n6.51 m\n \nThe parallelogram has the same perimeter as a circle with radius 4 m.",
+      "imageUrl": "/question_stems/058042_w25_Q7.png",
+      "regions": [
+        [
+          4,
+          61.1,
+          226.7
+        ]
+      ],
+      "px": [
+        1452,
+        462
+      ],
+      "figure": {
+        "assetId": "058042_w25_Q7_stemfig1",
+        "questionId": "058042_w25_Q7",
+        "imageUrl": "/question_figures/058042_w25_Q7_stemfig1.png",
+        "band": [
+          4,
+          88.3,
+          175.4
+        ],
+        "px": [
+          1452,
+          243
+        ]
+      }
+    },
+    "058042_w25_Q8": {
+      "questionId": "058042_w25_Q8",
+      "text": "8\nA\nB\ny\nx\n– 6\n– 5\n– 4\n– 3\n– 2\n– 1\n– 3\n– 2\n– 1\n5\n4\n 7\n6\n3\n2\n1\n0\n1\n2\n3\n4\n5\n6\n– 4\n– 5",
+      "imageUrl": "/question_stems/058042_w25_Q8.png",
+      "regions": [
+        [
+          5,
+          61.1,
+          466.4
+        ]
+      ],
+      "px": [
+        1452,
+        1128
+      ],
+      "figure": {
+        "assetId": "058042_w25_Q8_stemfig1",
+        "questionId": "058042_w25_Q8",
+        "imageUrl": "/question_figures/058042_w25_Q8_stemfig1.png",
+        "band": [
+          5,
+          146.3,
+          223.9
+        ],
+        "px": [
+          1452,
+          217
+        ]
+      }
+    },
+    "058042_w25_Q10": {
+      "questionId": "058042_w25_Q10",
+      "text": "10 Find the nth term of each sequence.",
+      "imageUrl": "/question_stems/058042_w25_Q10.png",
+      "regions": [
+        [
+          6,
+          470.8,
+          503.8
+        ]
+      ],
+      "px": [
+        1452,
+        93
+      ]
+    },
+    "058042_w25_Q11": {
+      "questionId": "058042_w25_Q11",
+      "text": "11 The table shows some values for   y\nx\nx\n2\n3\n3\n=\n-\n+ .\n \nWhere appropriate, values of y are given correct to 2 decimal places.\nx\n-2\n-1.5\n-1\n-0.5\n0\n0.5\n1\n1.5\n2\ny\n-1\n4\n3.88\n3\n2.13\n2\n7",
+      "imageUrl": "/question_stems/058042_w25_Q11.png",
+      "regions": [
+        [
+          7,
+          60.1,
+          164.7
+        ]
+      ],
+      "px": [
+        1452,
+        291
+      ]
+    },
+    "058042_w25_Q12": {
+      "questionId": "058042_w25_Q12",
+      "text": "12\nA\nC\nD\nE\nO\ny°\nx°\n65°\n52°\nB\nNOT TO\nSCALE\n \nA, B and C lie on a circle centre O.  \n \nDE is a tangent to the circle at C.\n \nAngle ABC = 52° and angle BCE = 65°.",
+      "imageUrl": "/question_stems/058042_w25_Q12.png",
+      "regions": [
+        [
+          8,
+          242.1,
+          563.8
+        ]
+      ],
+      "px": [
+        1452,
+        895
+      ],
+      "figure": {
+        "assetId": "058042_w25_Q12_stemfig1",
+        "questionId": "058042_w25_Q12",
+        "imageUrl": "/question_figures/058042_w25_Q12_stemfig1.png",
+        "band": [
+          8,
+          274.0,
+          488.7
+        ],
+        "px": [
+          1452,
+          598
+        ]
+      }
+    },
+    "058042_w25_Q15": {
+      "questionId": "058042_w25_Q15",
+      "text": "15\nA\nD\n140°\nC\nB\n180 m\n300 m\n112 m\nNOT TO\nSCALE\n \nThe diagram shows a field, ABCD, in the shape of a quadrilateral.\n \nBD is a straight path across the field.",
+      "imageUrl": "/question_stems/058042_w25_Q15.png",
+      "regions": [
+        [
+          10,
+          61.1,
+          284.3
+        ]
+      ],
+      "px": [
+        1452,
+        622
+      ],
+      "figure": {
+        "assetId": "058042_w25_Q15_stemfig1",
+        "questionId": "058042_w25_Q15",
+        "imageUrl": "/question_figures/058042_w25_Q15_stemfig1.png",
+        "band": [
+          10,
+          88.1,
+          223.2
+        ],
+        "px": [
+          1452,
+          377
+        ]
+      }
+    },
+    "058042_w25_Q16": {
+      "questionId": "058042_w25_Q16",
+      "text": "16 The histogram shows information about the masses of some coconuts.\n \nThe masses are classified into four categories A, B, C and D.\n0.9\n1.0\n1.1\n1.2\n1.3\nMass (kg)\nFrequency\ndensity\n1.4\n1.5\n1.6\n50\n0\n100\n150\n200\nA\nB\nC\nD",
+      "imageUrl": "/question_stems/058042_w25_Q16.png",
+      "regions": [
+        [
+          11,
+          61.1,
+          388.8
+        ]
+      ],
+      "px": [
+        1452,
+        912
+      ],
+      "figure": {
+        "assetId": "058042_w25_Q16_stemfig1",
+        "questionId": "058042_w25_Q16",
+        "imageUrl": "/question_figures/058042_w25_Q16_stemfig1.png",
+        "band": [
+          11,
+          93.5,
+          349.5
+        ],
+        "px": [
+          1452,
+          713
+        ]
+      }
+    },
+    "058042_w25_Q18": {
+      "questionId": "058042_w25_Q18",
+      "text": "18 \nC\nB\nA\nO\na\nb\nNOT TO\nSCALE\n \nIn the diagram, OA is parallel to CB.\n \nOA | CB = 4 | 3\n \nOA\na\n=\n and OB\nb\n=\n.",
+      "imageUrl": "/question_stems/058042_w25_Q18.png",
+      "regions": [
+        [
+          12,
+          238.4,
+          444.7
+        ]
+      ],
+      "px": [
+        1452,
+        575
+      ],
+      "figure": {
+        "assetId": "058042_w25_Q18_stemfig1",
+        "questionId": "058042_w25_Q18",
+        "imageUrl": "/question_figures/058042_w25_Q18_stemfig1.png",
+        "band": [
+          12,
+          270.6,
+          365.1
+        ],
+        "px": [
+          1452,
+          264
+        ]
+      }
+    },
+    "058043_w25_Q1": {
+      "questionId": "058043_w25_Q1",
+      "text": "1 \nThe nth term of a sequence is \nn\n5\n2\n-\n.",
+      "imageUrl": "/question_stems/058043_w25_Q1.png",
+      "regions": [
+        [
+          2,
+          61.1,
+          90.3
+        ]
+      ],
+      "px": [
+        1452,
+        83
+      ]
+    },
+    "058043_w25_Q2": {
+      "questionId": "058043_w25_Q2",
+      "text": "2 \nThe stem-and-leaf diagram shows the age of each of 16 adults.\n3\n 2     3     3     5     6     7\n4\n 0     1     5     5     6     8     9    \n5\n 1     1     1     \n \nKey: 3 | 2 represents age 32 years",
+      "imageUrl": "/question_stems/058043_w25_Q2.png",
+      "regions": [
+        [
+          2,
+          278.3,
+          424.7
+        ]
+      ],
+      "px": [
+        1452,
+        408
+      ]
+    },
+    "058043_w25_Q6": {
+      "questionId": "058043_w25_Q6",
+      "text": "6 \nSimplify.\ny5",
+      "imageUrl": "/question_stems/058043_w25_Q6.png",
+      "regions": [
+        [
+          4,
+          541.8,
+          587.8
+        ]
+      ],
+      "px": [
+        1452,
+        128
+      ]
+    },
+    "058043_w25_Q7": {
+      "questionId": "058043_w25_Q7",
+      "text": "7\nD\nE\nF\ny\nx\n– 6\n– 7\n– 8\n– 5 – 4 – 3 – 2 – 1\n1\n2\n3\n4\n5\n7\n8\n9\n10 11 12 13 14 15\n– 3\n– 2\n– 1\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n0\n– 4\n– 5\n– 6\n– 7\n– 8\n6",
+      "imageUrl": "/question_stems/058043_w25_Q7.png",
+      "regions": [
+        [
+          5,
+          61.1,
+          522.1
+        ]
+      ],
+      "px": [
+        1452,
+        1283
+      ],
+      "figure": {
+        "assetId": "058043_w25_Q7_stemfig1",
+        "questionId": "058043_w25_Q7",
+        "imageUrl": "/question_figures/058043_w25_Q7_stemfig1.png",
+        "band": [
+          5,
+          129.3,
+          428.1
+        ],
+        "px": [
+          1452,
+          832
+        ]
+      }
+    },
+    "058043_w25_Q15": {
+      "questionId": "058043_w25_Q15",
+      "text": "15 The population of a town is 54 000.\n \nThe population is decreasing exponentially at a rate of 2% per year.",
+      "imageUrl": "/question_stems/058043_w25_Q15.png",
+      "regions": [
+        [
+          8,
+          355.4,
+          401.4
+        ]
+      ],
+      "px": [
+        1452,
+        129
+      ]
+    },
+    "058043_w25_Q16": {
+      "questionId": "058043_w25_Q16",
+      "text": "16 Expand and simplify.",
+      "imageUrl": "/question_stems/058043_w25_Q16.png",
+      "regions": [
+        [
+          9,
+          61.1,
+          89.4
+        ]
+      ],
+      "px": [
+        1452,
+        80
+      ]
+    },
+    "058043_w25_Q18": {
+      "questionId": "058043_w25_Q18",
+      "text": "18\n102°\n41.3 cm\nNOT TO\nSCALE\n64.5 cm\n70.2 cm\n52.1 cm\nx°\ny°",
+      "imageUrl": "/question_stems/058043_w25_Q18.png",
+      "regions": [
+        [
+          10,
+          61.1,
+          313.4
+        ]
+      ],
+      "px": [
+        1452,
+        703
+      ],
+      "figure": {
+        "assetId": "058043_w25_Q18_stemfig1",
+        "questionId": "058043_w25_Q18",
+        "imageUrl": "/question_figures/058043_w25_Q18_stemfig1.png",
+        "band": [
+          10,
+          75.2,
+          303.9
+        ],
+        "px": [
+          1452,
+          636
+        ]
+      }
+    },
+    "058043_w25_Q19": {
+      "questionId": "058043_w25_Q19",
+      "text": "19  \n \n( )x\n5\nf\nx\n=\n    \n( )x\nx\n3\n2\ng\n=\n-     \n( )x\nx\n1\nh\n2\n=\n+",
+      "imageUrl": "/question_stems/058043_w25_Q19.png",
+      "regions": [
+        [
+          11,
+          60.1,
+          93.1
+        ]
+      ],
+      "px": [
+        1452,
+        92
+      ]
+    },
+    "058043_w25_Q20": {
+      "questionId": "058043_w25_Q20",
+      "text": "20  \ny\nx\nx\nx\n3\n13\n3\n2\n=\n+\n-\ny\nd",
+      "imageUrl": "/question_stems/058043_w25_Q20.png",
+      "regions": [
+        [
+          12,
+          60.1,
+          106.1
+        ]
+      ],
+      "px": [
+        1452,
+        129
+      ]
+    },
+    "058043_w25_Q23": {
+      "questionId": "058043_w25_Q23",
+      "text": "23 The table shows some information about the mass of each of 200 oranges.\nMass (m grams)\nm\n2 0\n180\n0\n1\nG\nm\n2\n2 0\n00\n1\n1\nG\nm\n21\n2\n0\n15\n1\nG\nm\n215\n230\n1\nG\nFrequency\n32\n64\n74\n30",
+      "imageUrl": "/question_stems/058043_w25_Q23.png",
+      "regions": [
+        [
+          14,
+          61.1,
+          145.3
+        ]
+      ],
+      "px": [
+        1452,
+        236
+      ]
+    },
+    "058043_w25_Q24": {
+      "questionId": "058043_w25_Q24",
+      "text": "24\n13 cm\n6.4 cm\n5.1 cm\nNOT TO\nSCALE\nC\nD\nG\nH\nE\nF\nA\nB      \n \nThe diagram shows a cuboid ABCDEFGH.\n \nAE = 6.4 cm, EH = 5.1 cm and AG = 13 cm.",
+      "imageUrl": "/question_stems/058043_w25_Q24.png",
+      "regions": [
+        [
+          15,
+          61.1,
+          265.2
+        ]
+      ],
+      "px": [
+        1452,
+        569
+      ],
+      "figure": {
+        "assetId": "058043_w25_Q24_stemfig1",
+        "questionId": "058043_w25_Q24",
+        "imageUrl": "/question_figures/058043_w25_Q24_stemfig1.png",
+        "band": [
+          15,
+          75.7,
+          202.1
+        ],
+        "px": [
+          1452,
+          352
+        ]
+      }
+    },
+    "058043_w25_Q26": {
+      "questionId": "058043_w25_Q26",
+      "text": "26\nm\np\nB\nC\nF\nD\nA\nE\nNOT TO\nSCALE\n \nABCD is a parallelogram.\n \nm\nAB =\n and \np\nAD =\n.\n \nF is a point on BC and BF = 4FC.\n \nE is a point on AD and AE : ED = 1 : 2.",
+      "imageUrl": "/question_stems/058043_w25_Q26.png",
+      "regions": [
+        [
+          17,
+          61.1,
+          308.8
+        ]
+      ],
+      "px": [
+        1452,
+        690
+      ],
+      "figure": {
+        "assetId": "058043_w25_Q26_stemfig1",
+        "questionId": "058043_w25_Q26",
+        "imageUrl": "/question_figures/058043_w25_Q26_stemfig1.png",
+        "band": [
+          17,
+          100.3,
+          211.5
+        ],
+        "px": [
+          1452,
+          310
+        ]
+      }
+    }
+  },
+  "groupStems": {
+    "058041_2024_Q1_a": {
+      "assetId": "058041_2024_Q1_a",
+      "questionId": "058041_2024_Q1",
+      "path": [
+        "a"
+      ],
+      "text": "1 \n(a) The table shows the areas, in km2, of the four largest rainforests in the world.\nRainforest\nArea (km2)\nAmazon \n5 500 000\nCongo \n2 000 000\nAtlantic \n1 315 000\nValdivian \n250 000",
+      "usedByParts": [
+        "058041_2024_Q1_a_i",
+        "058041_2024_Q1_a_ii",
+        "058041_2024_Q1_a_iii",
+        "058041_2024_Q1_a_iv",
+        "058041_2024_Q1_a_v"
+      ],
+      "imageUrl": "/question_stems/058041_2024_Q1_a.png",
+      "regions": [
+        [
+          1,
+          60.8,
+          203.8
+        ]
+      ],
+      "px": [
+        1452,
+        398
+      ]
+    },
+    "058041_2024_Q2_a": {
+      "assetId": "058041_2024_Q2_a",
+      "questionId": "058041_2024_Q2",
+      "path": [
+        "a"
+      ],
+      "text": "2 \n(a)\ny\nx\n2\n4\n6\n– 6\n– 4\n– 2\n– 2\n– 4\n– 6\n6\n4\nT\n2\n0\n \nOn the grid, draw the image of",
+      "usedByParts": [
+        "058041_2024_Q2_a_i",
+        "058041_2024_Q2_a_ii",
+        "058041_2024_Q2_a_iii"
+      ],
+      "imageUrl": "/question_stems/058041_2024_Q2_a.png",
+      "regions": [
+        [
+          3,
+          60.6,
+          487.8
+        ]
+      ],
+      "px": [
+        1452,
+        1189
+      ],
+      "figure": {
+        "assetId": "058041_2024_Q2_a_fig1",
+        "questionId": "058041_2024_Q2",
+        "imageUrl": "/question_figures/058041_2024_Q2_a_fig1.png",
+        "band": [
+          3,
+          289.2,
+          363.5
+        ],
+        "px": [
+          1452,
+          207
+        ]
+      }
+    },
+    "058041_2024_Q3_a": {
+      "assetId": "058041_2024_Q3_a",
+      "questionId": "058041_2024_Q3",
+      "path": [
+        "a"
+      ],
+      "text": "3 \n(a) \n C\nxy\n4\n1\n2\n=",
+      "usedByParts": [
+        "058041_2024_Q3_a_i",
+        "058041_2024_Q3_a_ii"
+      ],
+      "imageUrl": "/question_stems/058041_2024_Q3_a.png",
+      "regions": [
+        [
+          5,
+          67.7,
+          93.7
+        ]
+      ],
+      "px": [
+        1452,
+        73
+      ]
+    },
+    "058041_2024_Q4_a": {
+      "assetId": "058041_2024_Q4_a",
+      "questionId": "058041_2024_Q4",
+      "path": [
+        "a"
+      ],
+      "text": "4 \n(a) Jianyu records the time, in seconds, that some cars take to travel 195 m.\n \n \nThe box and whisker plot shows this information.\n5\n7\n9\n11\n13\nTime (s)\n6\n8\n10\n12\n14",
+      "usedByParts": [
+        "058041_2024_Q4_a_i",
+        "058041_2024_Q4_a_ii",
+        "058041_2024_Q4_a_iii"
+      ],
+      "imageUrl": "/question_stems/058041_2024_Q4_a.png",
+      "regions": [
+        [
+          7,
+          60.8,
+          234.1
+        ]
+      ],
+      "px": [
+        1452,
+        482
+      ],
+      "figure": {
+        "assetId": "058041_2024_Q4_a_fig1",
+        "questionId": "058041_2024_Q4",
+        "imageUrl": "/question_figures/058041_2024_Q4_a_fig1.png",
+        "band": [
+          7,
+          116.4,
+          165.7
+        ],
+        "px": [
+          1452,
+          138
+        ]
+      }
+    },
+    "058041_2024_Q4_b": {
+      "assetId": "058041_2024_Q4_b",
+      "questionId": "058041_2024_Q4",
+      "path": [
+        "b"
+      ],
+      "text": "(b) Matilda records the distances that 80 different cars can travel with a full tank of fuel.\n \n \nThe table shows this information.\nDistance (d km)\nd\n250\n300\n1\nG\nd\n0\n00\n30\n4\n1\nG\nd\n0\n0\n40\n42\n1\nG\nd\n0\n0\n42\n45\n1\nG\nd\n50\n00\n4\n5\n1\nG\nFrequency\n7\n13\n19\n21\n20",
+      "usedByParts": [
+        "058041_2024_Q4_b_i",
+        "058041_2024_Q4_b_ii",
+        "058041_2024_Q4_b_iii",
+        "058041_2024_Q4_b_iv"
+      ],
+      "imageUrl": "/question_stems/058041_2024_Q4_b.png",
+      "regions": [
+        [
+          8,
+          60.8,
+          155.7
+        ]
+      ],
+      "px": [
+        1452,
+        264
+      ]
+    },
+    "058041_2024_Q5_a": {
+      "assetId": "058041_2024_Q5_a",
+      "questionId": "058041_2024_Q5",
+      "path": [
+        "a"
+      ],
+      "text": "5 \n(a) P is the point (1, 7).\n \n \nQ is the point (5, –5).\nNOT TO\nSCALE\nP\nO\nQ\ny\nx",
+      "usedByParts": [
+        "058041_2024_Q5_a_i",
+        "058041_2024_Q5_a_ii",
+        "058041_2024_Q5_a_iii",
+        "058041_2024_Q5_a_iv",
+        "058041_2024_Q5_a_v"
+      ],
+      "imageUrl": "/question_stems/058041_2024_Q5_a.png",
+      "regions": [
+        [
+          9,
+          61.6,
+          282.4
+        ]
+      ],
+      "px": [
+        1452,
+        614
+      ]
+    },
+    "058041_2024_Q6_d": {
+      "assetId": "058041_2024_Q6_d",
+      "questionId": "058041_2024_Q6",
+      "path": [
+        "d"
+      ],
+      "text": "(d) At 1 pm boat C sails 32 km directly to the harbour at a speed of 10 knots.",
+      "usedByParts": [
+        "058041_2024_Q6_d_i",
+        "058041_2024_Q6_d_ii"
+      ],
+      "imageUrl": "/question_stems/058041_2024_Q6_d.png",
+      "regions": [
+        [
+          12,
+          386.7,
+          412.7
+        ]
+      ],
+      "px": [
+        1452,
+        73
+      ]
+    },
+    "058041_2024_Q7_a": {
+      "assetId": "058041_2024_Q7_a",
+      "questionId": "058041_2024_Q7",
+      "path": [
+        "a"
+      ],
+      "text": "7 \n(a)\n70 cm\n30 cm\n40 cm\nNOT TO\nSCALE\n \n \nThe diagram shows a box in the shape of a cuboid.\n \n \nThe box is open at the top.",
+      "usedByParts": [
+        "058041_2024_Q7_a_i",
+        "058041_2024_Q7_a_ii"
+      ],
+      "imageUrl": "/question_stems/058041_2024_Q7_a.png",
+      "regions": [
+        [
+          13,
+          60.6,
+          252.1
+        ]
+      ],
+      "px": [
+        1452,
+        533
+      ],
+      "figure": {
+        "assetId": "058041_2024_Q7_a_fig1",
+        "questionId": "058041_2024_Q7",
+        "imageUrl": "/question_figures/058041_2024_Q7_a_fig1.png",
+        "band": [
+          13,
+          75.1,
+          188.6
+        ],
+        "px": [
+          1452,
+          317
+        ]
+      }
+    },
+    "058041_2024_Q7_b": {
+      "assetId": "058041_2024_Q7_b",
+      "questionId": "058041_2024_Q7",
+      "path": [
+        "b"
+      ],
+      "text": "(b) A solid bronze cone has a mass 750 g.\n  \n \nThe density of the bronze is 8.9 g/cm3.\n \n \nThe ratio  radius of cone : height of cone = 1 : 3.",
+      "usedByParts": [
+        "058041_2024_Q7_b_i",
+        "058041_2024_Q7_b_ii"
+      ],
+      "imageUrl": "/question_stems/058041_2024_Q7_b.png",
+      "regions": [
+        [
+          14,
+          60.8,
+          125.8
+        ]
+      ],
+      "px": [
+        1452,
+        181
+      ]
+    },
+    "058041_2024_Q9_a": {
+      "assetId": "058041_2024_Q9_a",
+      "questionId": "058041_2024_Q9",
+      "path": [
+        "a"
+      ],
+      "text": "(a) Find",
+      "usedByParts": [
+        "058041_2024_Q9_a_i",
+        "058041_2024_Q9_a_ii"
+      ],
+      "imageUrl": "/question_stems/058041_2024_Q9_a.png",
+      "regions": [
+        [
+          17,
+          90.5,
+          116.5
+        ]
+      ],
+      "px": [
+        1452,
+        73
+      ]
+    },
+    "0580_2_SP_2025_Q16_a": {
+      "assetId": "0580_2_SP_2025_Q16_a",
+      "questionId": "0580_2_SP_2025_Q16",
+      "path": [
+        "a"
+      ],
+      "text": "(a)\t The cumulative frequency diagram shows the results.\n0\n0\n40\n80\n120\n160\n200\n240\n280\n320\n360\n400\n10\n20\n30\n40\nHeight (cm)\n50\n60\n70\n80\nCumulative\nfrequency\nh\n\t\n\t\nUse the diagram to find an estimate for",
+      "usedByParts": [
+        "0580_2_SP_2025_Q16_a_i",
+        "0580_2_SP_2025_Q16_a_ii",
+        "0580_2_SP_2025_Q16_a_iii",
+        "0580_2_SP_2025_Q16_a_iv"
+      ],
+      "imageUrl": "/question_stems/0580_2_SP_2025_Q16_a.png",
+      "regions": [
+        [
+          8,
+          87.5,
+          493.0
+        ]
+      ],
+      "px": [
+        1452,
+        1128
+      ],
+      "figure": {
+        "assetId": "0580_2_SP_2025_Q16_a_fig1",
+        "questionId": "0580_2_SP_2025_Q16",
+        "imageUrl": "/question_figures/0580_2_SP_2025_Q16_a_fig1.png",
+        "band": [
+          8,
+          105.6,
+          430.6
+        ],
+        "px": [
+          1452,
+          904
+        ]
+      }
+    },
+    "0580_2_SP_2025_Q17_a": {
+      "assetId": "0580_2_SP_2025_Q17_a",
+      "questionId": "0580_2_SP_2025_Q17",
+      "path": [
+        "a"
+      ],
+      "text": "(a)\t Angle BAD = 74° and angle BCA = 34°.\n\t\n\t\nFind",
+      "usedByParts": [
+        "0580_2_SP_2025_Q17_a_i",
+        "0580_2_SP_2025_Q17_a_ii",
+        "0580_2_SP_2025_Q17_a_iii"
+      ],
+      "imageUrl": "/question_stems/0580_2_SP_2025_Q17_a.png",
+      "regions": [
+        [
+          10,
+          306.9,
+          360.9
+        ]
+      ],
+      "px": [
+        1452,
+        151
+      ]
+    },
+    "0580_4_SP_2025_Q14_a": {
+      "assetId": "0580_4_SP_2025_Q14_a",
+      "questionId": "0580_4_SP_2025_Q14",
+      "path": [
+        "a"
+      ],
+      "text": "14\t (a)\t Hong has $4000 to invest.\n\t\n\t\nShe invests $2000 at a rate of 2.5% per year simple interest. \n\t\n\t\nShe also invests $2000 at a rate of 2% per year compound interest.",
+      "usedByParts": [
+        "0580_4_SP_2025_Q14_a_i",
+        "0580_4_SP_2025_Q14_a_ii",
+        "0580_4_SP_2025_Q14_a_iii"
+      ],
+      "imageUrl": "/question_stems/0580_4_SP_2025_Q14_a.png",
+      "regions": [
+        [
+          9,
+          60.5,
+          114.5
+        ]
+      ],
+      "px": [
+        1452,
+        151
+      ]
+    },
+    "0580_4_SP_2025_Q22_a": {
+      "assetId": "0580_4_SP_2025_Q22_a",
+      "questionId": "0580_4_SP_2025_Q22",
+      "path": [
+        "a"
+      ],
+      "text": "(a)\t Find, in terms of t and p, in its simplest form",
+      "usedByParts": [
+        "0580_4_SP_2025_Q22_a_i",
+        "0580_4_SP_2025_Q22_a_ii"
+      ],
+      "imageUrl": "/question_stems/0580_4_SP_2025_Q22_a.png",
+      "regions": [
+        [
+          14,
+          266.2,
+          293.2
+        ]
+      ],
+      "px": [
+        1452,
+        76
+      ]
+    },
+    "058022_m24_Q15_a": {
+      "assetId": "058022_m24_Q15_a",
+      "questionId": "058022_m24_Q15",
+      "path": [
+        "a"
+      ],
+      "text": "(a) Describe fully the single transformation that maps",
+      "usedByParts": [
+        "058022_m24_Q15_a_i",
+        "058022_m24_Q15_a_ii"
+      ],
+      "imageUrl": "/question_stems/058022_m24_Q15_a.png",
+      "regions": [
+        [
+          6,
+          344.9,
+          370.9
+        ]
+      ],
+      "px": [
+        1452,
+        73
+      ]
+    },
+    "058042_m24_Q1_b": {
+      "assetId": "058042_m24_Q1_b",
+      "questionId": "058042_m24_Q1",
+      "path": [
+        "b"
+      ],
+      "text": "(b) In one week, the ratio of the masses of vegetables sold by the grocer is\n \n \n \n \npotatoes : mushrooms : carrots  =  11 : 8 : 6.",
+      "usedByParts": [
+        "058042_m24_Q1_b_i",
+        "058042_m24_Q1_b_ii",
+        "058042_m24_Q1_b_iii",
+        "058042_m24_Q1_b_iv"
+      ],
+      "imageUrl": "/question_stems/058042_m24_Q1_b.png",
+      "regions": [
+        [
+          1,
+          229.8,
+          281.8
+        ]
+      ],
+      "px": [
+        1452,
+        146
+      ]
+    },
+    "058042_m24_Q2_c": {
+      "assetId": "058042_m24_Q2_c",
+      "questionId": "058042_m24_Q2",
+      "path": [
+        "c"
+      ],
+      "text": "(c) AD = 15 cm, DX = 9 cm and CX = 12 cm.",
+      "usedByParts": [
+        "058042_m24_Q2_c_i",
+        "058042_m24_Q2_c_ii"
+      ],
+      "imageUrl": "/question_stems/058042_m24_Q2_c.png",
+      "regions": [
+        [
+          4,
+          62.6,
+          88.6
+        ]
+      ],
+      "px": [
+        1452,
+        73
+      ]
+    },
+    "058042_m24_Q3_a": {
+      "assetId": "058042_m24_Q3_a",
+      "questionId": "058042_m24_Q3",
+      "path": [
+        "a"
+      ],
+      "text": "3 \n(a) The table shows information about the marks gained by each of 10 students in a test.\nMark\n15\n16\n17\n18\n19\n20\nFrequency\n4\n1\n2\n1\n0\n2",
+      "usedByParts": [
+        "058042_m24_Q3_a_i",
+        "058042_m24_Q3_a_ii",
+        "058042_m24_Q3_a_iii",
+        "058042_m24_Q3_a_iv"
+      ],
+      "imageUrl": "/question_stems/058042_m24_Q3_a.png",
+      "regions": [
+        [
+          5,
+          60.8,
+          141.6
+        ]
+      ],
+      "px": [
+        1452,
+        225
+      ]
+    },
+    "058042_m24_Q4_a": {
+      "assetId": "058042_m24_Q4_a",
+      "questionId": "058042_m24_Q4",
+      "path": [
+        "a"
+      ],
+      "text": "4 \n(a)\nF\nC\nB\nM\nE\nD\n9 cm\n12 cm\n12 cm\nNOT TO\nSCALE\n \n \nThe diagram shows a pyramid with a square base BCDE.\n \n \nThe diagonals CE and BD intersect at M, and the vertex F is directly above M.\n \n \nBE = 12 cm and FM = 9 cm.",
+      "usedByParts": [
+        "058042_m24_Q4_a_i",
+        "058042_m24_Q4_a_ii"
+      ],
+      "imageUrl": "/question_stems/058042_m24_Q4_a.png",
+      "regions": [
+        [
+          7,
+          60.6,
+          332.2
+        ]
+      ],
+      "px": [
+        1452,
+        756
+      ],
+      "figure": {
+        "assetId": "058042_m24_Q4_a_fig1",
+        "questionId": "058042_m24_Q4",
+        "imageUrl": "/question_figures/058042_m24_Q4_a_fig1.png",
+        "band": [
+          7,
+          79.0,
+          256.3
+        ],
+        "px": [
+          1452,
+          494
+        ]
+      }
+    },
+    "058042_m24_Q7_a": {
+      "assetId": "058042_m24_Q7_a",
+      "questionId": "058042_m24_Q7",
+      "path": [
+        "a"
+      ],
+      "text": "7 \n(a)  \np\n8\n5\n= -\ne\no \nq\n4\n5\n= -\ne\no",
+      "usedByParts": [
+        "058042_m24_Q7_a_i",
+        "058042_m24_Q7_a_ii"
+      ],
+      "imageUrl": "/question_stems/058042_m24_Q7_a.png",
+      "regions": [
+        [
+          12,
+          71.8,
+          110.8
+        ]
+      ],
+      "px": [
+        1452,
+        109
+      ]
+    },
+    "058042_m24_Q9_a": {
+      "assetId": "058042_m24_Q9_a",
+      "questionId": "058042_m24_Q9",
+      "path": [
+        "a"
+      ],
+      "text": "9 \n(a) Janna and Kamal each invest $8000.\n \n \nAt the end of 12 years, they each have $12 800.",
+      "usedByParts": [
+        "058042_m24_Q9_a_i",
+        "058042_m24_Q9_a_ii"
+      ],
+      "imageUrl": "/question_stems/058042_m24_Q9_a.png",
+      "regions": [
+        [
+          15,
+          60.8,
+          99.8
+        ]
+      ],
+      "px": [
+        1452,
+        109
+      ]
+    },
+    "058042_m24_Q11_a": {
+      "assetId": "058042_m24_Q11_a",
+      "questionId": "058042_m24_Q11",
+      "path": [
+        "a"
+      ],
+      "text": "(a) Find.",
+      "usedByParts": [
+        "058042_m24_Q11_a_i",
+        "058042_m24_Q11_a_ii"
+      ],
+      "imageUrl": "/question_stems/058042_m24_Q11_a.png",
+      "regions": [
+        [
+          17,
+          93.7,
+          119.7
+        ]
+      ],
+      "px": [
+        1452,
+        73
+      ]
+    },
+    "058042_m24_Q11_c": {
+      "assetId": "058042_m24_Q11_c",
+      "questionId": "058042_m24_Q11",
+      "path": [
+        "c"
+      ],
+      "text": "(c) Find the value of x when",
+      "usedByParts": [
+        "058042_m24_Q11_c_i",
+        "058042_m24_Q11_c_ii"
+      ],
+      "imageUrl": "/question_stems/058042_m24_Q11_c.png",
+      "regions": [
+        [
+          17,
+          405.7,
+          431.7
+        ]
+      ],
+      "px": [
+        1452,
+        74
+      ]
+    },
+    "058022_s24_Q22_a": {
+      "assetId": "058022_s24_Q22_a",
+      "questionId": "058022_s24_Q22",
+      "path": [
+        "a"
+      ],
+      "text": "22 (a) For each sketch, put a ring around the correct type of function shown.",
+      "usedByParts": [
+        "058022_s24_Q22_a_i",
+        "058022_s24_Q22_a_ii"
+      ],
+      "imageUrl": "/question_stems/058022_s24_Q22_a.png",
+      "regions": [
+        [
+          9,
+          60.8,
+          84.8
+        ]
+      ],
+      "px": [
+        1452,
+        67
+      ]
+    },
+    "058042_s24_Q3_a": {
+      "assetId": "058042_s24_Q3_a",
+      "questionId": "058042_s24_Q3",
+      "path": [
+        "a"
+      ],
+      "text": "3 \n(a) The table shows the time that each of 40 students takes to travel to school.\nTime (m minutes)\nm\n0\n10\n1\nG\nm\n10\n25\n1\nG\nm\n2\n0\n5\n4\n1\nG\nm\n40\n0\n6\n1\nG\nFrequency\n3\n18\n15\n4",
+      "usedByParts": [
+        "058042_s24_Q3_a_i",
+        "058042_s24_Q3_a_ii",
+        "058042_s24_Q3_a_iii"
+      ],
+      "imageUrl": "/question_stems/058042_s24_Q3_a.png",
+      "regions": [
+        [
+          5,
+          60.8,
+          158.5
+        ]
+      ],
+      "px": [
+        1452,
+        272
+      ]
+    },
+    "058042_s24_Q3_b": {
+      "assetId": "058042_s24_Q3_b",
+      "questionId": "058042_s24_Q3",
+      "path": [
+        "b"
+      ],
+      "text": "(b) This is some information about the time that 200 people took to fill in a questionnaire:\n• \nThe longest time taken was 30 minutes.\n• \nThe median time was 22 minutes.\n• \nThe lower quartile was 8 minutes.\n• \nThe interquartile range was 19 minutes.\n• \nThe range was 25 minutes.",
+      "usedByParts": [
+        "058042_s24_Q3_b_i",
+        "058042_s24_Q3_b_ii",
+        "058042_s24_Q3_b_iii"
+      ],
+      "imageUrl": "/question_stems/058042_s24_Q3_b.png",
+      "regions": [
+        [
+          6,
+          60.8,
+          164.8
+        ]
+      ],
+      "px": [
+        1452,
+        290
+      ]
+    },
+    "058042_s24_Q4_a": {
+      "assetId": "058042_s24_Q4_a",
+      "questionId": "058042_s24_Q4",
+      "path": [
+        "a"
+      ],
+      "text": "4 \n(a)\nNOT TO\nSCALE\n12 cm\n1 m\n \n \nThe diagram shows a tank in the shape of a half-cylinder of radius 12 cm and length 1 metre.\n \n \nThe tank is fixed horizontally and is completely filled with water.",
+      "usedByParts": [
+        "058042_s24_Q4_a_i",
+        "058042_s24_Q4_a_ii"
+      ],
+      "imageUrl": "/question_stems/058042_s24_Q4_a.png",
+      "regions": [
+        [
+          7,
+          60.6,
+          210.4
+        ]
+      ],
+      "px": [
+        1452,
+        417
+      ],
+      "figure": {
+        "assetId": "058042_s24_Q4_a_fig1",
+        "questionId": "058042_s24_Q4",
+        "imageUrl": "/question_figures/058042_s24_Q4_a_fig1.png",
+        "band": [
+          7,
+          76.2,
+          162.7
+        ],
+        "px": [
+          1452,
+          242
+        ]
+      }
+    },
+    "058042_s24_Q7_d": {
+      "assetId": "058042_s24_Q7_d",
+      "questionId": "058042_s24_Q7",
+      "path": [
+        "d"
+      ],
+      "text": "(d)       \n( )x\nx\n4\n1\n1\nf\n=\n- , x\n4\n1\n!\n    \n( )x\n3\ng\nx\n=",
+      "usedByParts": [
+        "058042_s24_Q7_d_i",
+        "058042_s24_Q7_d_ii",
+        "058042_s24_Q7_d_iii"
+      ],
+      "imageUrl": "/question_stems/058042_s24_Q7_d.png",
+      "regions": [
+        [
+          12,
+          412.7,
+          451.7
+        ]
+      ],
+      "px": [
+        1452,
+        109
+      ]
+    },
+    "058042_s24_Q9_b": {
+      "assetId": "058042_s24_Q9_b",
+      "questionId": "058042_s24_Q9",
+      "path": [
+        "b"
+      ],
+      "text": "(b)\nNOT TO\nSCALE\n \n \nThe diagram shows a regular hexagon.\n \n \nThe area of the hexagon is 127.3 cm2.",
+      "usedByParts": [
+        "058042_s24_Q9_b_i",
+        "058042_s24_Q9_b_ii"
+      ],
+      "imageUrl": "/question_stems/058042_s24_Q9_b.png",
+      "regions": [
+        [
+          16,
+          60.6,
+          208.0
+        ]
+      ],
+      "px": [
+        1452,
+        411
+      ],
+      "figure": {
+        "assetId": "058042_s24_Q9_b_fig2",
+        "questionId": "058042_s24_Q9",
+        "imageUrl": "/question_figures/058042_s24_Q9_b_fig2.png",
+        "band": [
+          16,
+          76.9,
+          159.8
+        ],
+        "px": [
+          1452,
+          232
+        ]
+      }
+    },
+    "058042_s24_Q10_a": {
+      "assetId": "058042_s24_Q10_a",
+      "questionId": "058042_s24_Q10",
+      "path": [
+        "a"
+      ],
+      "text": "10 (a) A is the point (6, 2) and B is the point (3, \n4\n- ).",
+      "usedByParts": [
+        "058042_s24_Q10_a_i",
+        "058042_s24_Q10_a_ii"
+      ],
+      "imageUrl": "/question_stems/058042_s24_Q10_a.png",
+      "regions": [
+        [
+          17,
+          61.7,
+          87.7
+        ]
+      ],
+      "px": [
+        1452,
+        73
+      ]
+    },
+    "058042_s24_Q10_b": {
+      "assetId": "058042_s24_Q10_b",
+      "questionId": "058042_s24_Q10",
+      "path": [
+        "b"
+      ],
+      "text": "(b) The equation of line l is   x\ny\n4\n3\n12\n0\n+\n-\n=\n.",
+      "usedByParts": [
+        "058042_s24_Q10_b_i",
+        "058042_s24_Q10_b_ii",
+        "058042_s24_Q10_b_iii"
+      ],
+      "imageUrl": "/question_stems/058042_s24_Q10_b.png",
+      "regions": [
+        [
+          17,
+          282.7,
+          308.7
+        ]
+      ],
+      "px": [
+        1452,
+        74
+      ]
+    },
+    "058042_s24_Q11_b": {
+      "assetId": "058042_s24_Q11_b",
+      "questionId": "058042_s24_Q11",
+      "path": [
+        "b"
+      ],
+      "text": "(b) A different curve has equation y\nx\nx\n2\n6\n8\n3\n=\n-\n+ .",
+      "usedByParts": [
+        "058042_s24_Q11_b_i",
+        "058042_s24_Q11_b_ii"
+      ],
+      "imageUrl": "/question_stems/058042_s24_Q11_b.png",
+      "regions": [
+        [
+          18,
+          282.7,
+          308.7
+        ]
+      ],
+      "px": [
+        1452,
+        74
+      ]
+    },
+    "058043_s24_Q1_a": {
+      "assetId": "058043_s24_Q1_a",
+      "questionId": "058043_s24_Q1",
+      "path": [
+        "a"
+      ],
+      "text": "1 \n(a) In 2023 a football club had 50 adult members and 70 child members.\n \n \nThe membership fee for an adult was $40 and the membership fee for a child was $15.",
+      "usedByParts": [
+        "058043_s24_Q1_a_i",
+        "058043_s24_Q1_a_ii",
+        "058043_s24_Q1_a_iii",
+        "058043_s24_Q1_a_iv"
+      ],
+      "imageUrl": "/question_stems/058043_s24_Q1_a.png",
+      "regions": [
+        [
+          1,
+          73.3,
+          112.3
+        ]
+      ],
+      "px": [
+        1452,
+        110
+      ]
+    },
+    "058043_s24_Q1_b": {
+      "assetId": "058043_s24_Q1_b",
+      "questionId": "058043_s24_Q1",
+      "path": [
+        "b"
+      ],
+      "text": "(b) Calculate the percentage increase in the total number of members from 2023 to 2024.\n \n ............................................. % [2]\n \n(b) The population of a village is 2500.\n \n \nThe population is decreasing exponentially at a rate of 3% per year.",
+      "usedByParts": [
+        "058043_s24_Q1_b_i",
+        "058043_s24_Q1_b_ii"
+      ],
+      "imageUrl": "/question_stems/058043_s24_Q1_b.png",
+      "regions": [
+        [
+          2,
+          73.3,
+          268.3
+        ]
+      ],
+      "px": [
+        1452,
+        543
+      ]
+    },
+    "058043_s24_Q2_a": {
+      "assetId": "058043_s24_Q2_a",
+      "questionId": "058043_s24_Q2",
+      "path": [
+        "a"
+      ],
+      "text": "2 \n(a) The nth term of a sequence is   \nn\n120\n3\n-\n .",
+      "usedByParts": [
+        "058043_s24_Q2_a_i",
+        "058043_s24_Q2_a_ii"
+      ],
+      "imageUrl": "/question_stems/058043_s24_Q2_a.png",
+      "regions": [
+        [
+          3,
+          77.0,
+          103.0
+        ]
+      ],
+      "px": [
+        1452,
+        73
+      ]
+    },
+    "058043_s24_Q3_b": {
+      "assetId": "058043_s24_Q3_b",
+      "questionId": "058043_s24_Q3",
+      "path": [
+        "b"
+      ],
+      "text": "(b) Sangita measures the speed of each of 100 cars.\n \n \nThe results are shown in the table.\nSpeed (v km/h)\nv\n20\n30\n1\nG\nv\n0\n0\n3\n5\n1\nG\nv\n0\n5\n75\n1\nG\nFrequency \n10\n72\n18",
+      "usedByParts": [
+        "058043_s24_Q3_b_i",
+        "058043_s24_Q3_b_ii"
+      ],
+      "imageUrl": "/question_stems/058043_s24_Q3_b.png",
+      "regions": [
+        [
+          5,
+          388.1,
+          494.8
+        ]
+      ],
+      "px": [
+        1452,
+        298
+      ]
+    },
+    "058043_s24_Q8_a": {
+      "assetId": "058043_s24_Q8_a",
+      "questionId": "058043_s24_Q8",
+      "path": [
+        "a"
+      ],
+      "text": "8 \n(a)\nNOT TO\nSCALE\n16 cm\n1.5 cm\n \n \nThe diagram shows a solid made from a cylinder and a cone.\n \n \nThe height of the cylinder is 16 cm and the height of the cone is 1.5 cm.\n \n \nThe radius of the cylinder and the base radius of the cone are each 0.35 cm.",
+      "usedByParts": [
+        "058043_s24_Q8_a_i",
+        "058043_s24_Q8_a_ii",
+        "058043_s24_Q8_a_iii"
+      ],
+      "imageUrl": "/question_stems/058043_s24_Q8_a.png",
+      "regions": [
+        [
+          15,
+          73.1,
+          208.1
+        ]
+      ],
+      "px": [
+        1452,
+        376
+      ]
+    },
+    "058043_s24_Q9_a": {
+      "assetId": "058043_s24_Q9_a",
+      "questionId": "058043_s24_Q9",
+      "path": [
+        "a"
+      ],
+      "text": "(a) Amir picks a card at random.\n \n \nFind the probability that the card shows",
+      "usedByParts": [
+        "058043_s24_Q9_a_i",
+        "058043_s24_Q9_a_ii"
+      ],
+      "imageUrl": "/question_stems/058043_s24_Q9_a.png",
+      "regions": [
+        [
+          17,
+          155.7,
+          207.7
+        ]
+      ],
+      "px": [
+        1452,
+        146
+      ]
+    },
+    "058043_s24_Q9_c": {
+      "assetId": "058043_s24_Q9_c",
+      "questionId": "058043_s24_Q9",
+      "path": [
+        "c"
+      ],
+      "text": "(c) Marcos picks two of the 7 cards at random, without replacement.",
+      "usedByParts": [
+        "058043_s24_Q9_c_i",
+        "058043_s24_Q9_c_ii"
+      ],
+      "imageUrl": "/question_stems/058043_s24_Q9_c.png",
+      "regions": [
+        [
+          17,
+          480.7,
+          506.7
+        ]
+      ],
+      "px": [
+        1452,
+        73
+      ]
+    },
+    "058043_s24_Q11_b": {
+      "assetId": "058043_s24_Q11_b",
+      "questionId": "058043_s24_Q11",
+      "path": [
+        "b"
+      ],
+      "text": "(b)\nNOT TO\nSCALE\ny°\nO\nB\nA\nr\n \n \nThe diagram shows a sector, OAB, of a circle with centre O and radius r.\n \n \nThe area of triangle OAB is half the area of the sector. \n \n \nAngle \n°\nAOB\ny\n=\n and is obtuse.",
+      "usedByParts": [
+        "058043_s24_Q11_b_i",
+        "058043_s24_Q11_b_ii",
+        "058043_s24_Q11_b_iii"
+      ],
+      "imageUrl": "/question_stems/058043_s24_Q11_b.png",
+      "regions": [
+        [
+          22,
+          73.1,
+          245.4
+        ]
+      ],
+      "px": [
+        1452,
+        480
+      ],
+      "figure": {
+        "assetId": "058043_s24_Q11_b_fig2",
+        "questionId": "058043_s24_Q11",
+        "imageUrl": "/question_figures/058043_s24_Q11_b_fig2.png",
+        "band": [
+          22,
+          86.3,
+          168.9
+        ],
+        "px": [
+          1452,
+          231
+        ]
+      }
+    },
+    "058021_s25_Q17_b": {
+      "assetId": "058021_s25_Q17_b",
+      "questionId": "058021_s25_Q17",
+      "path": [
+        "b"
+      ],
+      "text": "(b) Another bag contains 4 red counters and 2 yellow counters.\n \n \nTwo counters are picked at random from this bag without replacement.",
+      "usedByParts": [
+        "058021_s25_Q17_b_i",
+        "058021_s25_Q17_b_ii"
+      ],
+      "imageUrl": "/question_stems/058021_s25_Q17_b.png",
+      "regions": [
+        [
+          12,
+          219.4,
+          258.4
+        ]
+      ],
+      "px": [
+        1452,
+        110
+      ]
+    },
+    "058021_s25_Q21_a": {
+      "assetId": "058021_s25_Q21_a",
+      "questionId": "058021_s25_Q21",
+      "path": [
+        "a"
+      ],
+      "text": "(a) Find, in terms of m and n, in its simplest form",
+      "usedByParts": [
+        "058021_s25_Q21_a_i",
+        "058021_s25_Q21_a_ii"
+      ],
+      "imageUrl": "/question_stems/058021_s25_Q21_a.png",
+      "regions": [
+        [
+          15,
+          258.9,
+          284.9
+        ]
+      ],
+      "px": [
+        1452,
+        73
+      ]
+    },
+    "058022_s25_Q13_a": {
+      "assetId": "058022_s25_Q13_a",
+      "questionId": "058022_s25_Q13",
+      "path": [
+        "a"
+      ],
+      "text": "13 (a) 100 students solve a puzzle.\n \n \nThe table shows information about the time taken by each student to solve the puzzle.\nTime (t seconds)\nt\n20\n40\n1\nG\nt\n40\n60\n1\nG\nt\n60\n100\n1\nG\nFrequency \n30\n40\n30",
+      "usedByParts": [
+        "058022_s25_Q13_a_i",
+        "058022_s25_Q13_a_ii"
+      ],
+      "imageUrl": "/question_stems/058022_s25_Q13_a.png",
+      "regions": [
+        [
+          9,
+          63.4,
+          210.3
+        ]
+      ],
+      "px": [
+        1452,
+        409
+      ]
+    },
+    "058022_s25_Q13_b": {
+      "assetId": "058022_s25_Q13_b",
+      "questionId": "058022_s25_Q13",
+      "path": [
+        "b"
+      ],
+      "text": "(b) 80 adults solve the same puzzle as the students.\n \n \nThe cumulative frequency table shows information about the time taken by each adult to \nsolve the puzzle.\nTime (t seconds)\nt\n20\nG\nt\n40\nG\nt\n60\nG\nt\n80\nG\nt\n100\nG\nt\n120\nG\nCumulative frequency\n0\n12\n36\n60\n74\n80",
+      "usedByParts": [
+        "058022_s25_Q13_b_i",
+        "058022_s25_Q13_b_ii"
+      ],
+      "imageUrl": "/question_stems/058022_s25_Q13_b.png",
+      "regions": [
+        [
+          10,
+          63.4,
+          171.2
+        ]
+      ],
+      "px": [
+        1452,
+        301
+      ]
+    },
+    "058023_s25_Q5_b": {
+      "assetId": "058023_s25_Q5_b",
+      "questionId": "058023_s25_Q5",
+      "path": [
+        "b"
+      ],
+      "text": "(b) On the grid, draw the image of",
+      "usedByParts": [
+        "058023_s25_Q5_b_i",
+        "058023_s25_Q5_b_ii"
+      ],
+      "imageUrl": "/question_stems/058023_s25_Q5_b.png",
+      "regions": [
+        [
+          4,
+          564.6,
+          590.6
+        ]
+      ],
+      "px": [
+        1452,
+        73
+      ]
+    },
+    "058023_s25_Q24_a": {
+      "assetId": "058023_s25_Q24_a",
+      "questionId": "058023_s25_Q24",
+      "path": [
+        "a"
+      ],
+      "text": "24 (a) A is the point (a, 12) and B is the point (b, 27).",
+      "usedByParts": [
+        "058023_s25_Q24_a_i",
+        "058023_s25_Q24_a_ii"
+      ],
+      "imageUrl": "/question_stems/058023_s25_Q24_a.png",
+      "regions": [
+        [
+          15,
+          63.4,
+          89.4
+        ]
+      ],
+      "px": [
+        1452,
+        73
+      ]
+    },
+    "058021_w25_Q14_b": {
+      "assetId": "058021_w25_Q14_b",
+      "questionId": "058021_w25_Q14",
+      "path": [
+        "b"
+      ],
+      "text": "(b) Triangle CXD is mathematically similar to triangle BXA.\n \n \nDX = 8.0 cm, BX = 2.7 cm and AX = 4.0 cm.",
+      "usedByParts": [
+        "058021_w25_Q14_b_i",
+        "058021_w25_Q14_b_ii"
+      ],
+      "imageUrl": "/question_stems/058021_w25_Q14_b.png",
+      "regions": [
+        [
+          8,
+          63.4,
+          102.4
+        ]
+      ],
+      "px": [
+        1452,
+        109
+      ]
+    },
+    "058021_w25_Q20_b": {
+      "assetId": "058021_w25_Q20_b",
+      "questionId": "058021_w25_Q20",
+      "path": [
+        "b"
+      ],
+      "text": "(b) The balls are replaced into bag B.\n \n \nKyle picks a ball at random from each bag.",
+      "usedByParts": [
+        "058021_w25_Q20_b_i",
+        "058021_w25_Q20_b_ii"
+      ],
+      "imageUrl": "/question_stems/058021_w25_Q20_b.png",
+      "regions": [
+        [
+          11,
+          341.9,
+          380.9
+        ]
+      ],
+      "px": [
+        1452,
+        109
+      ]
+    },
+    "058022_w25_Q12_b": {
+      "assetId": "058022_w25_Q12_b",
+      "questionId": "058022_w25_Q12",
+      "path": [
+        "b"
+      ],
+      "text": "(b) One member of the fitness club is chosen at random.\n \n \nFor this member, find",
+      "usedByParts": [
+        "058022_w25_Q12_b_i",
+        "058022_w25_Q12_b_ii",
+        "058022_w25_Q12_b_iii"
+      ],
+      "imageUrl": "/question_stems/058022_w25_Q12_b.png",
+      "regions": [
+        [
+          7,
+          399.3,
+          451.3
+        ]
+      ],
+      "px": [
+        1452,
+        146
+      ]
+    },
+    "058022_w25_Q20_a": {
+      "assetId": "058022_w25_Q20_a",
+      "questionId": "058022_w25_Q20",
+      "path": [
+        "a"
+      ],
+      "text": "(a) Find",
+      "usedByParts": [
+        "058022_w25_Q20_a_i",
+        "058022_w25_Q20_a_ii",
+        "058022_w25_Q20_a_iii"
+      ],
+      "imageUrl": "/question_stems/058022_w25_Q20_a.png",
+      "regions": [
+        [
+          12,
+          96.3,
+          122.3
+        ]
+      ],
+      "px": [
+        1452,
+        74
+      ]
+    },
+    "058042_m25_Q10_a": {
+      "assetId": "058042_m25_Q10_a",
+      "questionId": "058042_m25_Q10",
+      "path": [
+        "a"
+      ],
+      "text": "(a) Draw the image of",
+      "usedByParts": [
+        "058042_m25_Q10_a_i",
+        "058042_m25_Q10_a_ii"
+      ],
+      "imageUrl": "/question_stems/058042_m25_Q10_a.png",
+      "regions": [
+        [
+          6,
+          477.9,
+          503.9
+        ]
+      ],
+      "px": [
+        1452,
+        73
+      ]
+    },
+    "058041_s25_Q4_a": {
+      "assetId": "058041_s25_Q4_a",
+      "questionId": "058041_s25_Q4",
+      "path": [
+        "a"
+      ],
+      "text": "(a) Describe fully the single transformation that maps",
+      "usedByParts": [
+        "058041_s25_Q4_a_i",
+        "058041_s25_Q4_a_ii"
+      ],
+      "imageUrl": "/question_stems/058041_s25_Q4_a.png",
+      "regions": [
+        [
+          3,
+          534.5,
+          560.5
+        ]
+      ],
+      "px": [
+        1452,
+        74
+      ]
+    },
+    "058041_s25_Q5_c": {
+      "assetId": "058041_s25_Q5_c",
+      "questionId": "058041_s25_Q5",
+      "path": [
+        "c"
+      ],
+      "text": "(c) The sum of the first n terms of another sequence is  (\n)\nn\nn\n2 5\n1\n-\n .",
+      "usedByParts": [
+        "058041_s25_Q5_c_i",
+        "058041_s25_Q5_c_ii"
+      ],
+      "imageUrl": "/question_stems/058041_s25_Q5_c.png",
+      "regions": [
+        [
+          4,
+          356.4,
+          395.4
+        ]
+      ],
+      "px": [
+        1452,
+        110
+      ]
+    },
+    "058042_s25_Q22_a": {
+      "assetId": "058042_s25_Q22_a",
+      "questionId": "058042_s25_Q22",
+      "path": [
+        "a"
+      ],
+      "text": "(a) One of the students in the class is picked at random.\n \n \nFind the probability that this student",
+      "usedByParts": [
+        "058042_s25_Q22_a_i",
+        "058042_s25_Q22_a_ii"
+      ],
+      "imageUrl": "/question_stems/058042_s25_Q22_a.png",
+      "regions": [
+        [
+          15,
+          287.5,
+          339.5
+        ]
+      ],
+      "px": [
+        1452,
+        145
+      ]
+    },
+    "058041_w25_Q5_c": {
+      "assetId": "058041_w25_Q5_c",
+      "questionId": "058041_w25_Q5",
+      "path": [
+        "c"
+      ],
+      "text": "(c) Triangle ABC is a scale drawing of a field.",
+      "usedByParts": [
+        "058041_w25_Q5_c_i",
+        "058041_w25_Q5_c_ii"
+      ],
+      "imageUrl": "/question_stems/058041_w25_Q5_c.png",
+      "regions": [
+        [
+          3,
+          448.3,
+          474.3
+        ]
+      ],
+      "px": [
+        1452,
+        73
+      ]
+    },
+    "058042_w25_Q8_a": {
+      "assetId": "058042_w25_Q8_a",
+      "questionId": "058042_w25_Q8",
+      "path": [
+        "a"
+      ],
+      "text": "(a) On the diagram, draw the image of \n1\ne\no",
+      "usedByParts": [
+        "058042_w25_Q8_a_i",
+        "058042_w25_Q8_a_ii"
+      ],
+      "imageUrl": "/question_stems/058042_w25_Q8_a.png",
+      "regions": [
+        [
+          5,
+          466.4,
+          492.4
+        ]
+      ],
+      "px": [
+        1452,
+        73
+      ]
+    }
+  }
+}

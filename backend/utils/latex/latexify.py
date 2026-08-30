@@ -344,17 +344,33 @@ def looks_like_plain_text(latex: str) -> bool:
 # --------------------------------------------------------------------------- #
 _LINE_NOISE = re.compile(r"\.{4,}|\[\d{1,2}\]|^Answer\b", re.M)
 _RUN_OF_SPACES = re.compile(r"[ \t]{2,}")
+# The raw PDF text of a sub-part still carries the labels Cambridge printed in
+# the margin — the original question number ("5") and the sub-part path
+# ("(a) (i)"). The template prints those itself from the bank record, so leaving
+# them in the body renders them twice: "(b)   (b) On the grid, ...".
+_LEADING_LABELS = re.compile(
+    r"^\s*(?:\d{1,2}\s*(?=\())?"                    # question number, only before a label
+    r"(?:\(\s*(?:[a-h]|[ivx]{1,4})\s*\)\s*)+",      # (a), (b) (ii), (iii) ...
+    re.I,
+)
+
+
+def strip_leading_labels(text: str) -> str:
+    """Drop the question-number / sub-part labels the template re-prints itself."""
+    return _LEADING_LABELS.sub("", text or "", count=1).lstrip()
 
 
 def latex_from_raw_text(text: str) -> str:
     """Best-effort LaTeX for a sub-part the extraction has not covered.
 
-    Strips the answer rules and mark indicators the template re-adds itself, then
-    maps the Unicode / Symbol-font maths characters to LaTeX. This is honest
-    prose with correct symbols — it is NOT a claim that the notation
-    (fractions, surds, vectors) was reconstructed, so anything routed through it
-    is counted as a fallback and reported to the caller.
+    Strips the answer rules, the duplicated margin labels and the mark indicators
+    the template re-adds itself, then maps the Unicode / Symbol-font maths
+    characters to LaTeX. This is honest prose with correct symbols — it is NOT a
+    claim that the notation (fractions, surds, vectors) was reconstructed, so
+    anything routed through it is counted as a fallback and reported to the
+    caller.
     """
     cleaned = _RUN_OF_SPACES.sub(" ", _LINE_NOISE.sub(" ", text or ""))
     lines = (line.strip() for line in cleaned.splitlines())
-    return unicode_to_latex(" ".join(line for line in lines if line)).strip()
+    joined = strip_leading_labels(" ".join(line for line in lines if line))
+    return unicode_to_latex(joined).strip()

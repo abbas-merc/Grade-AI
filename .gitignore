@@ -63,3 +63,33 @@ backend/tools/
 # them here locally, or point GA_CENTURY_GOTHIC_DIR at them.
 backend/fonts/century_gothic/*
 !backend/fonts/century_gothic/README.md
+
+# ── Question-bank build artefacts ──────────────────────────────────────────────
+# Source exam PDFs (22 MB) are read only by the offline build scripts; the
+# running server never opens them, and .dockerignore already keeps them out of
+# the image.
+backend/papers/
+# Intermediate crops. The PUBLISHED copies under backend/static/ are what the
+# server serves and what the typesetter reads off disk, so only those are
+# committed.
+backend/scripts/question_parts/
+backend/scripts/question_stems/
+backend/scripts/question_figures/
+backend/scripts/question_assets/
+backend/scripts/question_snippets/
+backend/scripts/pending_snippets/
+backend/scripts/diagram_out/
+backend/scripts/batch_review/
+backend/scripts/question_bank_review/
+backend/scripts/part_extraction/latex_test_output/
+# Build intermediates of the part-level extraction. Only the three files the
+# server actually loads at request time are committed (part_latex.json,
+# part_figures.json, part_level_questions.json) plus the two small review lists.
+backend/scripts/part_extraction/part_manifest.json
+backend/scripts/part_extraction/part_tags.json
+backend/scripts/part_extraction/part_dependencies.json
+backend/scripts/part_extraction/review_lists.json
+
+# Locally generated demo output.
+/demo/
+/demo_topic_algebra/

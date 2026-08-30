@@ -53,6 +53,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 
 import fitz  # PyMuPDF
@@ -75,6 +76,27 @@ OUT_JSON = os.path.join(OUT_DIR, "part_figures.json")
 # bounding box — without generous padding above, the crop decapitates them.
 PAD_TOP_PT = 13.0
 PAD_BOTTOM_PT = 8.0
+# Fixed padding is not enough on its own: a graph's axis labels sit further out
+# than any pad that is safe to apply blindly (the "120" at the top of the y-axis,
+# the tick row and the "Time (hours)" title below the x-axis). So the band is
+# also GROWN over text that belongs to the figure — see _grow_over_labels.
+LABEL_GAP_PT = 18.0       # how far outside the band a label may still sit
+LABEL_SIDE_PT = 45.0      # how far outside the drawing's x-span a label may sit
+LABEL_MAX_WORDS = 8       # more words than this is prose, unless all numeric
+# Body text and sub-part labels start at the left edge of the content column;
+# a centred figure's labels never do.
+PROSE_LEFT_PT = 24.0
+# A horizontal text row is never taller than this; anything taller is rotated
+# margin furniture (see _text_rows).
+MAX_TEXT_ROW_PT = 40.0
+# "(c)", "(ii)" — a sub-part label, never a figure label.
+_SUBPART_LABEL_RE = re.compile(r"\(\s*[a-z]{1,4}\s*\)")
+# Lower-case function words: a caption reads like a sentence, a label does not.
+_PROSE_WORDS = {"a", "an", "the", "is", "are", "of", "and", "with", "in", "on",
+                "for", "to", "by", "this", "that", "each", "from", "at", "as",
+                "it", "its", "has", "have", "shows", "show", "made", "when"}
+# A tick number: "0", "-2", "12.5", "10,5".
+_NUMERIC_TOKEN_RE = re.compile(r"[-‐-−]?\d+(?:[.,]\d+)?")
 # Shorter than this is a rule or a stray box, not a diagram worth printing.
 MIN_BAND_PT = 24.0
 # Taller than this fraction of the page is page furniture, not a figure.
@@ -140,34 +162,144 @@ def _cluster(spans, page_h: float) -> list[tuple[float, float, float, float]]:
             if MIN_BAND_PT <= band[1] - band[0] <= MAX_BAND_FRACTION * page_h]
 
 
-def _top_after_labels(page, top: float, drawing_top: float, band_x0: float) -> float:
+def _text_rows(page, y0: float, y1: float) -> list[tuple[float, float, float, float, str]]:
+    """(y0, y1, x0, x1, text) per logical text ROW inside the region.
+
+    PyMuPDF reports a "line" per run, so one sentence of a Cambridge paper comes
+    back as a dozen fragments ("AB", "=", "10 4", " cm and "). Each fragment is
+    short and sits inside a diagram's x-span, so tested individually every one of
+    them looks like a figure label. Rows sharing a baseline are merged first, and
+    the label tests below then see the sentence they are meant to reject.
+    """
+    frags: list[list] = []
+    for block in page.get_text("dict").get("blocks", []):
+        for line in block.get("lines", []):
+            lx0, ly0, lx1, ly1 = line["bbox"]
+            if ly1 <= y0 or ly0 >= y1:
+                continue
+            # Cambridge prints "DO NOT WRITE IN THIS MARGIN" rotated down the
+            # full height of the page. It is a text line whose bbox covers the
+            # whole page, so left in it would swallow every real row and defeat
+            # both label tests. Horizontal text is never this tall.
+            if ly1 - ly0 > MAX_TEXT_ROW_PT:
+                continue
+            text = "".join(span["text"] for span in line["spans"])
+            if not text.strip():
+                continue
+            frags.append([ly0, ly1, lx0, lx1, text])
+
+    rows: list[list] = []
+    for ly0, ly1, lx0, lx1, text in sorted(frags):
+        for row in rows:
+            # Same row when the vertical spans mostly coincide. Measured against
+            # the TALLER of the two: a short fragment sitting inside a taller
+            # one's span is a different row (a super/subscript, a stacked label),
+            # not part of it.
+            overlap = min(ly1, row[1]) - max(ly0, row[0])
+            if overlap > 0.55 * max(ly1 - ly0, row[1] - row[0]):
+                row[0], row[1] = min(row[0], ly0), max(row[1], ly1)
+                row[2], row[3] = min(row[2], lx0), max(row[3], lx1)
+                row[4] += " " + text
+                break
+        else:
+            rows.append([ly0, ly1, lx0, lx1, text])
+    return [tuple(r) for r in rows]
+
+
+def _top_after_labels(page, top: float, drawing_top: float,
+                      band_x0: float, band_x1: float) -> float:
     """Pull the crop's top edge below any text that is not part of the figure.
 
     The top padding exists to catch point labels ("D", "C") printed just above a
     drawing — but it also catches the source paper's own question number, which
-    then appears as a stray "2" in the corner of the crop. A line that lies
-    entirely to the LEFT of the drawing is the number/label column, never a
-    figure label, so the crop starts below it.
+    then appears as a stray "2" in the corner of the crop, and the tail of the
+    prose line above. Anything in the padding strip that is not a figure label
+    (see ``_is_figure_label``) puts the crop's top edge below itself.
     """
     limit = top
-    for block in page.get_text("dict").get("blocks", []):
-        for line in block.get("lines", []):
-            bx0, by0, bx1, by1 = line["bbox"]
-            if by1 <= top or by0 >= drawing_top:
-                continue
-            if bx1 < band_x0 - 4:
-                limit = max(limit, by1 + 1.0)
+    for ly0, ly1, lx0, lx1, text in _text_rows(page, top, drawing_top):
+        if ly1 <= top or ly0 >= drawing_top:
+            continue
+        if not _is_figure_label(text, lx0, lx1, band_x0, band_x1):
+            limit = max(limit, ly1 + 1.0)
     return min(limit, drawing_top)
 
 
-def _figure_bands(doc, regions) -> list[tuple[int, float, float]]:
-    """(page, y0, y1) for every figure band inside a question's page regions."""
-    bands: list[tuple[int, float, float]] = []
+def _is_figure_label(text: str, lx0: float, lx1: float,
+                     bx0: float, bx1: float) -> bool:
+    """Is this text line part of the figure rather than the prose around it?
+
+    A figure's labels sit inside (or barely outside) the drawing's own horizontal
+    span and are either very short ("NOT TO SCALE", "Time (hours)", "Solid A") or
+    pure numbers (an axis's tick row). Anything else is prose — which is what
+    separates "0 2 4 6 8 10" under an axis both from "The cumulative frequency
+    diagram shows this information." above one and from the caption
+    "The diagram shows a cuboid, ABCDEFGH." printed under one.
+    """
+    words = text.split()
+    if not words:
+        return False
+    if lx0 <= CONTENT_X0 + PROSE_LEFT_PT:
+        return False                                   # prose / "(a)" column
+    if _SUBPART_LABEL_RE.match(text.strip()):
+        return False               # "(c)", "(ii)" — alone, or merged with
+                                   # a figure label sharing its baseline
+    if lx0 < bx0 - LABEL_SIDE_PT or lx1 > bx1 + LABEL_SIDE_PT:
+        return False                                   # outside the figure
+    if all(_NUMERIC_TOKEN_RE.fullmatch(w) for w in words):
+        return True                                    # an axis tick row
+    if len(words) > LABEL_MAX_WORDS:
+        return False
+    # A caption is a sentence and reads like one; a label is a noun phrase.
+    # Tested lower-case-only so "NOT TO SCALE" keeps its "TO".
+    return not any(w.strip(".,;:()").lower() in _PROSE_WORDS and w[:1].islower()
+                   for w in words)
+
+
+def _grow_over_labels(page, y0: float, y1: float,
+                      band: tuple[float, float, float, float]) -> tuple[float, float]:
+    """Extend a drawing band over the figure's own labels, above and below.
+
+    Without this the crop is cut to the geometry: a cumulative-frequency graph
+    loses the "120" at the top of its axis, the tick numbers along the bottom and
+    the axis title under them, because all of those are text sitting outside the
+    drawing's bounding box by more than any blind padding could safely cover.
+    """
+    top, bottom, bx0, bx1 = band
+    lines = [(ly0, ly1) for ly0, ly1, lx0, lx1, text in _text_rows(page, y0, y1)
+             if _is_figure_label(text, lx0, lx1, bx0, bx1)]
+
+    changed = True
+    while changed:                       # a label may sit under another label
+        changed = False
+        for ly0, ly1 in lines:
+            # A label above the band, or straddling its edge (an axis's topmost
+            # tick number is centred ON the top gridline, so half of it is out).
+            # The gap is measured to the label's near edge, so a tall label is
+            # not rejected for the space its own height occupies.
+            if ly0 < top and ly1 >= top - LABEL_GAP_PT and ly0 >= y0:
+                top, changed = ly0, True
+            elif ly1 > bottom and ly0 <= bottom + LABEL_GAP_PT and ly1 <= y1:
+                bottom, changed = ly1, True
+    return top, bottom
+
+
+def _figure_bands(doc, regions) -> list[tuple[int, float, float, float, float]]:
+    """(page, crop_y0, crop_y1, core_y0, core_y1) for every figure band.
+
+    The crop is the band grown over the figure's labels and padded; the *core* is
+    the drawing's own extent. Ownership (which sub-part a figure belongs to) is
+    decided from the core, so growing a crop to keep an axis title can never move
+    a figure from the question stem into the sub-part printed underneath it.
+    """
+    bands: list[tuple[int, float, float, float, float]] = []
     for (pi, y0, y1) in regions:
         page = doc[pi]
-        for a, b, bx0, _bx1 in _cluster(_primitives(page, y0, y1), page.rect.height):
-            top = _top_after_labels(page, max(a - PAD_TOP_PT, y0), a, bx0)
-            bands.append((pi, top, min(b + PAD_BOTTOM_PT, y1)))
+        for a, b, bx0, bx1 in _cluster(_primitives(page, y0, y1), page.rect.height):
+            grown_top, grown_bottom = _grow_over_labels(page, y0, y1, (a, b, bx0, bx1))
+            top = _top_after_labels(page, max(grown_top - PAD_TOP_PT, y0),
+                                    grown_top, bx0, bx1)
+            bands.append((pi, top, min(grown_bottom + PAD_BOTTOM_PT, y1), a, b))
     return bands
 
 
@@ -269,12 +401,13 @@ def process_paper(paper: dict, write_images: bool) -> tuple[dict, dict, dict, di
                 stems[qid] = entry
 
         for fi, band in enumerate(bands):
-            hits = [leaf for leaf in leaves if _overlaps_leaf(band, leaf)]
+            core = (band[0], band[3], band[4])   # the drawing itself, not the crop
+            hits = [leaf for leaf in leaves if _overlaps_leaf(core, leaf)]
             if not hits:
                 # A figure inside a letter part's own introduction belongs to
                 # that group, not to the question stem.
                 owner = next((gid for gid, regions in group_regions.items()
-                              if _overlaps_leaf(band, {"regions": regions})), "")
+                              if _overlaps_leaf(core, {"regions": regions})), "")
                 if owner:
                     fig_id = f"{owner}_fig{fi + 1}"
                     entry = {"assetId": fig_id, "questionId": qid,
@@ -329,6 +462,42 @@ def process_paper(paper: dict, write_images: bool) -> tuple[dict, dict, dict, di
     return parts, shared, stems, group_stems
 
 
+def _referenced_figure_ids(data: dict) -> set[str]:
+    """Every figure asset id the manifest still points at."""
+    ids = set(data.get("parts") or {}) | set(data.get("shared") or {})
+    for group in ("stems", "groupStems"):
+        for entry in (data.get(group) or {}).values():
+            figure = entry.get("figure")
+            if figure and figure.get("assetId"):
+                ids.add(figure["assetId"])
+    return ids
+
+
+def _prune_stale_images(data: dict, codes: list[str]) -> list[str]:
+    """Delete crops a rebuild has orphaned.
+
+    A band that moves can change a figure's id — a stem figure becoming a
+    sub-part figure, a sub-part figure becoming a shared one. The manifest is
+    rewritten, but the old PNG stays on disk, and ``assemble.figure_path`` looks
+    crops up BY ID: the stale file is found and printed, so a question can end up
+    showing the previous run's crop next to the current one. Rebuilding a paper
+    therefore removes that paper's unreferenced crops.
+    """
+    if not os.path.isdir(FIG_IMG_DIR):
+        return []
+    keep = _referenced_figure_ids(data)
+    removed = []
+    for name in os.listdir(FIG_IMG_DIR):
+        stem, ext = os.path.splitext(name)
+        if ext.lower() != ".png" or stem in keep:
+            continue
+        if codes and not any(stem.startswith(code + "_Q") for code in codes):
+            continue                      # another paper's crop, not this run's
+        os.remove(os.path.join(FIG_IMG_DIR, name))
+        removed.append(stem)
+    return removed
+
+
 def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
     only = None
@@ -359,6 +528,11 @@ def main() -> None:
         data["groupStems"].update(groups)
         print(f"  {paper['code']}: {len(parts)} sub-part, {len(shared)} shared, "
               f"{len(stems)} stem, {len(groups)} group-stem")
+
+    if write_images:
+        stale = _prune_stale_images(data, [p["code"] for p in inv])
+        if stale:
+            print(f"  pruned {len(stale)} stale crop(s): {', '.join(stale)}")
 
     with open(OUT_JSON, "w", encoding="utf-8") as fh:
         json.dump(data, fh, indent=2, ensure_ascii=False)
